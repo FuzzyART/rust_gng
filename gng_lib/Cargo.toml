@@ -1,0 +1,33 @@
+[package]
+name = "gng_lib"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+csv = "1.3.1"
+fast-math = "0.1.1"
+json = "0.12.4"
+num = "0.4.3"
+num-traits = "0.2.19"
+rand = "0.9.0"
+serde = { version = "1.0.217", features = ["derive"] }
+serde_json = "1.0.137"
+backtrace="0.3"
+
+
+
+[features]
+default = []
+
+t1 = []
+
+stage_2 = []
+
+
+enable_init_model = []
+
+init_dataset = ["t1"]
+activate_init_model = ["enable_init_model"]
+
+stage_2_test = ["stage_2","enable_init_model"]
+#full_test = ["t1", "t2"]
