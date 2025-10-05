@@ -1,4 +1,4 @@
-rust_gng — Experiments in Rust & Python
+# rust_gng — Experiments in Rust & Python
 This repo is a personal playground for experimenting with the Growing Neural Gas (GNG) algorithm and related tooling. It’s a work-in-progress portfolio project combining Rust, Python, and Nix, designed to explore cross-language workflows and reproducible environments.
 
 🧩 Project Structure
