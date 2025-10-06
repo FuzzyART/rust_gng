@@ -58,62 +58,54 @@ def plot_dataset(X, y, title="Classification Dataset"):
     plt.xlabel('Feature 1')
     plt.ylabel('Feature 2')
 
-def create_dataset(filename='dataset.csv',type='none',num_samples=100):
-    np.random.seed(42)  # Set random seed for reproducibility
-
-    if type == 'circle':
-        print("creating circle")
-
-        # Generate and plot circle data
-        circle_X, circle_y = generate_circle_data(
-            n_samples=num_samples,
-            noise=0.05,
-            factor=0.7
-        )
-        plot_dataset(circle_X, circle_y, "Circle Classification Dataset")
-        #plt.savefig('circles.png')
-        #plt.close()
-
-        x_circle = np.array(circle_X)
-        y_circle = np.array(circle_y)
-  
-        save_to_csv(x_circle,y_circle,filename=filename)
-
-
-    elif type == 'blob':
-        print("creating blob")
-        # Generate and plot blob data
-        blob_X, blob_y = generate_blob_data(
-            n_samples=400,
-            centers=3,
-            std_dev=0.8
-        )
-        plot_dataset(blob_X, blob_y, "Blob Classification Dataset")
-        #plt.savefig('blobs.png')
-        #plt.close()
-
-        x_blob = np.array(blob_X)
-        y_blob = np.array(blob_y)
-
-        save_to_csv(x_blob,y_blob,filename=filename)
-    else:
-        print("No valid dataset type provided. Please use 'blob' or 'circle'.")
+def create_blobs(filename='dataset.csv',
+                 num_samples=100, 
+                 num_centers=3, 
+                 std_deviation =0.8,
+                 rng_seed = 123 
+                 ):
+    np.random.seed(rng_seed)  # Set random seed for reproducibility
 
 
 
+    print("creating blob")
+    # Generate and plot blob data
+    blob_X, blob_y = generate_blob_data(
+        n_samples=num_samples,
+        centers=num_centers,
+        std_dev=std_deviation
+    )
+    plot_dataset(blob_X, blob_y, "Blob Classification Dataset")
+    #plt.savefig('blobs.png')
+    #plt.close()
 
+    x_blob = np.array(blob_X)
+    y_blob = np.array(blob_y)
+
+    save_to_csv(x_blob,y_blob,filename=filename)
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--filename", help="Enter the filename")
-    parser.add_argument("-t", "--type", help="Enter the type of dataset to create (blob/circle)", choices=['blob', 'circle'], default='circle')
     parser.add_argument("-s", "--num_samples", help="Enter number of samples" )
+    parser.add_argument("-c", "--num_centers", help="Enter number of centers")
+    parser.add_argument("-d", "--std_dev", help="Enter value for standard deviation")
+    parser.add_argument("-r", "--rng_seed", help="Enter value for the rng seed")
     args = parser.parse_args()
 
-    circle_filename = args.filename
-    dataset_type = args.type
+    dataset_filename = args.filename
     n_samples = int(args.num_samples)
-    create_dataset(filename=circle_filename, type=dataset_type,num_samples=n_samples)
+    n_centers = int(args.num_centers)
+    std_deviation = float(args.std_dev)
+    rng = int(args.rng_seed)
+
+    create_blobs(
+                 filename       = dataset_filename,
+                 num_samples    = n_samples,
+                 num_centers    = n_centers,
+                 std_deviation  = std_deviation,
+                 rng_seed       = rng)
+
 
 
 if __name__ == "__main__":
