@@ -1,0 +1,14 @@
+/home/sinister/DEVELOPMENT/gitRepos/project_ouroboros/gng_test_app/target/debug/deps/libserde-9585d99112312eee.rmeta: /home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /home/sinister/DEVELOPMENT/gitRepos/project_ouroboros/gng_test_app/target/debug/build/serde-b13e4b42eec7d46c/out/private.rs
+
+/home/sinister/DEVELOPMENT/gitRepos/project_ouroboros/gng_test_app/target/debug/deps/libserde-9585d99112312eee.rlib: /home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /home/sinister/DEVELOPMENT/gitRepos/project_ouroboros/gng_test_app/target/debug/build/serde-b13e4b42eec7d46c/out/private.rs
+
+/home/sinister/DEVELOPMENT/gitRepos/project_ouroboros/gng_test_app/target/debug/deps/serde-9585d99112312eee.d: /home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /home/sinister/DEVELOPMENT/gitRepos/project_ouroboros/gng_test_app/target/debug/build/serde-b13e4b42eec7d46c/out/private.rs
+
+/home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs:
+/home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs:
+/home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs:
+/home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:
+/home/sinister/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs:
+/home/sinister/DEVELOPMENT/gitRepos/project_ouroboros/gng_test_app/target/debug/build/serde-b13e4b42eec7d46c/out/private.rs:
+
+# env-dep:OUT_DIR=/home/sinister/DEVELOPMENT/gitRepos/project_ouroboros/gng_test_app/target/debug/build/serde-b13e4b42eec7d46c/out

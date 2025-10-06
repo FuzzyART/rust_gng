@@ -1,0 +1,9 @@
+[package]
+name = "gng_test_app"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+gng_lib = {path = "../gng_lib"}
+
+
