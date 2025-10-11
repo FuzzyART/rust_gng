@@ -42,9 +42,6 @@ impl SampleHandler {
     pub fn init_data_set(&mut self, input_set_filename: &String, sample_width: usize) {
         self.sample_width = sample_width;
         let csv_reader = CsvReader::new(&input_set_filename, ',');
-        //    //---------------------------------------
-        //
-        //let res: i32 = csv_reader.count_lines().expect("Error reading file");
 
         let mut samples: Vec<f64> = Vec::new();
 
