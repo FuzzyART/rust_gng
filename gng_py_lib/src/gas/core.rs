@@ -13,6 +13,8 @@ use crate::gas::{
 
 use rand::seq::SliceRandom;
 use serde_json::{json, Value};
+use pyo3::PyResult;
+use pyo3::PyErr;
 
 pub struct GngParams {
     pub neuron_handler: NeuronHandler,
@@ -701,6 +703,13 @@ pub fn init_dataset(params: &mut GngParams, filename_dataset: &String) {
         .init_data_set(&filename_dataset, input_width);
 }
 
+pub fn init_dataset_vec(params: &mut GngParams, data_vec: &Vec<f64>) {
+    let &input_width = params.config_handler.get_input_width();
+    params
+        .sample_handler
+        .init_input_vec(&data_vec, input_width);
+}
+
 //--------------------------------------------------------------------------------------------------
 pub fn load_config(params: &mut GngParams, filename_config: &String) {
     params.config_handler.load_config(&filename_config);
@@ -755,6 +764,44 @@ pub fn save_model_json(
 
     println!("JSON successfully written to {}", output_file);
     Ok(())
+}
+
+pub fn get_model_string(
+    params: &mut GngParams,
+) -> String {
+    let mut data = json!({});
+    let keys = params.neuron_handler.get_keys();
+    let mut neuron_array: Vec<Value> = Vec::new();
+
+    for a in keys {
+        let neuron = json!({
+            "id": *a,
+            "position":  params.neuron_handler.get_weights(*a),
+        });
+        neuron_array.push(neuron);
+    }
+    let mut edge_array: Vec<Value> = Vec::new();
+    let keys_edges = params.edge_handler.get_keys();
+    for a in keys_edges {
+        let edge = json!({
+            "from": params.edge_handler.get_edge_start(*a),
+            "to": params.edge_handler.get_edge_end(*a),
+        });
+        edge_array.push(edge);
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // Step 1: Create an empty JSON object (Value)
+    let mut data = json!({});
+    // Step 2: Use write_value_to_block to add values to specific blocks
+    write_value_to_block(&mut data, "model", "neurons", neuron_array);
+    write_value_to_block(&mut data, "model", "edges", edge_array);
+
+    // Step 3: Serialize and write this JSON object to a file
+        
+    let res_str = serde_json::to_string(&data).unwrap();
+    res_str
+
 }
 
 // Export Model

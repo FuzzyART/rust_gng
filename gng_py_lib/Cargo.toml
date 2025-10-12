@@ -14,7 +14,7 @@ serde = { version = "1.0.217", features = ["derive"] }
 serde_json = "1.0.137"
 backtrace="0.3"
 pyo3 = {version = "0.21",features = ["extension-module"]}
-
+numpy = "0.21"
 
 [lib]
 name = "gng_py"

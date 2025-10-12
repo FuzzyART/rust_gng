@@ -40,3 +40,38 @@ impl Context {
         internal::core_save_model_json(&mut self.cont_params, filename_output.to_string());
     }
 }
+#[pymethods]
+impl PyContext {
+    #[new]
+    fn new() -> Self {
+        PyContext {
+            context: Context::new(),
+        }
+    }
+
+    fn load_config(&mut self, filename_config: &str) -> PyResult<()> {
+        self.context.load_config(filename_config);
+        Ok(())
+    }
+
+    fn init_dataset(&mut self, filename_dataset: &str) -> PyResult<()> {
+        self.context.init_dataset(filename_dataset);
+        Ok(())
+    }
+
+    fn fit(&mut self) -> PyResult<()> {
+        self.context.fit();
+        Ok(())
+    }
+
+    fn save_model_json(&mut self, filename_output: &str) -> PyResult<()> {
+        self.context.save_model_json(filename_output);
+        Ok(())
+    }
+}
+/// Define the Python module - renamed to match your package name
+#[pymodule]
+fn gng_py(_py: Python, m: &PyModule) -> PyResult<()> {
+    m.add_class::<PyContext>()?;
+    Ok(())
+}
