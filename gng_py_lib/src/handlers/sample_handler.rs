@@ -60,6 +60,21 @@ impl SampleHandler {
             self.sample_man.create(Samples { position: line });
         }
     }
+    //--------------------------------------------------
+    pub fn init_input_vec(&mut self, samples: &Vec<f64>, sample_width: usize) {
+        self.sample_width = sample_width;
+
+        self.num_samples = samples.len() / sample_width;
+
+        for a in 0..self.num_samples {
+            let mut line: Vec<f64> = Vec::new();
+            for i in 0..sample_width {
+                line.push(samples[(sample_width * a) + i]);
+            }
+            self.sample_man.create(Samples { position: line });
+        }
+    }
+    //--------------------------------------------------
     pub fn get_sample(&self, num_sample: usize) -> &Vec<f64> {
         return self
             .sample_man
