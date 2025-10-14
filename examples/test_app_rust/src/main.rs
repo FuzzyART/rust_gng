@@ -15,13 +15,13 @@
 
 
 use clap::Parser;
-use gng_lib::Context;
+use gng_py::Context;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
     /// Configuration file path
-    #[arg(long = "config", short = 'c', default_value = "input.json")]
+    #[arg(long = "config", short = 'c', default_value = "../config.json")]
     config_file: String,
 
     /// Data file path
