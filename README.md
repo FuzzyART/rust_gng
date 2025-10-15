@@ -1,42 +1,53 @@
-# rust_gng — Experiments in Rust & Python
-This repo is a personal playground for experimenting with the Growing Neural Gas (GNG) algorithm and related tooling. It’s a work-in-progress portfolio project combining Rust, Python, and Nix, designed to explore cross-language workflows and reproducible environments.
+# rust_gng — Growing Neural Gas in Rust & Python
 
-## Project Structure
-The repository contains three loosely coupled subprojects:
+This is a personal playground for experimenting with the Growing Neural Gas (GNG) algorithm using Rust, Python, and Nix. It's a work-in-progress portfolio project focused on cross-language workflows and reproducible development environments.
 
-gng-core (Rust) A Rust implementation of the Growing Neural Gas algorithm. Currently under development.
+🧱 Project Structure
 
-dataset-maker (Python) A simple wrapper around sklearn.datasets to generate synthetic data for GNG training. Outputs to CSV.
+gng_py/ (Rust) — A working implementation of the GNG algorithm
 
-gas-visualizer (Python) A visualization tool for inspecting GNG behavior and dataset structure. Uses matplotlib.
+dataset_creator/ (Python) — Generates synthetic data via sklearn, outputs to CSV
 
-Each subproject includes its own nix-shell for reproducible development environments.
+neural_gas_plotter/ (Python) — Visualizes GNG behavior using matplotlib
 
-## Communication
-Data is exchanged via CSV and JSON files.
+Each component includes its own nix-shell for consistent, reproducible dev environments.
 
-Future plans include direct IPC or shared memory once the Rust core stabilizes.
+📁 Examples
 
-## Goals
-- Build a clean, idiomatic GNG implementation in Rust
+See the examples/ directory for runnable usage demos:
 
-- Create a flexible dataset generator for experimentation
+run_rust_example.sh
 
-- Visualize GNG evolution over time
+run_python_example.sh
 
-- Showcase cross-language tooling and reproducibility with Nix
+run_jupyter_example.sh
 
-## Status
-- Portfolio Project & Work in Progress This repo is part of my Rust portfolio. I created it to show recruiters what I’m working on—even if it’s not finished yet. All the LLMs agreed: publishing early is a great idea.
+simple_usage.sh
 
-## Next Steps
-- Add everything needed for a demo on Linux systems
+test_app_py
 
-- Write documentation
+All scripts are run via nix-shell for setup-free execution.
 
-- Build a Python wrapper to integrate with Keras pipelines
+🔄 Data Flow
 
-## Ultimate Goal
-- Develop real-world workflows and use cases
+Data is currently exchanged using CSV and JSON.
+Future work will explore shared memory or IPC for tighter integration.
 
-- Launch a Wasm-based website with an interactive demo
+✅ Project Goals
+
+Build a clean, idiomatic Rust implementation of GNG
+
+Provide flexible dataset generation & visualization tools
+
+Showcase Nix-based reproducibility and cross-language workflows
+
+Enable Keras integration and interactive WebAssembly demos
+
+🚧 Status
+
+GNG core is working
+
+Examples are live
+
+Still in early development — follow along as it evolves
+
