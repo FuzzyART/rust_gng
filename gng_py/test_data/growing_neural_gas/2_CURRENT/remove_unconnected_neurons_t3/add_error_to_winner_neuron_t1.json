@@ -1,0 +1,27 @@
+{
+    "variables":{
+        "winnerNeur": 2,
+        "smpPos":1,
+        "__C_variables__":"__C_variables__",
+        "inputWidth" : 3,
+        "numNeurons" :3
+    },
+
+    "input":{
+        "W_in" : [[0.1,0.2,0.3],
+                [0.4,0.5,0.6],
+                [0.7,0.8,0.9]],
+
+        "input_In": [[1.0,2.0,3.0],
+                    [4.0,5.0,6.0]],
+
+        "neuronErr_In" : [[3.0,4.0,5.0]],
+
+        "neuronDist":[[1.5, 0.223606798, 1.360147051]],
+
+        "orderPos_In" : [[2,0,1]]
+    },
+    "output":{
+        "neuronErr_Target": [[3, 66.37, 5]]
+    }
+}

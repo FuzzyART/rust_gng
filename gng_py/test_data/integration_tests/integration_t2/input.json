@@ -1,0 +1,7 @@
+{
+  "config":{
+"weight_rng_min": -1.1,
+"weight_rng_max": 2.1,
+    "input_width": 2
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "gng_model":{
+
+        "weights" : [[0.1,0.2,0.3],
+                [0.4,0.5,0.6],
+                [0.7,0.8,0.9]],
+
+    
+
+        "edge_start": [[2]],
+        "edge_end":   [[0]],
+        "edge_age":   [[9]],
+
+        "input_width": 3,
+
+        "neuron_err" : [[3.0,4.0,5.0]],
+
+
+        "orderPos_In" : [[2,0,1]]
+  },
+  "config":{
+        "winnerNeur": 2,
+        "curr_sample_pos":1,
+        "winner_neuron" : 1
+
+  }
+}

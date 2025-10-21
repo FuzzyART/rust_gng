@@ -9,7 +9,7 @@ use numpy::{PyArray1};
 
 pub mod internal {
     // Re-export the original types and functions from core
-    pub use crate::gas::core::{GngParams,
+    pub use crate::gas::core::{Handler,
         fit as core_fit, init_dataset as core_init_dataset, 
 init_dataset_vec as core_init_dataset_vec,
          load_config as core_load_config,
@@ -19,13 +19,13 @@ init_dataset_vec as core_init_dataset_vec,
 }
 
 pub struct Context {
-    cont_params: internal::GngParams,
+    cont_params: internal::Handler,
 }
 
 impl Context {
     pub fn new() -> Self {
         Context {
-            cont_params: internal::GngParams::init(),
+            cont_params: internal::Handler::init(),
         }
     }
 

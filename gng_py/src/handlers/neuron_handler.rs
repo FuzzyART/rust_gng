@@ -101,6 +101,11 @@ impl NeuronHandler {
         let temp = self.neuron_man.len();
         temp
     }
+    //pub fn set_num_neurons(&mut self, num_neurons: usize) {
+    //    if let Some(obj) = self.neuron_man.get_mut(0) {
+    //        obj.num_neurons = val;
+    //    }
+    //}
 
     //----------------------------------------------------------
     // Debugging helpers

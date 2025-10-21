@@ -20,18 +20,18 @@ numpy = "0.21"
 name = "gng_py"
 crate-type = ["cdylib","lib"]
 
-[features]
-default = []
-
-t1 = []
-
-stage_2 = []
-
-
-enable_init_model = []
-
-init_dataset = ["t1"]
-activate_init_model = ["enable_init_model"]
-
-stage_2_test = ["stage_2","enable_init_model"]
-#full_test = ["t1", "t2"]
+#[features]
+#default = []
+#
+#t1 = []
+#
+#stage_2 = []
+#
+#
+#enable_init_model = []
+#
+#init_dataset = ["t1"]
+#activate_init_model = ["enable_init_model"]
+#
+#stage_2_test = ["stage_2","enable_init_model"]
+##full_test = ["t1", "t2"]

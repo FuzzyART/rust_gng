@@ -1,0 +1,12 @@
+{
+  "config":{
+"weight_rng_min": -1.1,
+"weight_rng_max": 2.1,
+"edge_removal_age": 15,
+"neuron_creation_interval": 89,
+"max_train_iterations": 1235,
+"target_error": 0.096,
+"epsilon_w": 1.853,
+"epsilon_n": 29.659
+  }
+}

@@ -1,0 +1,9 @@
+{
+    "input":{
+        "neuronDist_In":[[5.1,3.1,4.1,2.1]]
+    },
+    "output":{
+        "neuronDist_Target":[[5.0,3.0,4.0,2.0]],
+        "neuronOrder_Target":[[3,1,2,0]]
+    }
+}

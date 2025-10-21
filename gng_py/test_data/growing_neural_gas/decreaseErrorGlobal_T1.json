@@ -1,0 +1,15 @@
+{
+    "variables":{
+        "__C_variables__":"__C_variables__",
+        "inputWidth" : 2,
+        "numNeurons" :4,
+        "numSamples" : 4
+    },
+    "input":{
+            "d" : 0.5,
+            "neuronErrC_In" : [[2.5, 5.1, 4.8, 4.3]]
+    },
+    "output":{
+        "neuronErrC_Target" : [[1.25, 2.55, 2.4, 2.15]]
+    }
+}

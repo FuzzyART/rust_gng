@@ -132,20 +132,12 @@ mod tests {
             Err(err) => panic!("Error reading CSV values: {}", err),
         }
     }
+
+
+ // let csv_reader = CsvReader::new(csv_filename, ',');
+ // match csv_reader.read_values() {
+//   Ok(num_lines) => println!("Number of lines: {}", num_lines),
+ //     Err(err) => println!("Error reading file: {}", err),
+ // }
+
 }
-
-//   // let csv_reader = CsvReader::new(csv_filename, ',');
-//   // match csv_reader.read_values() {
-//     Ok(num_lines) => println!("Number of lines: {}", num_lines),
-//   //     Err(err) => println!("Error reading file: {}", err),
-//   // }
-
-//
-//
-//
-//
-//
-//
-
-//
-//

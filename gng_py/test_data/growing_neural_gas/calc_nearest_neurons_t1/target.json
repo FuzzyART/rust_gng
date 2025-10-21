@@ -1,0 +1,7 @@
+{
+  "target":{
+        "winner_neuron":3,
+        "second_neuron":1
+
+}
+}
