@@ -1,0 +1,8 @@
+stages:
+  - test
+
+test:
+  image: nixos/nix:latest  # Official Nix image
+  stage: test
+  script:
+    - nix-shell --run "cd gng_py && cargo test"
