@@ -1,8 +1,23 @@
 stages:
   - test
+  - build
 
 test:
   image: nixos/nix:latest  # Official Nix image
   stage: test
   script:
     - nix-shell --run "cd gng_py && cargo test"
+
+build:
+  image: nixos/nix
+  script:
+    - nix build .#packages.x86_64-linux.default
+    - mkdir -p artifacts
+    - mv result/dist/*.whl artifacts/
+
+
+
+  artifacts:
+    paths:
+      - artifacts/
+    expire_in: 1 week

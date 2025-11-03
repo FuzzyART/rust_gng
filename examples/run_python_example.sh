@@ -1,4 +1,3 @@
-
 #!/bin/bash
 cwd=$PWD
 
@@ -10,7 +9,7 @@ nix-shell --run "cd gng_py && \
 
 # Run test app, after running maturin
 cd ${cwd}/../
-nix-shell --run "cd gng_py &&  \
-                 maturin develop --release && \
-                 cd ../examples/test_app_py && \
-                 python test_app.py"
+nix-shell --run "cd gng_py && maturin develop --release"
+
+cd ${cwd}/../
+nix-shell --run "cd examples/test_app_py && python test_app.py"
