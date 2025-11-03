@@ -1,14 +1,14 @@
 stages:
-#  - test
+  - test
   - build
 
-#test:
-#  image: nixos/nix:latest  # Official Nix image
-#  stage: test
-#  variables:
-#    NIX_CONFIG: "experimental-features = nix-command flakes"
-#  script:
-#    - nix-shell --run "cd gng_py && cargo test"
+test:
+  image: nixos/nix:latest  # Official Nix image
+  stage: test
+  variables:
+    NIX_CONFIG: "experimental-features = nix-command flakes"
+  script:
+    - nix-shell --run "cd gng_py && cargo test"
 
 build:
   stage: build
@@ -26,3 +26,5 @@ build:
     paths:
       - artifacts/
     expire_in: 1 week
+  only:
+    - main
