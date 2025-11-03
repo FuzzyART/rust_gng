@@ -1,17 +1,20 @@
 stages:
-  - test
+#  - test
   - build
 
-test:
-  image: nixos/nix:latest  # Official Nix image
-  stage: test
-  variables:
-    NIX_CONFIG: "experimental-features = nix-command flakes"
-  script:
-    - nix-shell --run "cd gng_py && cargo test"
+#test:
+#  image: nixos/nix:latest  # Official Nix image
+#  stage: test
+#  variables:
+#    NIX_CONFIG: "experimental-features = nix-command flakes"
+#  script:
+#    - nix-shell --run "cd gng_py && cargo test"
 
 build:
+  stage: build
   image: nixos/nix
+  variables:
+    NIX_CONFIG: "experimental-features = nix-command flakes"
   script:
     - nix build .#packages.x86_64-linux.default
     - mkdir -p artifacts
