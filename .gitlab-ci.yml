@@ -13,8 +13,6 @@ test:
 build:
   image: nixos/nix
   script:
-  variables:
-    NIX_CONFIG: "experimental-features = nix-command flakes"
     - nix build .#packages.x86_64-linux.default
     - mkdir -p artifacts
     - mv result/dist/*.whl artifacts/
