@@ -1,29 +1,23 @@
 //use crate::data_structures::{
-//    params, 
+//    params,
 //    train_params
 //};
 use std::collections::HashSet;
 
 use crate::handlers::{
-    config_handler::ConfigHandler, 
-    edge_handler::EdgeHandler, 
-    neuron_handler::NeuronHandler,
-    sample_handler::SampleHandler, 
-    system_handler::State, 
-    system_handler::SystemHandler,
+    config_handler::ConfigHandler, edge_handler::EdgeHandler, neuron_handler::NeuronHandler,
+    sample_handler::SampleHandler, system_handler::State, system_handler::SystemHandler,
 };
 
 use crate::gas::{
-    json_reader, 
-    json_writer::write_json_to_file, 
-    json_writer::write_value_to_block,
+    json_reader, json_writer::write_json_to_file, json_writer::write_value_to_block,
     rng_manager::RngManager,
 };
 
+use pyo3::PyErr;
+use pyo3::PyResult;
 use rand::seq::SliceRandom;
 use serde_json::{json, Value};
-use pyo3::PyResult;
-use pyo3::PyErr;
 
 pub struct Handler {
     pub neuron_handler: NeuronHandler,
@@ -197,6 +191,35 @@ pub fn configure_model(filename_input: String, gng_params: &mut Handler) {
             "config",
             "weight_rng_max",
         ));
+}
+
+pub fn set_parameters(
+    gng_params: &mut Handler,
+    input_width: usize,
+    weight_rng_min: f64,
+    weight_rng_max: f64,
+    edge_removal_age: usize,
+    neuron_creation_interval: usize,
+    max_train_iterations: usize,
+    target_error: f64,
+    epsilon_w: f64,
+    epsilon_n: f64,
+    alpha: f64,
+    beta: f64,
+) {
+    gng_params.config_handler.set_parameters(
+        input_width,
+        weight_rng_min,
+        weight_rng_max,
+        edge_removal_age,
+        neuron_creation_interval,
+        max_train_iterations,
+        target_error,
+        epsilon_w,
+        epsilon_n,
+        alpha,
+        beta,
+    );
 }
 //--------------------------------------------------------------------------------------------------
 
@@ -714,9 +737,7 @@ pub fn init_dataset(params: &mut Handler, filename_dataset: &String) {
 
 pub fn init_dataset_vec(params: &mut Handler, data_vec: &Vec<f64>) {
     let &input_width = params.config_handler.get_input_width();
-    params
-        .sample_handler
-        .init_input_vec(&data_vec, input_width);
+    params.sample_handler.init_input_vec(&data_vec, input_width);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -775,9 +796,7 @@ pub fn save_model_json(
     Ok(())
 }
 
-pub fn get_model_string(
-    params: &mut Handler,
-) -> String {
+pub fn get_model_string(params: &mut Handler) -> String {
     let mut data = json!({});
     let keys = params.neuron_handler.get_keys();
     let mut neuron_array: Vec<Value> = Vec::new();
@@ -807,10 +826,9 @@ pub fn get_model_string(
     write_value_to_block(&mut data, "model", "edges", edge_array);
 
     // Step 3: Serialize and write this JSON object to a file
-        
+
     let res_str = serde_json::to_string(&data).unwrap();
     res_str
-
 }
 
 // Export Model
@@ -904,7 +922,6 @@ mod core_tests {
             assert_eq!(edge_age_res[a], edge_age_target[a]);
         }
     }
-
 
     #[test]
     fn test_init_model_t1() {
@@ -1598,11 +1615,9 @@ mod core_tests {
     #[test]
     fn remove_unconnected_neurons_t1() {
         let filename_input =
-            "test_data/growing_neural_gas/remove_unconnected_neurons_t1/input.json"
-                .to_string();
+            "test_data/growing_neural_gas/remove_unconnected_neurons_t1/input.json".to_string();
         let filename_target =
-            "test_data/growing_neural_gas/remove_unconnected_neurons_t1/target.json"
-                .to_string();
+            "test_data/growing_neural_gas/remove_unconnected_neurons_t1/target.json".to_string();
 
         let reader_target = json_reader::read_file(&filename_target).unwrap();
 

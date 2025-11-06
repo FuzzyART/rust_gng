@@ -105,6 +105,36 @@ impl ConfigHandler {
     }
 
     //----------------------------------------------------------
+    pub fn set_parameters(
+        &mut self,
+        input_width: usize,
+        weight_rng_min: f64,
+        weight_rng_max: f64,
+        edge_removal_age: usize,
+        neuron_creation_interval: usize,
+        max_train_iterations: usize,
+        target_error: f64,
+        epsilon_w: f64,
+        epsilon_n: f64,
+        alpha: f64,
+        beta: f64,
+    ) {
+        if let Some(val) = self.config_man.get_mut(0) {
+            val.input_width = input_width;
+            val.weight_rng_min = weight_rng_min;
+            val.weight_rng_max = weight_rng_max;
+            val.edge_removal_age = edge_removal_age;
+            val.neuron_creation_interval = neuron_creation_interval;
+            val.max_train_iterations = max_train_iterations;
+            val.target_error = target_error;
+            val.epsilon_w = epsilon_w;
+            val.epsilon_n = epsilon_n;
+            val.alpha = alpha;
+            val.beta = beta;
+        }
+    }
+
+    //----------------------------------------------------------
     pub fn set_config_filename(&mut self, filename_config: String) {
         if let Some(val) = self.config_man.get_mut(0) {
             val.config_filename = filename_config;
