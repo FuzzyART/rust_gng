@@ -5,4 +5,5 @@ target/
 __pycache__
 result
 .ipynb_checkpoints
-
+.devcontainer/
+.python-version
