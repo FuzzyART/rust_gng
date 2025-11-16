@@ -4,4 +4,4 @@ target/
 .venv
 __pycache__
 result
-*.ipynb
+*.ipynb_checkpoints
