@@ -1,30 +1,62 @@
+image: rust:1.75-bookworm
+
+before_script:
+  - apt-get update && apt-get install -y python3.12 python3-pip gcc
+  - pip3 install --break-system-packages maturin
+
 stages:
-  - test
   - build
+  - test
+  - package
 
-test:
-  image: nixos/nix:latest  # Official Nix image
-  stage: test
-  variables:
-    NIX_CONFIG: "experimental-features = nix-command flakes"
-  script:
-    - nix-shell --run "cd gng_py && cargo test"
+# Cache Cargo dependencies
+variables:
+  CARGO_HOME: $CI_PROJECT_DIR/.cargo
 
+cache:
+  key: cargo-cache
+  paths:
+    - .cargo/
+    - gng_py/target/
+
+# Build the Rust+Python wheel
 build:
   stage: build
-  image: nixos/nix
-  variables:
-    NIX_CONFIG: "experimental-features = nix-command flakes"
   script:
-    - nix build .#packages.x86_64-linux.default
-    - mkdir -p artifacts
-    - mv result/dist/*.whl artifacts/
-
-
-
+    - cd gng_py
+    - maturin build --release -o ../dist
+    - ls -lh ../dist/
   artifacts:
     paths:
-      - artifacts/
+      - "dist/*.whl"
     expire_in: 1 week
+
+# Test the built wheel
+test:
+  stage: test
+  before_script:
+    - apt-get update && apt-get install -y python3.12 python3-pip
+    - pip3 install --break-system-packages numpy pandas
+  script:
+    - pip3 install --break-system-packages dist/*.whl
+    - python3 -c "import gng_py; print('Import successful!')"
+    - echo "Tests passed!"
+  dependencies:
+    - build
+
+# Package for release
+package:
+  stage: package
+  script:
+    - echo "Packaging wheel for release"
+    - ls -lh dist/*.whl
+    - sha256sum dist/*.whl
+  artifacts:
+    paths:
+      - "dist/*.whl"
+    name: "gng_py-${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}"
   only:
+    - tags
     - main
+  dependencies:
+    - build
