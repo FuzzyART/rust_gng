@@ -1,4 +1,4 @@
-image: konstin2/maturin:latest-python3.12
+image: ghcr.io/pyo3/maturin:python3.12-bookworm
 
 stages:
   - build
