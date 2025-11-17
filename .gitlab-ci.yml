@@ -1,4 +1,4 @@
-image: ghcr.io/pyo3/maturin:python3.12-bookworm
+image: ghcr.io/pyo3/maturin:master-python3.12-slim
 
 stages:
   - build
