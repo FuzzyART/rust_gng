@@ -1,25 +1,10 @@
-image: rust:1.75-bookworm
-
-before_script:
-  - apt-get update && apt-get install -y python3.12 python3-pip gcc
-  - pip3 install --break-system-packages maturin
+image: konstin2/maturin:latest-python3.12
 
 stages:
   - build
   - test
   - package
 
-# Cache Cargo dependencies
-variables:
-  CARGO_HOME: $CI_PROJECT_DIR/.cargo
-
-cache:
-  key: cargo-cache
-  paths:
-    - .cargo/
-    - gng_py/target/
-
-# Build the Rust+Python wheel
 build:
   stage: build
   script:
@@ -31,20 +16,17 @@ build:
       - "dist/*.whl"
     expire_in: 1 week
 
-# Test the built wheel
 test:
   stage: test
+  image: python:3.12-slim
   before_script:
-    - apt-get update && apt-get install -y python3.12 python3-pip
-    - pip3 install --break-system-packages numpy pandas
+    - pip install numpy pandas
   script:
-    - pip3 install --break-system-packages dist/*.whl
-    - python3 -c "import gng_py; print('Import successful!')"
-    - echo "Tests passed!"
+    - pip install dist/*.whl
+    - python3 -c "import gng_py; print('Import OK!')"
   dependencies:
     - build
 
-# Package for release
 package:
   stage: package
   script:
@@ -58,5 +40,4 @@ package:
   only:
     - tags
     - main
-  dependencies:
-    - build
+
