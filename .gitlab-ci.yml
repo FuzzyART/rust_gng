@@ -50,5 +50,6 @@ package:
   only:
     - tags
     - main
+    - dev
   dependencies:
     - build
