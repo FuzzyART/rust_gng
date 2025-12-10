@@ -20,6 +20,10 @@ numpy = "0.21"
 name = "gng_py"
 crate-type = ["cdylib","lib"]
 
+[[bin]]
+name = "debug_runner"
+path = "src/bin/debug_runner.rs"
+
 #[features]
 #default = []
 #
