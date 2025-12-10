@@ -13,7 +13,8 @@ pub mod internal {
         fit as core_fit, get_model_string as core_get_model_string,
         init_dataset as core_init_dataset, init_dataset_vec as core_init_dataset_vec,
         load_config as core_load_config, save_model_json as core_save_model_json,
-        set_parameters as core_set_parameters, Handler,
+        set_parameters as core_set_parameters, set_input_width as core_set_input_width,
+        Handler,
     };
 }
 
@@ -28,8 +29,12 @@ impl Context {
         }
     }
 
-    pub fn load_config(&mut self, filename_config: &str) {
+    pub fn create_system(&mut self){
         self.cont_params.create_system();
+    }
+
+    pub fn load_config(&mut self, filename_config: &str) {
+      //  self.cont_params.create_system();
         // If core expects &String, convert from &str
         internal::core_load_config(&mut self.cont_params, &filename_config.to_string());
     }
@@ -51,6 +56,13 @@ impl Context {
     pub fn get_model_string(&mut self) -> String {
         internal::core_get_model_string(&mut self.cont_params)
     }
+
+
+    pub fn set_input_width(&mut self,input_width:usize){
+        internal::core_set_input_width(&mut self.cont_params,input_width);
+    }
+
+//    pub fn get_input_width(&mut self,)
 
     pub fn foo(&mut self) -> String {
         "hello int".to_string()
@@ -133,6 +145,9 @@ impl PyContext {
             alpha,
             beta,
         );
+    }
+    fn create_system(&mut self){
+        self.context.create_system();
     }
     fn load_config(&mut self, filename_config: &str) -> PyResult<()> {
         self.context.load_config(filename_config);

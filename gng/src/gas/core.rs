@@ -221,6 +221,10 @@ pub fn set_parameters(
         beta,
     );
 }
+pub fn set_input_width(gng_params: &mut Handler,input_width:usize){
+    gng_params.config_handler.set_input_width(input_width);
+    let bla = gng_params.config_handler.get_input_width();
+}
 //--------------------------------------------------------------------------------------------------
 
 pub fn init_model(params: &mut Handler) {

@@ -157,6 +157,7 @@ impl ConfigHandler {
         if let Some(obj) = self.config_man.get_mut(0) {
             obj.input_width = val;
         }
+        
     }
     pub fn read_input_width(&mut self, filename: &str) {
         let reader = json_reader::read_file(filename).unwrap();
@@ -169,7 +170,7 @@ impl ConfigHandler {
         self.config_man
             .get(0)
             .map(|val| &val.input_width)
-            .expect("config not initiated")
+            .expect("input width: config not initiated")
     }
     //----------------------------------------------------------
 
@@ -190,7 +191,7 @@ impl ConfigHandler {
         self.config_man
             .get(0)
             .map(|val| &val.weight_rng_min)
-            .expect("config not initiated")
+            .expect("weight rng min: config not initiated")
     }
 
     //----------------------------------------------------------
@@ -210,7 +211,7 @@ impl ConfigHandler {
         self.config_man
             .get(0)
             .map(|val| &val.weight_rng_max)
-            .expect("config not initiated")
+            .expect("weight rng max: config not initiated")
     }
 
     //----------------------------------------------------------
