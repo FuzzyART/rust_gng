@@ -13,7 +13,7 @@
         in {
 # Dev shell: interactive environment
         devShell = pkgs.mkShell {
-        name = "gng_py build";
+        name = "gng build";
         buildInputs = with pkgs; [
         rustc
         cargo
@@ -42,20 +42,20 @@
 
 # Declarative package: this is what nix build uses
         packages.default = pkgs.rustPlatform.buildRustPackage {
-          pname = "gng_py";
+          pname = "gng";
           version = "0.1.1";
-          src = ./gng_py;
+          src = ./gng;
 
 # Prefetch crates according to Cargo.lock
           cargoLock = {
-            lockFile = ./gng_py/Cargo.lock;
+            lockFile = ./gng/Cargo.lock;
           };
 
             # Add Python & Maturin for building the wheel
             nativeBuildInputs = [ python pkgs.maturin ];
 
             buildPhase = ''
-              echo "Building gng_py with maturin..."
+              echo "Building gng with maturin..."
               maturin build --release --locked -o dist --skip-auditwheel
               '';
 

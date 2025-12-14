@@ -18,7 +18,7 @@ build:
     - rustup default stable
     - pip install --quiet maturin
   script:
-    - cd gng_py
+    - cd gng
     - maturin build --release -o ../dist
     - ls -lh ../dist/
   artifacts:
@@ -32,7 +32,7 @@ test:
   script:
     - pip install numpy pandas
     - pip install dist/*.whl
-    - python -c "import gng_py; print('Import OK!')"
+    - python -c "import gng; print('Import OK!')"
   dependencies:
     - build
 
@@ -46,7 +46,7 @@ package:
   artifacts:
     paths:
       - dist/*.whl
-    name: "gng_py-${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}"
+    name: "gng-${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}"
   only:
     - tags
     - main
