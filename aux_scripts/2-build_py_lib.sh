@@ -5,5 +5,6 @@ cwd=$PWD
 
 nix develop --command bash -c "cd gng && \
                                cargo clean && \
-                               cargo build"
+                               cargo build --release && \
+                               maturin build --release"
 

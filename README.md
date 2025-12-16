@@ -1,53 +1,156 @@
-# rust_gng — Growing Neural Gas in Rust & Python
+🧠 GNG – Experimental ML Core (Rust + Python)
 
-This is a personal playground for experimenting with the Growing Neural Gas (GNG) algorithm using Rust, Python, and Nix. It's a work-in-progress portfolio project focused on cross-language workflows and reproducible development environments.
+⚠️ Work in Progress / Portfolio Project
+This repository is actively evolving and not even remotely finished.
+It serves as an experimental playground for ML systems, Rust ↔ Python integration, and tooling — and as a portfolio project to demonstrate real-world engineering skills.
 
-🧱 Project Structure
+Overview
 
-gng_py/ (Rust) — A working implementation of the GNG algorithm
+This repository contains an experimental machine learning core written in Rust, with Python bindings and a growing set of tools, experiments, and examples around it.
 
-dataset_creator/ (Python) — Generates synthetic data via sklearn, outputs to CSV
+Everything currently lives in one repository to keep development fast and flexible. The structure and boundaries will evolve as the project matures.
 
-neural_gas_plotter/ (Python) — Visualizes GNG behavior using matplotlib
+Current components
 
-Each component includes its own nix-shell for consistent, reproducible dev environments.
+🦀 Rust GNG library
 
-📁 Examples
+Core algorithms and performance-critical logic
 
-See the examples/ directory for runnable usage demos:
+🐍 Python bindings
 
-run_rust_example.sh
+Built using maturin
 
-run_python_example.sh
+Exposed as a Python package
 
-run_jupyter_example.sh
+🧪 Experiments & prototypes
 
-simple_usage.sh
+Jupyter notebooks for ML exploration
 
-test_app_py
+🛠 Quick-and-dirty tools
 
-All scripts are run via nix-shell for setup-free execution.
+Data generators
 
-🔄 Data Flow
+Visualization helpers
 
-Data is currently exchanged using CSV and JSON.
-Future work will explore shared memory or IPC for tighter integration.
+📚 Documentation & setup guides
 
-✅ Project Goals
+Including notes on GPU / ROCm / TensorFlow setups
 
-Build a clean, idiomatic Rust implementation of GNG
+🚧 Planned
 
-Provide flexible dataset generation & visualization tools
+A main application that combines everything into a usable system
 
-Showcase Nix-based reproducibility and cross-language workflows
+Project Status
 
-Enable Keras integration and interactive WebAssembly demos
+✔ Early architecture in place
 
-🚧 Status
+✔ Rust ↔ Python integration working
 
-GNG core is working
+✔ Nix-based dev environment
 
-Examples are live
+❌ APIs not stable
 
-Still in early development — follow along as it evolves
+❌ No backwards compatibility guarantees
 
+❌ Not production-ready
+
+This project prioritizes learning, experimentation, and correctness over polish — for now.
+
+Development Environment
+
+The project uses Nix to provide a reproducible development environment.
+
+Make sure you have:
+
+Nix (with flakes enabled)
+
+Rust toolchain
+
+Python ≥ 3.12
+
+## Build Instructions
+
+- Build the Rust library
+```bash
+nix develop --command bash -c "cd gng && cargo build"
+```
+- Build the Python package
+
+    - This creates Python wheels using maturin.
+
+```bash
+nix develop --command bash -c "cd gng && maturin build"
+```
+
+- Install the Python package in a virtual environment
+
+```bash
+python3.12 -m venv venv && \
+source venv/bin/activate && \
+pip install gng/target/wheels/*
+```
+
+## Repository Structure (High-Level)
+├── aux_scripts
+│   ├── 1-build_lib.sh
+│   ├── 2-build_py_lib.sh
+│   ├── 3-create_venv.sh
+│   ├── 3-install_lib.sh
+│   └── test.sh
+├── build_all.sh
+├── examples
+│   ├── example_dataset.csv
+│   ├── input.json
+│   ├── test_2_app.ipynb
+│   ├── test_app.ipynb
+│   └── test_app.py
+├── flake.lock
+├── flake.nix
+├── gng
+│   ├── Cargo.lock
+│   ├── Cargo.toml
+│   ├── src
+│   └── test_data
+├── LICENSE
+├── README.md
+├── shell.nix
+
+
+
+Structure is expected to change as the project grows.
+
+## Goals
+
+- Explore ML system design in Rust
+
+- Learn and demonstrate FFI & Python bindings
+
+- Experiment with GPU acceleration
+- Build a foundation for a real application
+- Serve as a portfolio project to demonstrate:
+- Systems programming
+- ML experimentation
+- Tooling & developer experience
+- Pragmatic engineering decisions
+## Non-Goals (for now)
+- Production stability
+- Clean public API
+- Backwards compatibility
+- Polished UX
+- These will come later — if and when the project stabilizes.
+
+## Contributions
+
+This is primarily a personal project, but:
+
+- Issues, feedback, and discussion are welcome
+
+- Code style and structure may change rapidly
+
+## Disclaimer
+
+This repository reflects active learning and experimentation.
+Some solutions are intentionally exploratory rather than “final”.
+
+If you’re reviewing this as part of a hiring process:
+this repo is meant to show how I think, build, and iterate — not just polished end results.
