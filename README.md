@@ -84,37 +84,26 @@ nix develop --command bash -c "cd gng && maturin build"
 
 - Install the Python package in a virtual environment
 
-```bash
+```bashy
 python3.12 -m venv venv && \
 source venv/bin/activate && \
 pip install gng/target/wheels/*
 ```
 
 ## Repository Structure (High-Level)
-├── aux_scripts
-│   ├── 1-build_lib.sh
-│   ├── 2-build_py_lib.sh
-│   ├── 3-create_venv.sh
-│   ├── 3-install_lib.sh
-│   └── test.sh
-├── build_all.sh
-├── examples
-│   ├── example_dataset.csv
-│   ├── input.json
-│   ├── test_2_app.ipynb
-│   ├── test_app.ipynb
-│   └── test_app.py
+```
+├── app
+├── experiments
+├── gng
+├── scripts
+├── tools
+├── venv
 ├── flake.lock
 ├── flake.nix
-├── gng
-│   ├── Cargo.lock
-│   ├── Cargo.toml
-│   ├── src
-│   └── test_data
 ├── LICENSE
 ├── README.md
-├── shell.nix
 
+```
 
 
 Structure is expected to change as the project grows.
