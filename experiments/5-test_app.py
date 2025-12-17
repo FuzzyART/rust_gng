@@ -1,3 +1,4 @@
+# GNG works. Plotting not 
 import gng_py
 import numpy as np
 import pandas as pd

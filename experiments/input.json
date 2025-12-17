@@ -1,0 +1,15 @@
+{
+  "config":{
+    "input_width":2,
+    "weight_rng_min": -1.1,
+    "weight_rng_max": 1.1,
+    "edge_removal_age": 50,
+    "neuron_creation_interval": 200,
+    "max_train_iterations": 20000,
+    "target_error": 0.096,
+    "epsilon_w": 0.1,
+    "epsilon_n": 0.006,
+    "alpha" : 0.5,
+    "beta" : 0.995
+  }
+}
