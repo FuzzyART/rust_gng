@@ -1,4 +1,5 @@
 # rust_gng — Growing Neural Gas in Rust & Python
+## NOTE: This repo exists on Gitlab and Github. The primary repo  is GitLab, the one on Github is the mirror
 
 This is a personal playground for experimenting with the Growing Neural Gas (GNG) algorithm using Rust, Python, and Nix. It's a work-in-progress portfolio project focused on cross-language workflows and reproducible development environments.
 
