@@ -8,3 +8,6 @@ result
 *.ipynb_checkpoints
 .devcontainer/
 .python-version
+
+*.csv
+rust_gng.git
