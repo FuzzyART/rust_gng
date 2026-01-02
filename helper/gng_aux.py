@@ -219,3 +219,59 @@ def findBMU(X_test,gng_res):
     # Convert to DataFrame for easy viewing
     best_neurons_df = pd.DataFrame(best_neurons)
     return best_neurons_df
+
+    
+
+
+def calc_classes_numpy(f_points, f_edges):
+    # Extract columns as NumPy arrays
+    point_ids = f_points["id"].to_numpy()
+    point_class = f_points["class"].to_numpy()
+
+    edge_start = f_edges["start"].to_numpy()
+    edge_to    = f_edges["to"].to_numpy()
+
+    num_points = len(point_ids)
+    num_edges  = len(edge_start)
+
+    # --- Mapping: point_id -> index ---
+    # (Assuming ids are arbitrary integers)
+    # Build fast lookup dictionary: id → index
+    id_to_index = {pid: i for i, pid in enumerate(point_ids)}
+
+    changed = True
+    while changed:
+        changed = False
+
+        for p_idx in range(num_points):
+            curr_point_id = point_ids[p_idx]
+
+            # Loop edges
+            for e in range(num_edges):
+
+                s = edge_start[e]
+                t = edge_to[e]
+
+                # Case 1: point is edge start
+                if s == curr_point_id:
+                    i_s = id_to_index[s]
+                    i_t = id_to_index[t]
+
+                    if point_class[i_s] > point_class[i_t]:
+                        point_class[i_s] = point_class[i_t]
+                        changed = True
+                        break
+
+                # Case 2: point is edge end
+                if t == curr_point_id:
+                    i_s = id_to_index[t]
+                    i_t = id_to_index[s]
+
+                    if point_class[i_s] > point_class[i_t]:
+                        point_class[i_s] = point_class[i_t]
+                        changed = True
+                        break
+
+    # Write classes back to DataFrame
+    f_points["class"] = point_class
+    return f_points
