@@ -4,8 +4,8 @@ pub mod ecs;
 pub mod gas;
 pub mod handlers;
 
-use numpy::PyArray1;
-use pyo3::prelude::*;
+//use numpy::PyArray1;
+//use pyo3::prelude::*;
 
 pub mod internal {
     // Re-export the original types and functions from core
@@ -18,19 +18,17 @@ pub mod internal {
     };
 }
 
-pub struct Context {
+pub struct Gng {
     cont_params: internal::Handler,
 }
 
-impl Context {
+impl Gng{
     pub fn new() -> Self {
-        Context {
-            cont_params: internal::Handler::init(),
+        let mut cont_params = internal::Handler::init();
+        cont_params.create_system();
+        Self {
+            cont_params,
         }
-    }
-
-    pub fn create_system(&mut self){
-        self.cont_params.create_system();
     }
 
     pub fn load_config(&mut self, filename_config: &str) {
@@ -64,14 +62,14 @@ impl Context {
 
 //    pub fn get_input_width(&mut self,)
 
-    pub fn foo(&mut self) -> String {
-        "hello int".to_string()
-    }
-    pub fn foo_vec(&mut self) -> (Vec<usize>, Vec<f64>) {
-        let res1: Vec<usize> = vec![1, 3];
-        let res2: Vec<f64> = vec![1.0, 2.2];
-        (res1, res2)
-    }
+    //pub fn foo(&mut self) -> String {
+    //    "hello int".to_string()
+    //}
+    //pub fn foo_vec(&mut self) -> (Vec<usize>, Vec<f64>) {
+    //    let res1: Vec<usize> = vec![1, 3];
+    //    let res2: Vec<f64> = vec![1.0, 2.2];
+    //    (res1, res2)
+    //}
     pub fn set_parameters(
         &mut self,
         input_width: usize,
@@ -102,96 +100,96 @@ impl Context {
         );
     }
 }
-/// Python wrapper for Context struct
-#[pyclass]
-//#[derive(Debug, Clone)]
-pub struct PyContext {
-    context: Context,
-}
-
-#[pymethods]
-impl PyContext {
-    #[new]
-    fn new() -> Self {
-        PyContext {
-            context: Context::new(),
-        }
-    }
-
-    pub fn set_parameters(
-        &mut self,
-        input_width: usize,
-        weight_rng_min: f64,
-        weight_rng_max: f64,
-        edge_removal_age: usize,
-        neuron_creation_interval: usize,
-        max_train_iterations: usize,
-        target_error: f64,
-        epsilon_w: f64,
-        epsilon_n: f64,
-        alpha: f64,
-        beta: f64,
-    ) {
-        self.context.set_parameters(
-            input_width,
-            weight_rng_min,
-            weight_rng_max,
-            edge_removal_age,
-            neuron_creation_interval,
-            max_train_iterations,
-            target_error,
-            epsilon_w,
-            epsilon_n,
-            alpha,
-            beta,
-        );
-    }
-    fn create_system(&mut self){
-        self.context.create_system();
-    }
-    fn load_config(&mut self, filename_config: &str) -> PyResult<()> {
-        self.context.load_config(filename_config);
-        Ok(())
-    }
-
-    fn init_dataset_vec(&mut self, dataset: &PyArray1<f64>) -> PyResult<()> {
-        let slice = unsafe { dataset.as_slice()? };
-        let vec_data: Vec<f64> = slice.to_vec();
-        self.context.init_dataset_vec(&vec_data);
-        Ok(())
-    }
-
-    fn init_dataset(&mut self, filename_dataset: &str) -> PyResult<()> {
-        self.context.init_dataset(filename_dataset);
-        Ok(())
-    }
-
-    fn fit(&mut self) -> PyResult<()> {
-        self.context.fit();
-        Ok(())
-    }
-
-    fn foo(&mut self) -> PyResult<String> {
-        Ok(self.context.foo())
-    }
-    fn foo_val(&mut self) -> PyResult<f64> {
-        Ok(6.4)
-    }
-    fn foo_vec(&mut self) -> PyResult<(Vec<usize>, Vec<f64>)> {
-        Ok(self.context.foo_vec())
-    }
-
-    fn save_model_json(&mut self, filename_output: &str) -> PyResult<()> {
-        self.context.save_model_json(filename_output);
-        Ok(())
-    }
-    fn get_model_string(&mut self) -> PyResult<String> {
-        Ok(self.context.get_model_string())
-    }
-}
-/// Define the Python module - renamed to match your package name
-#[pymodule]
-fn gng_py(_py: Python, m: &PyModule) -> PyResult<()> {
-    m.add_class::<PyContext>()?;
-    Ok(())
-}
+//// Python wrapper for Context struct
+//#[pyclass]
+////#[derive(Debug, Clone)]
+//pub struct PyContext {
+//    context: Context,
+//}
+//
+//#[pymethods]
+//impl PyContext {
+//    #[new]
+//    fn new() -> Self {
+//        PyContext {
+//            context: Context::new(),
+//        }
+//    }
+//
+//    pub fn set_parameters(
+//        &mut self,
+//        input_width: usize,
+//        weight_rng_min: f64,
+//        weight_rng_max: f64,
+//        edge_removal_age: usize,
+//        neuron_creation_interval: usize,
+//        max_train_iterations: usize,
+//        target_error: f64,
+//        epsilon_w: f64,
+//        epsilon_n: f64,
+//        alpha: f64,
+//        beta: f64,
+//    ) {
+//        self.context.set_parameters(
+//            input_width,
+//            weight_rng_min,
+//            weight_rng_max,
+//            edge_removal_age,
+//            neuron_creation_interval,
+//            max_train_iterations,
+//            target_error,
+//            epsilon_w,
+//            epsilon_n,
+//            alpha,
+//            beta,
+//        );
+//    }
+//    fn create_system(&mut self){
+//        self.context.create_system();
+//    }
+//    fn load_config(&mut self, filename_config: &str) -> PyResult<()> {
+//        self.context.load_config(filename_config);
+//        Ok(())
+//    }
+//
+//    fn init_dataset_vec(&mut self, dataset: &PyArray1<f64>) -> PyResult<()> {
+//        let slice = unsafe { dataset.as_slice()? };
+//        let vec_data: Vec<f64> = slice.to_vec();
+//        self.context.init_dataset_vec(&vec_data);
+//        Ok(())
+//    }
+//
+//    fn init_dataset(&mut self, filename_dataset: &str) -> PyResult<()> {
+//        self.context.init_dataset(filename_dataset);
+//        Ok(())
+//    }
+//
+//    fn fit(&mut self) -> PyResult<()> {
+//        self.context.fit();
+//        Ok(())
+//    }
+//
+//    fn foo(&mut self) -> PyResult<String> {
+//        Ok(self.context.foo())
+//    }
+//    fn foo_val(&mut self) -> PyResult<f64> {
+//        Ok(6.4)
+//    }
+//    fn foo_vec(&mut self) -> PyResult<(Vec<usize>, Vec<f64>)> {
+//        Ok(self.context.foo_vec())
+//    }
+//
+//    fn save_model_json(&mut self, filename_output: &str) -> PyResult<()> {
+//        self.context.save_model_json(filename_output);
+//        Ok(())
+//    }
+//    fn get_model_string(&mut self) -> PyResult<String> {
+//        Ok(self.context.get_model_string())
+//    }
+//}
+//// Define the Python module - renamed to match your package name
+//#[pymodule]
+//fn gng_py(_py: Python, m: &PyModule) -> PyResult<()> {
+//    m.add_class::<PyContext>()?;
+//    Ok(())
+//}
