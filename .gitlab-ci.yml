@@ -3,9 +3,9 @@ stages:
   - test
   #- package
 
-variables:
-  CARGO_HOME: "$CI_PROJECT_DIR/.cargo"
-  RUSTUP_HOME: "$CI_PROJECT_DIR/.rustup"
+#variables:
+#  CARGO_HOME: "$CI_PROJECT_DIR/.cargo"
+#  RUSTUP_HOME: "$CI_PROJECT_DIR/.rustup"
 
 default:
   image: rust:1.82-slim
@@ -19,6 +19,7 @@ default:
 build:
   stage: build
   script:
+    - cd gn g
     - cargo build --release
 #  artifacts:
 #    paths:
@@ -28,6 +29,7 @@ build:
 test:
   stage: test
   script:
+    - cd gng
     - cargo test --all --release
   dependencies:
     - build
