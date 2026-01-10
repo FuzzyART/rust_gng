@@ -15,8 +15,8 @@
 
 
 //use clap::Parser;
-use gng_py::gas::csv_reader::CsvReader;
-use gng_py::Context;
+use gng::gas::csv_reader::CsvReader;
+use gng::Gng;
 //
 //#[derive(Parser, Debug)]
 //#[command(author, version, about, long_about = None)]
@@ -35,8 +35,8 @@ use gng_py::Context;
 //}
 
 fn main() {
-        let mut ctx = Context::new();
-        ctx.create_system();
+        let mut ctx = Gng::new();
+//        ctx.create_system();
 
         let input_width = 2;
         let weight_rng_min = -1.0;
