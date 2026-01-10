@@ -18,7 +18,8 @@ backtrace="0.3"
 
 [lib]
 name = "gng"
-crate-type = ["cdylib","lib"]
+#crate-type = ["cdylib","lib"]
+crate-type = ["lib"]
 
 [[bin]]
 name = "debug_runner"
