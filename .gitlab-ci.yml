@@ -19,7 +19,7 @@ default:
 build:
   stage: build
   script:
-    - cd gn g
+    - cd gng
     - cargo build --release
 #  artifacts:
 #    paths:
