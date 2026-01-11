@@ -102,8 +102,6 @@ impl EdgeHandler {
     pub fn get_edge_start_vec(&self) -> Vec<usize> {
         let len = self.edge_man.len();
         let mut res_vec: Vec<usize> = vec![0; len];
-        //for key in self.edge_man.keys(){
-        //if let Some(entity) = self.edge_man.get(*key){
 
         for (id, line) in self.edge_man.iter() {
             res_vec[*id] = line.start;
@@ -113,8 +111,6 @@ impl EdgeHandler {
     pub fn get_edge_end_vec(&self) -> Vec<usize> {
         let len = self.edge_man.len();
         let mut res_vec: Vec<usize> = vec![0; len];
-        //for key in self.edge_man.keys(){
-        //if let Some(entity) = self.edge_man.get(*key){
 
         for (id, line) in self.edge_man.iter() {
             res_vec[*id] = line.end;

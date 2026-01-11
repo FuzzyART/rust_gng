@@ -2,13 +2,11 @@
 cwd=$PWD
 
 # Build Rust source
-#cd ${cwd}/../
 nix develop --command bash -c "cd gng && \
                  cargo clean && \
                  cargo build --release"
 
 # Run Codium
-#cd ${cwd}/../
 nix develop --command bash -c  "cd gng && maturin build --release
 cd .. &&
 source .venv/bin/activate &&

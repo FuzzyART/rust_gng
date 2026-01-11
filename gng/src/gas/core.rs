@@ -1,7 +1,3 @@
-//use crate::data_structures::{
-//    params,
-//    train_params
-//};
 use std::collections::HashSet;
 
 use crate::handlers::{
@@ -14,8 +10,6 @@ use crate::gas::{
     rng_manager::RngManager,
 };
 
-//use pyo3::PyErr;
-//use pyo3::PyResult;
 use rand::seq::SliceRandom;
 use serde_json::{json, Value};
 
@@ -110,6 +104,7 @@ pub fn start_new_epoch(params: &mut Handler) {
 }
 
 //--------------------------------------------------------------------------------------------------
+// To be implemented
 pub fn check_stopping_criterion(params: &mut Handler) {}
 //--------------------------------------------------------------------------------------------------
 pub fn update_state(params: &mut Handler, state: &mut State) {
@@ -134,6 +129,7 @@ pub fn update_state(params: &mut Handler, state: &mut State) {
     }
 }
 //--------------------------------------------------------------------------------------------------
+// to be implemented
 pub fn end_loop(params: &mut Handler) {}
 //--------------------------------------------------------------------------------------------------
 
@@ -221,9 +217,9 @@ pub fn set_parameters(
         beta,
     );
 }
-pub fn set_input_width(gng_params: &mut Handler,input_width:usize){
+pub fn set_input_width(gng_params: &mut Handler, input_width: usize) {
     gng_params.config_handler.set_input_width(input_width);
-    let bla = gng_params.config_handler.get_input_width();
+    //let bla = gng_params.config_handler.get_input_width();
 }
 //--------------------------------------------------------------------------------------------------
 
@@ -787,6 +783,7 @@ pub fn save_model_json(
     }
 
     //--------------------------------------------------------------------------------------------------
+
     // Step 1: Create an empty JSON object (Value)
     let mut data = json!({});
     // Step 2: Use write_value_to_block to add values to specific blocks
@@ -823,14 +820,15 @@ pub fn get_model_string(params: &mut Handler) -> String {
     }
 
     //--------------------------------------------------------------------------------------------------
+
     // Step 1: Create an empty JSON object (Value)
     let mut data = json!({});
+
     // Step 2: Use write_value_to_block to add values to specific blocks
     write_value_to_block(&mut data, "model", "neurons", neuron_array);
     write_value_to_block(&mut data, "model", "edges", edge_array);
 
     // Step 3: Serialize and write this JSON object to a file
-
     let res_str = serde_json::to_string(&data).unwrap();
     res_str
 }
@@ -897,7 +895,6 @@ mod core_tests {
             json_reader::read_array_usize(&reader_target, "target", "edge_start");
         let edge_end_target = json_reader::read_array_usize(&reader_target, "target", "edge_end");
         let edge_age_target = json_reader::read_array_usize(&reader_target, "target", "edge_age");
-        //    let input_width_target = json_reader::read_val_usize(&reader_target,    "target", "input_width");
         // target
         //----------------------------------------------------------
         // function call
@@ -1282,7 +1279,6 @@ mod core_tests {
     fn create_edge_t1() {
         let filename_input = "test_data/growing_neural_gas/create_edge_t1/input.json".to_string();
         let filename_target = "test_data/growing_neural_gas/create_edge_t1/target.json".to_string();
-        //let filename_dataset = "test_data/growing_neural_gas/create_edge_t1/dataset.csv".to_string();
 
         let reader_target = json_reader::read_file(&filename_target).unwrap();
         let reader_input = json_reader::read_file(&filename_input).unwrap();
@@ -1295,7 +1291,6 @@ mod core_tests {
 
         let neuron_dependencies =
             json_reader::read_array_usize(&reader_input, "state", "neuron_dependencies");
-        //let distance_order = json_reader::read_array_usize(&reader_input, "state", "distance_order");
         let winner_neuron_input =
             json_reader::read_val_usize(&reader_input, "config", "winner_neuron");
         let second_neuron_input =
@@ -1353,7 +1348,6 @@ mod core_tests {
 
         let neuron_dependencies =
             json_reader::read_array_usize(&reader_input, "state", "neuron_dependencies");
-        //let distance_order = json_reader::read_array_usize(&reader_input, "state", "distance_order");
         let winner_neuron_input =
             json_reader::read_val_usize(&reader_input, "config", "winner_neuron");
         let second_neuron_input =

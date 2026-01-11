@@ -1,6 +1,6 @@
 [package]
-name = "gng"
-version = "0.0.2"
+name = "neurogas"
+version = "0.0.1"
 edition = "2021"
 
 [dependencies]
@@ -17,7 +17,7 @@ backtrace="0.3"
 #numpy = "0.21"
 
 [lib]
-name = "gng"
+name = "neurogas"
 #crate-type = ["cdylib","lib"]
 crate-type = ["lib"]
 
