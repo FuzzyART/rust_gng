@@ -1,4 +1,4 @@
-use::gng::Gng;
+use::neurogas::Gng;
 
 fn main() {
     const CONFIG_FILE: &str = "../config.json";

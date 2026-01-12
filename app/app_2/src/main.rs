@@ -1,7 +1,6 @@
-use::gng::Gng;
+use::neurogas::Gng;
 
 fn main() {
-    const CONFIG_FILE: &str = "../config.json";
     const DATA_FILE: &str = "../blobs.csv";
     const OUTPUT_FILE: &str = "/tmp/output.json";
     let mut gng = Gng::new();
