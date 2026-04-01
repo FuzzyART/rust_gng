@@ -28,6 +28,8 @@
         python.pkgs.numpy
         python.pkgs.pandas  
         python.pkgs.matplotlib
+        zlib
+        stdenv.cc.cc.lib
         ];
 
 # Make sure the Python packages in this shell are visible to venvs
