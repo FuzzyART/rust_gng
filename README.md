@@ -10,7 +10,30 @@ This repository contains an experimental machine learning core written in Rust, 
 
 Everything currently lives in one repository to keep development fast and flexible. The structure and boundaries will evolve as the project matures.
 
-Current components
+
+## Usage
+
+### Compilation
+
+
+
+
+
+```bash
+sh scripts/1-build_lib.sh
+sh scripts/2-build_py_lib.sh
+
+sh scripts/container/1-buildContainer.sh
+sh scripts/container/2-startContainer.sh
+sh scripts/container/3-install_gng.sh
+
+```
+in VSCode/Codium, attach to remote container
+
+
+
+
+## Current components
 
 🦀 Rust GNG library
 
