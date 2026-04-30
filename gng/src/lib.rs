@@ -18,11 +18,17 @@ pub struct Gng {
     cont_params: internal::Handler,
 }
 
-impl Gng {
-    pub fn new() -> Self {
+impl Default for Gng {
+    fn default() -> Self {
         let mut cont_params = internal::Handler::init();
         cont_params.create_system();
         Self { cont_params }
+    }
+}
+
+impl Gng {
+    pub fn new() -> Self {
+        Self::default()
     }
 
     pub fn load_config(&mut self, filename_config: &str) {
