@@ -12,9 +12,7 @@ pub struct Params {
     pub distance_order: Vec<usize>,
     pub distance_ranking: Vec<usize>, // ordered distances to curr. input. 0 = winner neuron
     pub neuron_err_ranking: Vec<usize>, // first has biggest error
-    pub neuron_dependencies: Vec<usize>, // 1: winner neuron,
-    // 2: neighbour neuron
-    // 0: not connected to winner neuron
+    pub neuron_dependencies: Vec<usize>, // 1: winner neuron, 2: neighbour neuron, 0: not connected to winner neuron
 
     // ^^^^ Everything in here must have num_neuron sizes ^^^^
     //----------------------------------------

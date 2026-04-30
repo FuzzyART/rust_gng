@@ -1,6 +1,5 @@
 use crate::ecs::manager;
 use crate::gas::json_reader;
-//use crate::ecs::DataStructures::Config;
 
 //==================================================================================================
 // Config Struct
@@ -157,7 +156,6 @@ impl ConfigHandler {
         if let Some(obj) = self.config_man.get_mut(0) {
             obj.input_width = val;
         }
-        
     }
     pub fn read_input_width(&mut self, filename: &str) {
         let reader = json_reader::read_file(filename).unwrap();

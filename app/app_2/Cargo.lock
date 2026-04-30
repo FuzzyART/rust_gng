@@ -93,6 +93,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e629b9b98ef3dd8afe6ca2bd0f89306cec16d43d907889945bc5d6687f2f13c7"
 
 [[package]]
+name = "gng_test_app_2"
+version = "0.1.0"
+dependencies = [
+ "neurogas",
+]
+
+[[package]]
 name = "ieee754"
 version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -133,7 +140,9 @@ dependencies = [
 
 [[package]]
 name = "neurogas"
-version = "0.0.2"
+version = "0.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "07acc64b68af47c21b5dc091bdeb4dd09f00372c4455038a4b5d28ffc098fb06"
 dependencies = [
  "backtrace",
  "csv",
