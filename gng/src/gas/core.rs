@@ -801,7 +801,7 @@ pub fn get_model_string(params: &mut Handler) -> String {
     let mut data = json!({});
     let keys = params.neuron_handler.get_keys();
     let mut neuron_array: Vec<Value> = Vec::new();
-
+    let mut edge_array: Vec<Value> = Vec::new();
     for a in keys {
         let neuron = json!({
             "id": *a,
@@ -809,15 +809,7 @@ pub fn get_model_string(params: &mut Handler) -> String {
         });
         neuron_array.push(neuron);
     }
-    let mut edge_array: Vec<Value> = Vec::new();
-    let keys_edges = params.edge_handler.get_keys();
-    for a in keys_edges {
-        let edge = json!({
-            "from": params.edge_handler.get_edge_start(*a),
-            "to": params.edge_handler.get_edge_end(*a),
-        });
-        edge_array.push(edge);
-    }
+
 
     //--------------------------------------------------------------------------------------------------
 
@@ -825,6 +817,7 @@ pub fn get_model_string(params: &mut Handler) -> String {
     let mut data = json!({});
 
     // Step 2: Use write_value_to_block to add values to specific blocks
+    //let mut edge_array: Vec<Value> = Vec::new();
     write_value_to_block(&mut data, "model", "neurons", neuron_array);
     write_value_to_block(&mut data, "model", "edges", edge_array);
 
@@ -835,6 +828,63 @@ pub fn get_model_string(params: &mut Handler) -> String {
 
 // Export Model
 //--------------------------------------------------------------------------------------------------
+// get neurons and edges
+
+/// Returns the current neurons as (id, position) pairs.
+///
+/// The positions are 3D vectors stored as (x, y, z) tuples.
+pub fn get_neurons(params: &mut Handler) -> Vec<(usize, Vec<f64>)> {
+    let mut result = Vec::with_capacity(params.neuron_handler.get_num_neurons());
+    let keys = params.neuron_handler.get_keys();
+    let mut neuron_array: Vec<Value> = Vec::new();
+    for a in keys {
+        result.push((*a, params.neuron_handler.get_weights(*a).clone()  ));
+    }
+    result
+}
+
+pub fn get_edges(params: &mut Handler) -> Vec<(usize, usize)> {
+    let mut result = Vec::with_capacity(params.neuron_handler.get_num_neurons());
+    let keys = params.edge_handler.get_keys();
+    let mut neuron_array: Vec<Value> = Vec::new();
+    for a in keys {
+        result.push((params.edge_handler.get_edge_start(*a).clone(),
+                     params.edge_handler.get_edge_end(*a).clone()  )
+        );
+    }
+    result
+}
+
+/// Returns the current edges as (from, to) pairs.
+///
+/// Each tuple represents a directed edge between two neurons.
+//pub fn get_edges(params: &mut Handler) -> Vec<(usize, usize)> {
+//    self.edge_handler
+//        .get()
+//        .iter()
+//        .filter_map(|edge| {
+//            if edge.active {
+//                Some((edge.from, edge.to))
+//            } else {
+//                None
+//            }
+//        })
+//        .collect()
+//}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 mod core_tests {
     use super::*;
