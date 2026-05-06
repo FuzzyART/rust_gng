@@ -10,7 +10,9 @@ pub mod internal {
         fit as core_fit, get_model_string as core_get_model_string,
         init_dataset as core_init_dataset, init_dataset_vec as core_init_dataset_vec,
         load_config as core_load_config, save_model_json as core_save_model_json,
-        set_input_width as core_set_input_width, set_parameters as core_set_parameters, Handler,
+        set_input_width as core_set_input_width, set_parameters as core_set_parameters,
+         get_neurons as core_get_neurons, get_edges as core_get_edges,
+        Handler,
     };
 }
 
@@ -53,9 +55,17 @@ impl Gng {
         internal::core_get_model_string(&mut self.cont_params)
     }
 
-    pub fn set_input_width(&mut self, input_width: usize) {
-        internal::core_set_input_width(&mut self.cont_params, input_width);
-    }
+//    pub fn get_neurons(&mut self) -> Vec<Neuron> {
+//         internal::core_get_neurons(&mut self.cont_params)
+//     }
+//
+     pub fn get_neurons(&mut self) -> Vec<(usize,Vec<f64>)> {
+             internal::core_get_neurons(&mut self.cont_params)
+         }
+
+         pub fn get_edges(&mut self) -> Vec<(usize,usize)> {
+             internal::core_get_edges(&mut self.cont_params)
+         }
 
     pub fn set_parameters(
         &mut self,
