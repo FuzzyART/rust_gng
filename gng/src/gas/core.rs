@@ -75,8 +75,8 @@ pub fn fit(params: &mut Handler) {
                 create_edge(params);
                 delete_old_edges(params);
                 remove_unconnected_neurons(params);
-                let temp_1 = params.system_handler.get_create_neuron_scheduled();
-                let temp_2 = *params.system_handler.get_sample_order_position();
+                //let temp_1 = params.system_handler.get_create_neuron_scheduled();
+                //let temp_2 = *params.system_handler.get_sample_order_position();
                 if params.system_handler.get_create_neuron_scheduled() == true {
                     create_neuron(params);
                     params.system_handler.set_create_neuron_scheduled(false);
@@ -93,6 +93,7 @@ pub fn fit(params: &mut Handler) {
         update_state(params, &mut current_state);
     }
 }
+
 
 //--------------------------------------------------------------------------------------------------
 pub fn start_new_epoch(params: &mut Handler) {
