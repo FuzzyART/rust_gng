@@ -13,6 +13,7 @@ pub struct Config {
     pub edge_removal_age: usize,
     pub neuron_creation_interval: usize,
     pub max_epochs: usize,
+    pub max_neurons: usize,
     pub target_error: f64,
     pub epsilon_w: f64,
     pub epsilon_n: f64,
@@ -31,6 +32,7 @@ impl Config {
             edge_removal_age: 0,
             neuron_creation_interval: 0,
             max_epochs: 0,
+            max_neurons: 0,
             target_error: 0.0,
             epsilon_w: 0.0,
             epsilon_n: 0.0,
@@ -59,6 +61,7 @@ pub fn set_parameters(
     edge_removal_age: usize,
     neuron_creation_interval: usize,
     max_epochs: usize,
+    max_neurons: usize,
     target_error: f64,
     epsilon_w: f64,
     epsilon_n: f64,
@@ -71,6 +74,7 @@ pub fn set_parameters(
     self.edge_removal_age = edge_removal_age;
     self.neuron_creation_interval = neuron_creation_interval;
     self.max_epochs = max_epochs;
+    self.max_neurons= max_neurons;
     self.target_error = target_error;
     self.epsilon_w = epsilon_w;
     self.epsilon_n = epsilon_n;
@@ -109,6 +113,10 @@ pub fn set_parameters(
 
    pub fn set_max_epochs(&mut self, val: usize) {
        self.max_epochs = val;
+   }
+   pub fn set_max_neurons(&mut self, val:usize){
+
+       self.max_neurons = val;
    }
 
    pub fn set_target_error(&mut self, val: f64) {
@@ -163,6 +171,10 @@ pub fn set_parameters(
 
    pub fn get_max_epochs(&self) -> usize {
        self.max_epochs
+   }
+
+   pub fn get_max_neurons(&self) -> usize {
+       self.max_neurons
    }
 
    pub fn get_target_error(&self) -> f64 {

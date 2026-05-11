@@ -209,6 +209,7 @@ pub fn set_parameters(
     edge_removal_age: usize,
     neuron_creation_interval: usize,
     max_epochs: usize,
+    max_neurons: usize,
     target_error: f64,
     epsilon_w: f64,
     epsilon_n: f64,
@@ -222,6 +223,7 @@ pub fn set_parameters(
         edge_removal_age,
         neuron_creation_interval,
         max_epochs,
+        max_neurons,
         target_error,
         epsilon_w,
         epsilon_n,
@@ -551,6 +553,7 @@ pub fn add_error_to_winner_neuron(params: &mut Handler) {
 //--------------------------------------------------------------------------------------------------
 // create_neuron and sub gas
 pub fn create_neuron(params: &mut Handler) {
+    if params.neuron_handler.get_num_neurons() < params.config_handler.get_max_neurons(){
     //------------------------------------------------------------------------------
     // get neuron with biggest error
     calc_max_error_neuron(params);
@@ -578,6 +581,7 @@ pub fn create_neuron(params: &mut Handler) {
     let neuron_new = params.system_handler.get_newest_neuron_id();
     params.edge_handler.create_edge(neuron_new, neuron_1, 0);
     params.edge_handler.create_edge(neuron_new, neuron_2, 0);
+    }
 }
 //---------------------------------------
 
@@ -1466,6 +1470,7 @@ mod core_tests {
         let neuron_err = json_reader::read_array_f64(&reader_input, "state", "neuron_err");
 
         let alpha = json_reader::read_val_f64(&reader_input, "config", "alpha");
+        let max_neurons = json_reader::read_val_usize(&reader_input, "config", "max_neurons");
 
         // input
         //------------------------------------------------------------------------------
@@ -1483,6 +1488,7 @@ mod core_tests {
         // preparation
         load_model(&mut params, filename_input);
         params.config_handler.set_alpha(alpha);
+        params.config_handler.set_max_neurons(max_neurons);
         params.system_handler.set_curr_neuron(target_neuron);
         params.neuron_handler.set_errors_debug(neuron_err);
 
@@ -1541,6 +1547,7 @@ mod core_tests {
         let neuron_err = json_reader::read_array_f64(&reader_input, "state", "neuron_err");
 
         let alpha = json_reader::read_val_f64(&reader_input, "config", "alpha");
+        let max_neurons = json_reader::read_val_usize(&reader_input, "config", "max_neurons");
 
         // input
         //------------------------------------------------------------------------------
@@ -1558,6 +1565,7 @@ mod core_tests {
         // preparation
         load_model(&mut params, filename_input);
         params.config_handler.set_alpha(alpha);
+        params.config_handler.set_max_neurons(max_neurons);
         params.system_handler.set_curr_neuron(target_neuron);
         params.neuron_handler.set_errors_debug(neuron_err);
 

@@ -16,8 +16,8 @@ mod integration_tests {
            let weight_rng_max = 1.0;
            let edge_removal_age = 50;
            let neuron_creation_interval = 200;
-           //let max_train_iterations = 10000;
-           let max_train_iterations = 10;
+           let max_epochs= 30;
+           let max_neurons= 50;
            let target_error = 0.096;
            let epsilon_w = 0.1;
            let epsilon_n = 0.006;
@@ -30,7 +30,8 @@ mod integration_tests {
                weight_rng_max,
                edge_removal_age,
                neuron_creation_interval,
-               max_train_iterations,
+               max_epochs,
+               max_neurons,
                target_error,
                epsilon_w,
                epsilon_n,
