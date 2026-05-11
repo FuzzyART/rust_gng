@@ -12,7 +12,7 @@ pub struct Config {
     pub weight_rng_max: f64,
     pub edge_removal_age: usize,
     pub neuron_creation_interval: usize,
-    pub max_train_iterations: usize,
+    pub max_epochs: usize,
     pub target_error: f64,
     pub epsilon_w: f64,
     pub epsilon_n: f64,
@@ -30,7 +30,7 @@ impl Config {
             weight_rng_max: 0.0,
             edge_removal_age: 0,
             neuron_creation_interval: 0,
-            max_train_iterations: 0,
+            max_epochs: 0,
             target_error: 0.0,
             epsilon_w: 0.0,
             epsilon_n: 0.0,
@@ -58,7 +58,7 @@ pub fn set_parameters(
     weight_rng_max: f64,
     edge_removal_age: usize,
     neuron_creation_interval: usize,
-    max_train_iterations: usize,
+    max_epochs: usize,
     target_error: f64,
     epsilon_w: f64,
     epsilon_n: f64,
@@ -70,7 +70,7 @@ pub fn set_parameters(
     self.weight_rng_max = weight_rng_max;
     self.edge_removal_age = edge_removal_age;
     self.neuron_creation_interval = neuron_creation_interval;
-    self.max_train_iterations = max_train_iterations;
+    self.max_epochs = max_epochs;
     self.target_error = target_error;
     self.epsilon_w = epsilon_w;
     self.epsilon_n = epsilon_n;
@@ -107,8 +107,8 @@ pub fn set_parameters(
        self.neuron_creation_interval = val;
    }
 
-   pub fn set_max_train_iterations(&mut self, val: usize) {
-       self.max_train_iterations = val;
+   pub fn set_max_epochs(&mut self, val: usize) {
+       self.max_epochs = val;
    }
 
    pub fn set_target_error(&mut self, val: f64) {
@@ -161,8 +161,8 @@ pub fn set_parameters(
        self.neuron_creation_interval
    }
 
-   pub fn get_max_train_iterations(&self) -> usize {
-       self.max_train_iterations
+   pub fn get_max_epochs(&self) -> usize {
+       self.max_epochs
    }
 
    pub fn get_target_error(&self) -> f64 {
@@ -195,7 +195,7 @@ pub fn set_parameters(
        self.set_weight_rng_max(json_reader::read_val_f64(&reader, "config", "weight_rng_max"));
        self.set_edge_removal_age(json_reader::read_val_usize(&reader, "config", "edge_removal_age"));
        self.set_neuron_creation_interval(json_reader::read_val_usize(&reader, "config", "neuron_creation_interval"));
-       self.set_max_train_iterations(json_reader::read_val_usize(&reader, "config", "max_train_iterations"));
+       self.set_max_epochs(json_reader::read_val_usize(&reader, "config", "max_epochs"));
        self.set_target_error(json_reader::read_val_f64(&reader, "config", "target_error"));
        self.set_epsilon_w(json_reader::read_val_f64(&reader, "config", "epsilon_w"));
        self.set_epsilon_n(json_reader::read_val_f64(&reader, "config", "epsilon_n"));
@@ -275,10 +275,10 @@ pub fn set_parameters(
 //            "config",
 //            "neuron_creation_interval",
 //        ));
-//        self.set_max_train_iterations(json_reader::read_val_usize(
+//        self.set_max_epochs(json_reader::read_val_usize(
 //            &reader,
 //            "config",
-//            "max_train_iterations",
+//            "max_epochs",
 //        ));
 //        self.set_target_error(json_reader::read_val_f64(&reader, "config", "target_error"));
 //        self.set_epsilon_w(json_reader::read_val_f64(&reader, "config", "epsilon_w"));
@@ -295,7 +295,7 @@ pub fn set_parameters(
 //        weight_rng_max: f64,
 //        edge_removal_age: usize,
 //        neuron_creation_interval: usize,
-//        max_train_iterations: usize,
+//        max_epochs: usize,
 //        target_error: f64,
 //        epsilon_w: f64,
 //        epsilon_n: f64,
@@ -308,7 +308,7 @@ pub fn set_parameters(
 //            val.weight_rng_max = weight_rng_max;
 //            val.edge_removal_age = edge_removal_age;
 //            val.neuron_creation_interval = neuron_creation_interval;
-//            val.max_train_iterations = max_train_iterations;
+//            val.max_epochs = max_epochs;
 //            val.target_error = target_error;
 //            val.epsilon_w = epsilon_w;
 //            val.epsilon_n = epsilon_n;
@@ -434,22 +434,22 @@ pub fn set_parameters(
 //    }
 //
 //    //----------------------------------------------------------
-//    pub fn set_max_train_iterations(&mut self, val: usize) {
+//    pub fn set_max_epochs(&mut self, val: usize) {
 //        if let Some(obj) = self.config_man.get_mut(0) {
-//            obj.max_train_iterations = val;
+//            obj.max_epochs = val;
 //        }
 //    }
-//    pub fn get_max_train_iterations(&self) -> &usize {
+//    pub fn get_max_epochs(&self) -> &usize {
 //        self.config_man
 //            .get(0)
-//            .map(|val| &val.max_train_iterations)
+//            .map(|val| &val.max_epochs)
 //            .expect("max train iteration not found")
 //    }
-//    pub fn read_max_train_iterations(&mut self, filename: &str) {
+//    pub fn read_max_epochs(&mut self, filename: &str) {
 //        let reader = json_reader::read_file(filename).unwrap();
-//        let val = json_reader::read_val_usize(&reader, "config", "max_train_iterations");
+//        let val = json_reader::read_val_usize(&reader, "config", "max_epochs");
 //        if let Some(obj) = self.config_man.get_mut(0) {
-//            obj.max_train_iterations = val;
+//            obj.max_epochs = val;
 //        }
 //    }
 //

@@ -73,6 +73,7 @@ pub fn fit(params: &mut Handler) {
                 end_loop(params);
             }
             State::NormalIteration => {
+
                 select_sample(params);
                 calc_neuron_distances(params);
                 calc_nearest_neurons(params);
@@ -109,7 +110,7 @@ pub fn start_new_epoch(params: &mut Handler) {
     let curr_epoch = params.system_handler.get_curr_epoch();
     let new_epoch = curr_epoch + 1;
     params.system_handler.set_curr_epoch(new_epoch);
-    params.config_handler.get_max_train_iterations();
+    params.config_handler.get_max_epochs();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -119,10 +120,10 @@ pub fn check_stopping_criterion(params: &mut Handler) {}
 pub fn update_state(params: &mut Handler, state: &mut State) {
     let curr_epoch: usize = params.system_handler.get_curr_epoch();
 
-    let max_train_iterations = params.config_handler.get_max_train_iterations();
-    //let max_train_iterations: usize = *params.config_handler.get_max_train_iterations();
+    let max_epochs = params.config_handler.get_max_epochs();
+    //let max_epochs: usize = *params.config_handler.get_max_epochs();
 
-    if curr_epoch >= max_train_iterations {
+    if curr_epoch >= max_epochs {
         params.system_handler.set_train_completed(true);
     }
     if params.system_handler.get_train_initiated() {
@@ -207,7 +208,7 @@ pub fn set_parameters(
     weight_rng_max: f64,
     edge_removal_age: usize,
     neuron_creation_interval: usize,
-    max_train_iterations: usize,
+    max_epochs: usize,
     target_error: f64,
     epsilon_w: f64,
     epsilon_n: f64,
@@ -220,7 +221,7 @@ pub fn set_parameters(
         weight_rng_max,
         edge_removal_age,
         neuron_creation_interval,
-        max_train_iterations,
+        max_epochs,
         target_error,
         epsilon_w,
         epsilon_n,
@@ -1123,7 +1124,6 @@ mod core_tests {
         params.neuron_handler.set_distances_debug(distance_input);
         calc_nearest_neurons(&mut params);
 
-        params.neuron_handler.print_neurons();
         // function call
         //------------------------------------------------------------------------------
         // validation
@@ -1667,6 +1667,7 @@ mod core_tests {
     }
     #[test]
     fn remove_unconnected_neurons_t1() {
+
         let filename_input =
             "test_data/growing_neural_gas/remove_unconnected_neurons_t1/input.json".to_string();
         let filename_target =
