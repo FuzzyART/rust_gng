@@ -1,11 +1,10 @@
-use std::collections::HashSet;
 use crate::handlers::config_handler::Config;
 use crate::handlers::system_handler::System;
 use crate::handlers::{
-    edge_handler::EdgeHandler, neuron_handler::NeuronHandler,
-    sample_handler::SampleHandler, system_handler::State,
-    //system_handler::SystemHandler,
+    edge_handler::EdgeHandler, neuron_handler::NeuronHandler, sample_handler::SampleHandler,
+    system_handler::Phase,
 };
+use std::collections::HashSet;
 
 use crate::gas::{
     json_reader, json_writer::write_json_to_file, json_writer::write_value_to_block,
@@ -19,12 +18,8 @@ pub struct Handler {
     pub neuron_handler: NeuronHandler,
     pub edge_handler: EdgeHandler,
 
-
     pub config_handler: Config,
     pub system_handler: System,
- //   pub config_handler: ConfigHandler,
-//    pub system_handler: SystemHandler,
-//
     pub sample_handler: SampleHandler,
     pub rng_manager: RngManager,
 }
@@ -36,113 +31,77 @@ impl Handler {
 
             config_handler: Config::init(),
             system_handler: System::init(),
-  //          config_handler: ConfigHandler::init(),
-  //            system_handler: SystemHandler::init(),
             sample_handler: SampleHandler::init(),
             rng_manager: RngManager::init(123),
         }
     }
     pub fn create_system(&mut self) {
         Self::init();
-      //  self.config_handler.create_config();
-      //  self.system_handler.create_system();
     }
 }
-
 //--------------------------------------------------------------------------------------------------
 pub fn fit(params: &mut Handler) {
-    let mut current_state = State::Init;
+    let mut curr_phase = Phase::StartNewEpoch;
+    init_training(params);
+    shuffle_dataset(params);
+    params.system_handler.set_train_initiated(true);
 
-    let mut counter = 0;
     while params.system_handler.get_train_completed() == false {
-        counter += 1;
-        match current_state {
-            State::Init => {
-                init_training(params);
-                shuffle_dataset(params);
-                params.system_handler.set_train_initiated(true);
-            }
-            State::StartNewIteration => {
-                shuffle_dataset(params);
-                let curr_epoch = params.system_handler.get_curr_epoch();
-                params.system_handler.set_curr_epoch(curr_epoch + 1);
-                params.system_handler.set_iteration_completed(true);
-                current_state = State::TrainingCompleted;
-            }
-            State::TrainingCompleted => {
-                end_loop(params);
-            }
-            State::NormalIteration => {
-
-                select_sample(params);
-                calc_neuron_distances(params);
-                calc_nearest_neurons(params);
-                calc_neuron_dependencies(params);
-                increase_edge_age(params);
-                add_error_to_winner_neuron(params);
-
-                update_weights(params);
-
-                create_edge(params);
-                delete_old_edges(params);
-                remove_unconnected_neurons(params);
-                if params.system_handler.get_create_neuron_scheduled() == true {
-                    create_neuron(params);
-                    params.system_handler.set_create_neuron_scheduled(false);
-                }
-                decrease_error_global(params);
-            }
-            State::EpochCompleted => {
-                start_new_epoch(params);
-                check_stopping_criterion(params);
-            }
-            State::IterationCompleted => {}
+        if curr_phase == Phase::StartNewEpoch {
+            shuffle_dataset(params);
+            let curr_epoch = params.system_handler.get_curr_epoch();
+            params.system_handler.set_curr_epoch(curr_epoch + 1);
         }
+
+        if curr_phase == Phase::NormalIteration {
+            select_sample(params);
+            calc_neuron_distances(params);
+            calc_nearest_neurons(params);
+            calc_neuron_dependencies(params);
+            increase_edge_age(params);
+            add_error_to_winner_neuron(params);
+
+            update_weights(params);
+
+            create_edge(params);
+            delete_old_edges(params);
+            remove_unconnected_neurons(params);
+
+            if params.system_handler.get_curr_iteration()
+                % params.config_handler.get_neuron_creation_interval() == 0
+            {
+                create_neuron(params);
+            }
+
+            decrease_error_global(params);
+        }
+
         params.system_handler.inc_curr_iteration();
-        update_state(params, &mut current_state);
+        update_phase(params, &mut curr_phase);
+        if params.system_handler.get_curr_epoch() >= params.config_handler.get_max_epochs() {
+            params.system_handler.set_train_completed(true);
+        }
     }
 }
 
-
 //--------------------------------------------------------------------------------------------------
+pub fn update_phase(params: &mut Handler, phase: &mut Phase) {
+    if params.system_handler.get_train_initiated() {
+        *phase = Phase::NormalIteration;
+    };
+    if params.system_handler.get_last_sample_reached() {
+        params.system_handler.set_last_sample_reached(false);
+        *phase = Phase::StartNewEpoch;
+    }
+}
+
 pub fn start_new_epoch(params: &mut Handler) {
     shuffle_dataset(params);
     let curr_epoch = params.system_handler.get_curr_epoch();
     let new_epoch = curr_epoch + 1;
     params.system_handler.set_curr_epoch(new_epoch);
-    params.config_handler.get_max_epochs();
 }
 
-//--------------------------------------------------------------------------------------------------
-// To be implemented
-pub fn check_stopping_criterion(params: &mut Handler) {}
-//--------------------------------------------------------------------------------------------------
-pub fn update_state(params: &mut Handler, state: &mut State) {
-    let curr_epoch: usize = params.system_handler.get_curr_epoch();
-
-    let max_epochs = params.config_handler.get_max_epochs();
-    //let max_epochs: usize = *params.config_handler.get_max_epochs();
-
-    if curr_epoch >= max_epochs {
-        params.system_handler.set_train_completed(true);
-    }
-    if params.system_handler.get_train_initiated() {
-        *state = State::NormalIteration;
-    };
-    if params.system_handler.get_last_sample_reached() {
-        params.system_handler.set_last_sample_reached(false);
-        *state = State::StartNewIteration;
-    }
-    if params.system_handler.get_curr_iteration()
-        % params.config_handler.get_neuron_creation_interval()
-        == 0
-    {
-        params.system_handler.set_create_neuron_scheduled(true);
-    }
-}
-//--------------------------------------------------------------------------------------------------
-// to be implemented
-pub fn end_loop(params: &mut Handler) {}
 //--------------------------------------------------------------------------------------------------
 
 pub fn load_model(params: &mut Handler, filename_model: String) {
@@ -553,34 +512,34 @@ pub fn add_error_to_winner_neuron(params: &mut Handler) {
 //--------------------------------------------------------------------------------------------------
 // create_neuron and sub gas
 pub fn create_neuron(params: &mut Handler) {
-    if params.neuron_handler.get_num_neurons() < params.config_handler.get_max_neurons(){
-    //------------------------------------------------------------------------------
-    // get neuron with biggest error
-    calc_max_error_neuron(params);
-    // get best neuron amongst neighbors of winner
-    calc_neighbor_neuron_vec_max_err(params);
+    if params.neuron_handler.get_num_neurons() < params.config_handler.get_max_neurons() {
+        //------------------------------------------------------------------------------
+        // get neuron with biggest error
+        calc_max_error_neuron(params);
+        // get best neuron amongst neighbors of winner
+        calc_neighbor_neuron_vec_max_err(params);
 
-    calc_neighbor_neuron_max_err(params);
+        calc_neighbor_neuron_max_err(params);
 
-    let max_err_neuron: usize = params.system_handler.get_neuron_max_err();
-    let best_neighbor_neuron: usize = params.system_handler.get_neighbor_neuron_max_err();
+        let max_err_neuron: usize = params.system_handler.get_neuron_max_err();
+        let best_neighbor_neuron: usize = params.system_handler.get_neighbor_neuron_max_err();
 
-    remove_edge(params);
+        remove_edge(params);
 
-    insert_new_neuron(params);
-    let neuron_1 = params.system_handler.get_neuron_max_err();
-    let neuron_2 = params.system_handler.get_neighbor_neuron_max_err();
-    let err_1 = params.neuron_handler.get_error(neuron_1) * params.config_handler.get_alpha();
-    let err_2 = params.neuron_handler.get_error(neuron_2) * params.config_handler.get_alpha();
+        insert_new_neuron(params);
+        let neuron_1 = params.system_handler.get_neuron_max_err();
+        let neuron_2 = params.system_handler.get_neighbor_neuron_max_err();
+        let err_1 = params.neuron_handler.get_error(neuron_1) * params.config_handler.get_alpha();
+        let err_2 = params.neuron_handler.get_error(neuron_2) * params.config_handler.get_alpha();
 
-    params.neuron_handler.set_error(neuron_1, err_1);
-    params.neuron_handler.set_error(neuron_2, err_2);
+        params.neuron_handler.set_error(neuron_1, err_1);
+        params.neuron_handler.set_error(neuron_2, err_2);
 
-    let neuron_1 = params.system_handler.get_neuron_max_err();
-    let neuron_2 = params.system_handler.get_neighbor_neuron_max_err();
-    let neuron_new = params.system_handler.get_newest_neuron_id();
-    params.edge_handler.create_edge(neuron_new, neuron_1, 0);
-    params.edge_handler.create_edge(neuron_new, neuron_2, 0);
+        let neuron_1 = params.system_handler.get_neuron_max_err();
+        let neuron_2 = params.system_handler.get_neighbor_neuron_max_err();
+        let neuron_new = params.system_handler.get_newest_neuron_id();
+        params.edge_handler.create_edge(neuron_new, neuron_1, 0);
+        params.edge_handler.create_edge(neuron_new, neuron_2, 0);
     }
 }
 //---------------------------------------
@@ -631,9 +590,7 @@ pub fn delete_old_edges(params: &mut Handler) {
 }
 fn delete_old_edges_mark(params: &mut Handler) -> Vec<usize> {
     let keys = params.edge_handler.get_keys();
-    let max_age = params
-        .config_handler
-        .get_edge_removal_age();
+    let max_age = params.config_handler.get_edge_removal_age();
     let mut marked_edges: Vec<usize> = Vec::new();
     for &a in keys {
         if *params.edge_handler.get_edge_age(a) > max_age {
@@ -708,8 +665,7 @@ pub fn remove_edge(params: &mut Handler) {
     for a in keys {
         let start = params.edge_handler.get_edge_start(a);
         let end = params.edge_handler.get_edge_end(a);
-        if (*start == neuron_1 && *end == neuron_2) || (*end == neuron_1 && *start == neuron_2)
-        {
+        if (*start == neuron_1 && *end == neuron_2) || (*end == neuron_1 && *start == neuron_2) {
             params.edge_handler.remove_edge(a);
             break;
         }
@@ -820,7 +776,6 @@ pub fn get_model_string(params: &mut Handler) -> String {
         neuron_array.push(neuron);
     }
 
-
     //--------------------------------------------------------------------------------------------------
 
     // Step 1: Create an empty JSON object (Value)
@@ -848,7 +803,7 @@ pub fn get_neurons(params: &mut Handler) -> Vec<(usize, Vec<f64>)> {
     let keys = params.neuron_handler.get_keys();
     let mut neuron_array: Vec<Value> = Vec::new();
     for a in keys {
-        result.push((*a, params.neuron_handler.get_weights(*a).clone()  ));
+        result.push((*a, params.neuron_handler.get_weights(*a).clone()));
     }
     result
 }
@@ -858,9 +813,10 @@ pub fn get_edges(params: &mut Handler) -> Vec<(usize, usize)> {
     let keys = params.edge_handler.get_keys();
     let mut neuron_array: Vec<Value> = Vec::new();
     for a in keys {
-        result.push((params.edge_handler.get_edge_start(*a).clone(),
-                     params.edge_handler.get_edge_end(*a).clone()  )
-        );
+        result.push((
+            params.edge_handler.get_edge_start(*a).clone(),
+            params.edge_handler.get_edge_end(*a).clone(),
+        ));
     }
     result
 }
@@ -881,20 +837,6 @@ pub fn get_edges(params: &mut Handler) -> Vec<(usize, usize)> {
 //        })
 //        .collect()
 //}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 mod core_tests {
     use super::*;
@@ -1675,7 +1617,6 @@ mod core_tests {
     }
     #[test]
     fn remove_unconnected_neurons_t1() {
-
         let filename_input =
             "test_data/growing_neural_gas/remove_unconnected_neurons_t1/input.json".to_string();
         let filename_target =
