@@ -40,20 +40,31 @@ impl Handler {
     }
 }
 //--------------------------------------------------------------------------------------------------
-pub fn fit(params: &mut Handler) {
-    let mut curr_phase = Phase::StartNewEpoch;
+pub fn init_step(params: &mut Handler) {
+    //   let mut curr_phase = Phase::StartNewEpoch;
     init_training(params);
     shuffle_dataset(params);
     params.system_handler.set_train_initiated(true);
+    println!("num samples :{}",params.sample_handler.get_num_samples());
+    params.system_handler.curr_phase = Phase::StartNewEpoch;
+}
 
-    while params.system_handler.get_train_completed() == false {
-        if curr_phase == Phase::StartNewEpoch {
+//--------------------------------------------------------------------------------------------------
+pub fn fit_step(params: &mut Handler) {
+    println!("epoch: {}",params.system_handler.get_curr_epoch());
+    println!("max max_neurons {}",params.config_handler.get_max_neurons());
+
+    //========================================
+    //for a in 0..10 {
+       // if curr_phase == Phase::StartNewEpoch {
             shuffle_dataset(params);
             let curr_epoch = params.system_handler.get_curr_epoch();
             params.system_handler.set_curr_epoch(curr_epoch + 1);
-        }
+            //}
 
-        if curr_phase == Phase::NormalIteration {
+            params.system_handler.curr_phase = Phase::NormalIteration;
+            while params.system_handler.curr_phase != Phase::StartNewEpoch{
+        //if curr_phase == Phase::NormalIteration {
             select_sample(params);
             calc_neuron_distances(params);
             calc_nearest_neurons(params);
@@ -68,7 +79,55 @@ pub fn fit(params: &mut Handler) {
             remove_unconnected_neurons(params);
 
             if params.system_handler.get_curr_iteration()
-                % params.config_handler.get_neuron_creation_interval() == 0
+                % params.config_handler.get_neuron_creation_interval()
+                == 0
+            {
+                create_neuron(params);
+            }
+
+            decrease_error_global(params);
+            //}
+
+        params.system_handler.inc_curr_iteration();
+
+       // update_phase(params, &mut params.system_handlercurr_phase);
+        update_phase(params);
+    }
+}
+//--------------------------------------------------------------------------------------------------
+pub fn fit(params: &mut Handler) {
+    // init_run
+    //let mut curr_phase = Phase::StartNewEpoch;
+     params.system_handler.curr_phase = Phase::StartNewEpoch;
+    init_training(params);
+    shuffle_dataset(params);
+    params.system_handler.set_train_initiated(true);
+    // init_run
+    //========================================
+    while params.system_handler.get_train_completed() == false {
+        if params.system_handler.curr_phase == Phase::StartNewEpoch {
+            shuffle_dataset(params);
+            let curr_epoch = params.system_handler.get_curr_epoch();
+            params.system_handler.set_curr_epoch(curr_epoch + 1);
+        }
+
+        if params.system_handler.curr_phase == Phase::NormalIteration {
+            select_sample(params);
+            calc_neuron_distances(params);
+            calc_nearest_neurons(params);
+            calc_neuron_dependencies(params);
+            increase_edge_age(params);
+            add_error_to_winner_neuron(params);
+
+            update_weights(params);
+
+            create_edge(params);
+            delete_old_edges(params);
+            remove_unconnected_neurons(params);
+
+            if params.system_handler.get_curr_iteration()
+                % params.config_handler.get_neuron_creation_interval()
+                == 0
             {
                 create_neuron(params);
             }
@@ -77,7 +136,7 @@ pub fn fit(params: &mut Handler) {
         }
 
         params.system_handler.inc_curr_iteration();
-        update_phase(params, &mut curr_phase);
+        update_phase(params);
         if params.system_handler.get_curr_epoch() >= params.config_handler.get_max_epochs() {
             params.system_handler.set_train_completed(true);
         }
@@ -85,13 +144,14 @@ pub fn fit(params: &mut Handler) {
 }
 
 //--------------------------------------------------------------------------------------------------
-pub fn update_phase(params: &mut Handler, phase: &mut Phase) {
+pub fn update_phase(params: &mut Handler) {
+    let curr_phase = params.system_handler.get_curr_phase();
     if params.system_handler.get_train_initiated() {
-        *phase = Phase::NormalIteration;
+        params.system_handler.set_curr_phase(Phase::NormalIteration);
     };
     if params.system_handler.get_last_sample_reached() {
         params.system_handler.set_last_sample_reached(false);
-        *phase = Phase::StartNewEpoch;
+        params.system_handler.set_curr_phase(Phase::StartNewEpoch);
     }
 }
 

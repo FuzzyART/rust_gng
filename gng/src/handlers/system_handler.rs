@@ -1,6 +1,6 @@
 use crate::ecs::manager;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq,Clone)]
 pub enum Phase {
     StartNewEpoch,
     NormalIteration,
@@ -9,6 +9,7 @@ pub enum Phase {
 
 #[derive(Debug)]
 pub struct System {
+    pub curr_phase: Phase,
     pub train_initiated: bool,
     pub dataset_initiated: bool,
     pub train_completed: bool,
@@ -45,6 +46,7 @@ pub struct System {
 impl System {
     pub fn init() -> Self {
         Self {
+            curr_phase : Phase::StartNewEpoch,
             train_initiated: false,
             dataset_initiated: false,
             train_completed: false,
@@ -78,6 +80,13 @@ impl System {
     }
 
     // Getters and Setters
+    pub fn get_curr_phase(&self)->Phase{
+        self.curr_phase.clone()
+    }
+    pub fn set_curr_phase(&mut self,p: Phase){
+        self.curr_phase = p;
+    }
+
 
     pub fn get_train_initiated(&self) -> bool {
         self.train_initiated

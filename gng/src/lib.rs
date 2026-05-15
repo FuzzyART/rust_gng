@@ -7,9 +7,10 @@ pub mod handlers;
 pub mod internal {
     // Re-export the original types and functions from core
     pub use crate::gas::core::{
-        fit as core_fit, get_edges as core_get_edges, get_model_string as core_get_model_string,
-        get_neurons as core_get_neurons, init_dataset as core_init_dataset,
-        init_dataset_vec as core_init_dataset_vec, load_config as core_load_config,
+        fit as core_fit, fit_step as core_fit_step, get_edges as core_get_edges,
+        get_model_string as core_get_model_string, get_neurons as core_get_neurons,
+        init_dataset as core_init_dataset, init_dataset_vec as core_init_dataset_vec,
+        init_step as core_init_step, load_config as core_load_config,
         save_model_json as core_save_model_json, set_input_width as core_set_input_width,
         set_parameters as core_set_parameters, Handler,
     };
@@ -46,6 +47,12 @@ impl Gng {
 
     pub fn fit(&mut self) {
         internal::core_fit(&mut self.cont_params);
+    }
+    pub fn init_step(&mut self) {
+        internal::core_init_step(&mut self.cont_params);
+    }
+    pub fn fit_step(&mut self) {
+        internal::core_fit_step(&mut self.cont_params);
     }
     pub fn save_model_json(&mut self, filename_output: &str) {
         internal::core_save_model_json(&mut self.cont_params, filename_output.to_string());
