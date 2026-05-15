@@ -82,157 +82,134 @@ impl Config {
         self.beta = beta;
     }
 
-    pub fn set_config_filename(&mut self, filename: String) {
-        self.config_filename = filename;
-    }
+    //    pub fn set_config_filename(&mut self, filename: String) {
+    //        self.config_filename = filename;
+    //    }
 
-    pub fn set_input_set_filename(&mut self, filename: String) {
-        self.input_set_filename = filename;
-    }
+    //    pub fn set_input_set_filename(&mut self, filename: String) {
+    //        self.input_set_filename = filename;
+    //    }
 
-    pub fn set_input_width(&mut self, val: usize) {
-        self.input_width = val;
-    }
-
-    pub fn set_weight_rng_min(&mut self, val: f64) {
-        self.weight_rng_min = val;
-    }
-
-    pub fn set_weight_rng_max(&mut self, val: f64) {
-        self.weight_rng_max = val;
-    }
-
-    pub fn set_edge_removal_age(&mut self, val: usize) {
-        self.edge_removal_age = val;
-    }
-
-    pub fn set_neuron_creation_interval(&mut self, val: usize) {
-        self.neuron_creation_interval = val;
-    }
-
-    pub fn set_max_epochs(&mut self, val: usize) {
-        self.max_epochs = val;
-    }
-    pub fn set_max_neurons(&mut self, val: usize) {
-        self.max_neurons = val;
-    }
-
-    pub fn set_target_error(&mut self, val: f64) {
-        self.target_error = val;
-    }
-
-    pub fn set_epsilon_w(&mut self, val: f64) {
-        self.epsilon_w = val;
-    }
-
-    pub fn set_epsilon_n(&mut self, val: f64) {
-        self.epsilon_n = val;
-    }
-
-    pub fn set_alpha(&mut self, val: f64) {
-        self.alpha = val;
-    }
-
-    pub fn set_beta(&mut self, val: f64) {
-        self.beta = val;
-    }
+    //    pub fn set_input_width(&mut self, val: usize) {
+    //        self.input_width = val;
+    //    }
+    //
+    //    pub fn set_weight_rng_min(&mut self, val: f64) {
+    //        self.weight_rng_min = val;
+    //    }
+    //
+    //    pub fn set_weight_rng_max(&mut self, val: f64) {
+    //        self.weight_rng_max = val;
+    //    }
+    //
+    //    pub fn set_edge_removal_age(&mut self, val: usize) {
+    //        self.edge_removal_age = val;
+    //    }
+    //
+    //    pub fn set_neuron_creation_interval(&mut self, val: usize) {
+    //        self.neuron_creation_interval = val;
+    //    }
+    //
+    //    pub fn set_max_epochs(&mut self, val: usize) {
+    //        self.max_epochs = val;
+    //    }
+    //    pub fn set_max_neurons(&mut self, val: usize) {
+    //        self.max_neurons = val;
+    //    }
+    //
+    //    pub fn set_target_error(&mut self, val: f64) {
+    //        self.target_error = val;
+    //    }
+    //
+    //    pub fn set_epsilon_w(&mut self, val: f64) {
+    //        self.epsilon_w = val;
+    //    }
+    //
+    //    pub fn set_epsilon_n(&mut self, val: f64) {
+    //        self.epsilon_n = val;
+    //    }
+    //
+    //    pub fn set_alpha(&mut self, val: f64) {
+    //        self.alpha = val;
+    //    }
+    //
+    //    pub fn set_beta(&mut self, val: f64) {
+    //        self.beta = val;
+    //    }
 
     // --- Getters (return Option<&T> for safety) ---
 
-    pub fn get_config_filename(&self) -> &String {
-        &self.config_filename
-    }
-
-    pub fn get_input_set_filename(&self) -> &String {
-        &self.input_set_filename
-    }
-
-    pub fn get_input_width(&self) -> usize {
-        self.input_width
-    }
-
-    pub fn get_weight_rng_min(&self) -> f64 {
-        self.weight_rng_min
-    }
-
-    pub fn get_weight_rng_max(&self) -> f64 {
-        self.weight_rng_max
-    }
-
-    pub fn get_edge_removal_age(&self) -> usize {
-        self.edge_removal_age
-    }
-
-    pub fn get_neuron_creation_interval(&self) -> usize {
-        self.neuron_creation_interval
-    }
-
-    pub fn get_max_epochs(&self) -> usize {
-        self.max_epochs
-    }
-
-    pub fn get_max_neurons(&self) -> usize {
-        self.max_neurons
-    }
-
-    pub fn get_target_error(&self) -> f64 {
-        self.target_error
-    }
-
-    pub fn get_epsilon_w(&self) -> f64 {
-        self.epsilon_w
-    }
-
-    pub fn get_epsilon_n(&self) -> f64 {
-        self.epsilon_n
-    }
-
-    pub fn get_alpha(&self) -> f64 {
-        self.alpha
-    }
-
-    pub fn get_beta(&self) -> f64 {
-        self.beta
-    }
+    //    pub fn get_config_filename(&self) -> &String {
+    //        &self.config_filename
+    //    }
+    //
+    //    pub fn get_input_set_filename(&self) -> &String {
+    //        &self.input_set_filename
+    //    }
+    //
+    //    pub fn get_input_width(&self) -> usize {
+    //        self.input_width
+    //    }
+    //
+    //    pub fn get_weight_rng_min(&self) -> f64 {
+    //        self.weight_rng_min
+    //    }
+    //
+    //    pub fn get_weight_rng_max(&self) -> f64 {
+    //        self.weight_rng_max
+    //    }
+    //
+    //    pub fn get_edge_removal_age(&self) -> usize {
+    //        self.edge_removal_age
+    //    }
+    //
+    //    pub fn get_neuron_creation_interval(&self) -> usize {
+    //        self.neuron_creation_interval
+    //    }
+    //
+    //    pub fn get_max_epochs(&self) -> usize {
+    //        self.max_epochs
+    //    }
+    //
+    //    pub fn get_max_neurons(&self) -> usize {
+    //        self.max_neurons
+    //    }
+    //
+    //    pub fn get_target_error(&self) -> f64 {
+    //        self.target_error
+    //    }
+    //
+    //    pub fn get_epsilon_w(&self) -> f64 {
+    //        self.epsilon_w
+    //    }
+    //
+    //    pub fn get_epsilon_n(&self) -> f64 {
+    //        self.epsilon_n
+    //    }
+    //
+    //    pub fn get_alpha(&self) -> f64 {
+    //        self.alpha
+    //    }
+    //
+    //    pub fn get_beta(&self) -> f64 {
+    //        self.beta
+    //    }
 
     // --- Reader (loads from JSON file) ---
 
     pub fn read_config(&mut self, filename: &str) {
         let reader = json_reader::read_file(filename).unwrap();
 
-        self.set_input_width(json_reader::read_val_usize(
-            &reader,
-            "config",
-            "input_width",
-        ));
-        self.set_weight_rng_min(json_reader::read_val_f64(
-            &reader,
-            "config",
-            "weight_rng_min",
-        ));
-        self.set_weight_rng_max(json_reader::read_val_f64(
-            &reader,
-            "config",
-            "weight_rng_max",
-        ));
-        self.set_edge_removal_age(json_reader::read_val_usize(
-            &reader,
-            "config",
-            "edge_removal_age",
-        ));
-        self.set_neuron_creation_interval(json_reader::read_val_usize(
-            &reader,
-            "config",
-            "neuron_creation_interval",
-        ));
-        self.set_max_epochs(json_reader::read_val_usize(&reader, "config", "max_epochs"));
-        self.set_target_error(json_reader::read_val_f64(&reader, "config", "target_error"));
-        self.set_epsilon_w(json_reader::read_val_f64(&reader, "config", "epsilon_w"));
-        self.set_epsilon_n(json_reader::read_val_f64(&reader, "config", "epsilon_n"));
-        // Note: alpha and beta are not in the original JSON reader calls in ConfigHandler
-        // If they are in the JSON, add them here:
-        // self.set_alpha(json_reader::read_val_f64(&reader, "config", "alpha"));
-        // self.set_beta(json_reader::read_val_f64(&reader, "config", "beta"));
+        self.input_width = json_reader::read_val_usize(&reader, "config", "input_width");
+        self.weight_rng_min = json_reader::read_val_f64(&reader, "config", "weight_rng_min");
+        self.weight_rng_max = json_reader::read_val_f64(&reader, "config", "weight_rng_max");
+        self.edge_removal_age = json_reader::read_val_usize(&reader, "config", "edge_removal_age");
+        self.neuron_creation_interval =
+            json_reader::read_val_usize(&reader, "config", "neuron_creation_interval");
+        self.max_epochs = json_reader::read_val_usize(&reader, "config", "max_epochs");
+        self.target_error = json_reader::read_val_f64(&reader, "config", "target_error");
+        self.epsilon_w = json_reader::read_val_f64(&reader, "config", "epsilon_w");
+        self.epsilon_n = json_reader::read_val_f64(&reader, "config", "epsilon_n");
     }
 
     // --- Convenience: load_config (renamed/updated from original) ---

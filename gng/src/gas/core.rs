@@ -44,53 +44,52 @@ pub fn init_step(params: &mut Handler) {
     //   let mut curr_phase = Phase::StartNewEpoch;
     init_training(params);
     shuffle_dataset(params);
-    params.system_handler.set_train_initiated(true);
-    println!("num samples :{}",params.sample_handler.get_num_samples());
+    params.system_handler.train_initiated = true;
+    println!("num samples :{}", params.sample_handler.get_num_samples());
     params.system_handler.curr_phase = Phase::StartNewEpoch;
 }
 
 //--------------------------------------------------------------------------------------------------
 pub fn fit_step(params: &mut Handler) {
-    println!("epoch: {}",params.system_handler.get_curr_epoch());
-    println!("max max_neurons {}",params.config_handler.get_max_neurons());
+    println!("epoch: {}", params.system_handler.curr_epoch);
+    println!("max max_neurons {}", params.config_handler.max_neurons);
 
     //========================================
     //for a in 0..10 {
-       // if curr_phase == Phase::StartNewEpoch {
-            shuffle_dataset(params);
-            let curr_epoch = params.system_handler.get_curr_epoch();
-            params.system_handler.set_curr_epoch(curr_epoch + 1);
-            //}
+    // if curr_phase == Phase::StartNewEpoch {
+    shuffle_dataset(params);
+    let curr_epoch = params.system_handler.curr_epoch;
+    params.system_handler.curr_epoch = curr_epoch + 1;
+    //}
 
-            params.system_handler.curr_phase = Phase::NormalIteration;
-            while params.system_handler.curr_phase != Phase::StartNewEpoch{
+    params.system_handler.curr_phase = Phase::NormalIteration;
+    while params.system_handler.curr_phase != Phase::StartNewEpoch {
         //if curr_phase == Phase::NormalIteration {
-            select_sample(params);
-            calc_neuron_distances(params);
-            calc_nearest_neurons(params);
-            calc_neuron_dependencies(params);
-            increase_edge_age(params);
-            add_error_to_winner_neuron(params);
+        select_sample(params);
+        calc_neuron_distances(params);
+        calc_nearest_neurons(params);
+        calc_neuron_dependencies(params);
+        increase_edge_age(params);
+        add_error_to_winner_neuron(params);
 
-            update_weights(params);
+        update_weights(params);
 
-            create_edge(params);
-            delete_old_edges(params);
-            remove_unconnected_neurons(params);
+        create_edge(params);
+        delete_old_edges(params);
+        remove_unconnected_neurons(params);
 
-            if params.system_handler.get_curr_iteration()
-                % params.config_handler.get_neuron_creation_interval()
-                == 0
-            {
-                create_neuron(params);
-            }
+        if params.system_handler.curr_iteration % params.config_handler.neuron_creation_interval
+            == 0
+        {
+            create_neuron(params);
+        }
 
-            decrease_error_global(params);
-            //}
+        decrease_error_global(params);
+        //}
 
-        params.system_handler.inc_curr_iteration();
+        params.system_handler.curr_iteration += 1;
 
-       // update_phase(params, &mut params.system_handlercurr_phase);
+        // update_phase(params, &mut params.system_handlercurr_phase);
         update_phase(params);
     }
 }
@@ -98,17 +97,17 @@ pub fn fit_step(params: &mut Handler) {
 pub fn fit(params: &mut Handler) {
     // init_run
     //let mut curr_phase = Phase::StartNewEpoch;
-     params.system_handler.curr_phase = Phase::StartNewEpoch;
+    params.system_handler.curr_phase = Phase::StartNewEpoch;
     init_training(params);
     shuffle_dataset(params);
-    params.system_handler.set_train_initiated(true);
+    params.system_handler.train_initiated = true;
     // init_run
     //========================================
-    while params.system_handler.get_train_completed() == false {
+    while params.system_handler.train_completed == false {
         if params.system_handler.curr_phase == Phase::StartNewEpoch {
             shuffle_dataset(params);
-            let curr_epoch = params.system_handler.get_curr_epoch();
-            params.system_handler.set_curr_epoch(curr_epoch + 1);
+            let curr_epoch = params.system_handler.curr_epoch;
+            params.system_handler.curr_epoch = curr_epoch + 1;
         }
 
         if params.system_handler.curr_phase == Phase::NormalIteration {
@@ -125,8 +124,7 @@ pub fn fit(params: &mut Handler) {
             delete_old_edges(params);
             remove_unconnected_neurons(params);
 
-            if params.system_handler.get_curr_iteration()
-                % params.config_handler.get_neuron_creation_interval()
+            if params.system_handler.curr_iteration % params.config_handler.neuron_creation_interval
                 == 0
             {
                 create_neuron(params);
@@ -135,31 +133,32 @@ pub fn fit(params: &mut Handler) {
             decrease_error_global(params);
         }
 
-        params.system_handler.inc_curr_iteration();
+        params.system_handler.curr_iteration += 1;
         update_phase(params);
-        if params.system_handler.get_curr_epoch() >= params.config_handler.get_max_epochs() {
-            params.system_handler.set_train_completed(true);
+        if params.system_handler.curr_epoch >= params.config_handler.max_epochs {
+            params.system_handler.train_completed = true;
         }
     }
 }
 
 //--------------------------------------------------------------------------------------------------
 pub fn update_phase(params: &mut Handler) {
-    let curr_phase = params.system_handler.get_curr_phase();
-    if params.system_handler.get_train_initiated() {
-        params.system_handler.set_curr_phase(Phase::NormalIteration);
+    //let curr_phase = params.system_handler.curr_phase;
+    if params.system_handler.train_initiated == true {
+        //params.system_handler.set_curr_phase(Phase::NormalIteration);
+        params.system_handler.curr_phase = Phase::NormalIteration;
     };
-    if params.system_handler.get_last_sample_reached() {
-        params.system_handler.set_last_sample_reached(false);
-        params.system_handler.set_curr_phase(Phase::StartNewEpoch);
+    if params.system_handler.last_sample_reached == true {
+        params.system_handler.last_sample_reached = false;
+        //params.system_handler.set_curr_phase(Phase::StartNewEpoch);
+        params.system_handler.curr_phase = Phase::StartNewEpoch;
     }
 }
 
 pub fn start_new_epoch(params: &mut Handler) {
     shuffle_dataset(params);
-    let curr_epoch = params.system_handler.get_curr_epoch();
-    let new_epoch = curr_epoch + 1;
-    params.system_handler.set_curr_epoch(new_epoch);
+    let curr_epoch = params.system_handler.curr_epoch;
+    params.system_handler.curr_epoch = curr_epoch + 1;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -173,7 +172,7 @@ pub fn load_model(params: &mut Handler, filename_model: String) {
     let edge_age = json_reader::read_array_usize(&reader_input, "gng_model", "edge_age");
     let input_width = json_reader::read_val_usize(&reader_input, "gng_model", "input_width");
 
-    params.config_handler.set_input_width(input_width);
+    params.config_handler.input_width = input_width;
     let num_neurons = weights.len() / input_width;
     let num_edges = edge_start.len();
 
@@ -197,27 +196,12 @@ pub fn load_model(params: &mut Handler, filename_model: String) {
 pub fn configure_model(filename_input: String, gng_params: &mut Handler) {
     let reader_input = json_reader::read_file(&filename_input).unwrap();
     //gng_params.config_handler.create_config();
-    gng_params
-        .config_handler
-        .set_input_width(json_reader::read_val_usize(
-            &reader_input,
-            "config",
-            "input_width",
-        ));
-    gng_params
-        .config_handler
-        .set_weight_rng_min(json_reader::read_val_f64(
-            &reader_input,
-            "config",
-            "weight_rng_min",
-        ));
-    gng_params
-        .config_handler
-        .set_weight_rng_max(json_reader::read_val_f64(
-            &reader_input,
-            "config",
-            "weight_rng_max",
-        ));
+    gng_params.config_handler.input_width =
+        json_reader::read_val_usize(&reader_input, "config", "input_width");
+    gng_params.config_handler.weight_rng_min =
+        json_reader::read_val_f64(&reader_input, "config", "weight_rng_min");
+    gng_params.config_handler.weight_rng_max =
+        json_reader::read_val_f64(&reader_input, "config", "weight_rng_max");
 }
 
 pub fn set_parameters(
@@ -251,15 +235,14 @@ pub fn set_parameters(
     );
 }
 pub fn set_input_width(gng_params: &mut Handler, input_width: usize) {
-    gng_params.config_handler.set_input_width(input_width);
-    //let bla = gng_params.config_handler.get_input_width();
+    gng_params.config_handler.input_width = input_width;
 }
 //--------------------------------------------------------------------------------------------------
 
 pub fn init_model(params: &mut Handler) {
-    let width = params.config_handler.get_input_width();
-    let rng_min = params.config_handler.get_weight_rng_min();
-    let rng_max = params.config_handler.get_weight_rng_max();
+    let width = params.config_handler.input_width;
+    let rng_min = params.config_handler.weight_rng_min;
+    let rng_max = params.config_handler.weight_rng_max;
     let mut weights_n1: Vec<f64> = Vec::new();
     let mut weights_n2: Vec<f64> = Vec::new();
 
@@ -281,9 +264,9 @@ pub fn calc_neuron_distances(params: &mut Handler) {
     // output: neuron: distance
     //----------------------------------------
     // input
-    let input_width = params.config_handler.get_input_width();
+    let input_width = params.config_handler.input_width;
 
-    let sample_pos = params.system_handler.get_curr_sample_pos();
+    let sample_pos = params.system_handler.curr_sample_pos;
     // output
     //----------------------------------------
     let input = params.sample_handler.get_sample(sample_pos);
@@ -331,12 +314,12 @@ pub fn calc_nearest_neurons(params: &mut Handler) {
     }
 
     if let Some(winner) = first_key {
-        params.system_handler.set_winner_neuron(winner);
+        params.system_handler.winner_neuron = winner;
         if let Some(second) = second_key {
-            params.system_handler.set_second_neuron(second);
+            params.system_handler.second_neuron = second;
         } else {
             // Handle case where there's only one neuron
-            params.system_handler.set_second_neuron(winner); // Or some default
+            params.system_handler.second_neuron = winner; // Or some default
         }
     } else {
         // Handle case where there are no neurons
@@ -355,7 +338,7 @@ pub fn calc_neuron_dependencies(params: &mut Handler) {
     let num_neurons = params.neuron_handler.get_num_neurons();
 
     // input
-    let winner_neuron = params.system_handler.get_winner_neuron();
+    let winner_neuron = params.system_handler.winner_neuron;
     let winner_edges: Vec<usize> = params.edge_handler.get_connected_edges(winner_neuron);
 
     //----------------------------------------
@@ -389,12 +372,12 @@ pub fn calc_neuron_dependencies(params: &mut Handler) {
 //--------------------------------------------------------------------------------------------------
 pub fn update_weights(params: &mut Handler) {
     // params
-    let input_width = params.config_handler.get_input_width();
-    let epsilon_w: f64 = params.config_handler.get_epsilon_w();
-    let epsilon_n: f64 = params.config_handler.get_epsilon_n();
+    let input_width = params.config_handler.input_width;
+    let epsilon_w: f64 = params.config_handler.epsilon_w;
+    let epsilon_n: f64 = params.config_handler.epsilon_n;
 
     // input
-    let sample_pos = params.system_handler.get_curr_sample_pos();
+    let sample_pos = params.system_handler.curr_sample_pos;
     //----------------------------------------
     let mut w_temp: Vec<(usize, Vec<f64>)> = Vec::new();
 
@@ -436,7 +419,7 @@ pub fn update_weights(params: &mut Handler) {
 
 //--------------------------------------------------------------------------------------------------
 pub fn get_winner_edges(params: &mut Handler) -> Vec<usize> {
-    let winner_neuron = params.system_handler.get_winner_neuron();
+    let winner_neuron = params.system_handler.winner_neuron;
 
     return params.edge_handler.get_connected_edges(winner_neuron);
 }
@@ -452,7 +435,7 @@ pub fn calc_neighbor_neuron_vec_max_err(params: &mut Handler) {
 
     let mut res_vec: Vec<usize> = Vec::new();
 
-    let target_neuron = params.system_handler.get_neuron_max_err();
+    let target_neuron = params.system_handler.neuron_max_err;
 
     let keys = params.edge_handler.get_keys();
     for a in keys {
@@ -466,26 +449,20 @@ pub fn calc_neighbor_neuron_vec_max_err(params: &mut Handler) {
         }
     }
     // output
-    params
-        .system_handler
-        .set_neighbor_neuron_vec_max_err(res_vec);
+    params.system_handler.neighbor_neuron_vec_max_err = res_vec;
 }
 //--------------------------------------------------------------------------------------------------
 
 pub fn select_sample(params: &mut Handler) {
-    let sample_order_position: usize = params.system_handler.get_sample_order_position();
-    let sample_order = params.system_handler.get_sample_order();
+    let sample_order_position = params.system_handler.sample_order_position.clone();
+    let sample_order = params.system_handler.sample_order.clone();
     let len: usize = sample_order.len();
 
-    params
-        .system_handler
-        .set_curr_sample_pos(sample_order[sample_order_position]);
-    params
-        .system_handler
-        .set_sample_order_position(sample_order_position + 1);
+    params.system_handler.curr_sample_pos = sample_order[sample_order_position];
+    params.system_handler.sample_order_position = sample_order_position + 1;
 
     if sample_order_position >= len - 1 {
-        params.system_handler.set_last_sample_reached(true);
+        params.system_handler.last_sample_reached = true;
     }
 }
 //--------------------------------------------------------------------------------------------------
@@ -499,16 +476,16 @@ pub fn shuffle_dataset(params: &mut Handler) {
     let rng_new = params.rng_manager.get_rng();
     res.shuffle(rng_new);
 
-    params.system_handler.set_sample_order(res);
+    params.system_handler.sample_order = res;
 
-    params.system_handler.set_sample_order_position(0);
+    params.system_handler.sample_order_position = 0;
 }
 
 //--------------------------------------------------------------------------------------------------
 
 pub fn decrease_error_global(params: &mut Handler) {
     let keys = params.neuron_handler.get_keys();
-    let d = params.config_handler.get_beta();
+    let d = params.config_handler.beta;
 
     let mut res: Vec<(usize, f64)> = Vec::new();
 
@@ -528,7 +505,7 @@ pub fn decrease_error_global(params: &mut Handler) {
 }
 //--------------------------------------------------------------------------------------------------
 pub fn increase_edge_age(params: &mut Handler) {
-    let winner_neuron = params.system_handler.get_winner_neuron();
+    let winner_neuron = params.system_handler.winner_neuron;
 
     let keys = params.edge_handler.get_keys();
     let mut marked_edges: Vec<usize> = Vec::new();
@@ -547,11 +524,11 @@ pub fn increase_edge_age(params: &mut Handler) {
 }
 //--------------------------------------------------------------------------------------------------
 pub fn add_error_to_winner_neuron(params: &mut Handler) {
-    let sample_pos = params.system_handler.get_curr_sample_pos();
-    let input_width = params.config_handler.get_input_width();
+    let sample_pos = params.system_handler.curr_sample_pos;
+    let input_width = params.config_handler.input_width;
 
     // get winner neuron
-    let winner_neuron = params.system_handler.get_winner_neuron();
+    let winner_neuron = params.system_handler.winner_neuron;
 
     let mut sum: f64 = 0.0;
 
@@ -572,7 +549,7 @@ pub fn add_error_to_winner_neuron(params: &mut Handler) {
 //--------------------------------------------------------------------------------------------------
 // create_neuron and sub gas
 pub fn create_neuron(params: &mut Handler) {
-    if params.neuron_handler.get_num_neurons() < params.config_handler.get_max_neurons() {
+    if params.neuron_handler.get_num_neurons() < params.config_handler.max_neurons {
         //------------------------------------------------------------------------------
         // get neuron with biggest error
         calc_max_error_neuron(params);
@@ -581,23 +558,23 @@ pub fn create_neuron(params: &mut Handler) {
 
         calc_neighbor_neuron_max_err(params);
 
-        let max_err_neuron: usize = params.system_handler.get_neuron_max_err();
-        let best_neighbor_neuron: usize = params.system_handler.get_neighbor_neuron_max_err();
+        let max_err_neuron: usize = params.system_handler.neuron_max_err;
+        let best_neighbor_neuron: usize = params.system_handler.neighbor_neuron_max_err;
 
         remove_edge(params);
 
         insert_new_neuron(params);
-        let neuron_1 = params.system_handler.get_neuron_max_err();
-        let neuron_2 = params.system_handler.get_neighbor_neuron_max_err();
-        let err_1 = params.neuron_handler.get_error(neuron_1) * params.config_handler.get_alpha();
-        let err_2 = params.neuron_handler.get_error(neuron_2) * params.config_handler.get_alpha();
+        let neuron_1 = params.system_handler.neuron_max_err;
+        let neuron_2 = params.system_handler.neighbor_neuron_max_err;
+        let err_1 = params.neuron_handler.get_error(neuron_1) * params.config_handler.alpha;
+        let err_2 = params.neuron_handler.get_error(neuron_2) * params.config_handler.alpha;
 
         params.neuron_handler.set_error(neuron_1, err_1);
         params.neuron_handler.set_error(neuron_2, err_2);
 
-        let neuron_1 = params.system_handler.get_neuron_max_err();
-        let neuron_2 = params.system_handler.get_neighbor_neuron_max_err();
-        let neuron_new = params.system_handler.get_newest_neuron_id();
+        let neuron_1 = params.system_handler.neuron_max_err;
+        let neuron_2 = params.system_handler.neighbor_neuron_max_err;
+        let neuron_new = params.system_handler.newest_neuron_id;
         params.edge_handler.create_edge(neuron_new, neuron_1, 0);
         params.edge_handler.create_edge(neuron_new, neuron_2, 0);
     }
@@ -605,7 +582,7 @@ pub fn create_neuron(params: &mut Handler) {
 //---------------------------------------
 
 pub fn calc_neighbor_neuron_max_err(params: &mut Handler) {
-    let neighbor_neurons = params.system_handler.get_neighbor_neuron_vec_max_err();
+    let neighbor_neurons = &params.system_handler.neighbor_neuron_vec_max_err;
     let mut max_err_neighbor: f64 = *params.neuron_handler.get_error(neighbor_neurons[0]);
     let mut max_error_neighbor_pos = neighbor_neurons[0];
     for a in neighbor_neurons {
@@ -616,9 +593,7 @@ pub fn calc_neighbor_neuron_max_err(params: &mut Handler) {
         }
     }
 
-    params
-        .system_handler
-        .set_neighbor_neuron_max_err(max_error_neighbor_pos);
+    params.system_handler.neighbor_neuron_max_err = max_error_neighbor_pos;
 }
 pub fn calc_max_error_neuron(params: &mut Handler) {
     let keys = params.neuron_handler.get_all_neuron_ids();
@@ -637,7 +612,7 @@ pub fn calc_max_error_neuron(params: &mut Handler) {
             max_error_pos = keys[a];
         }
     }
-    params.system_handler.set_neuron_max_err(max_error_pos);
+    params.system_handler.neuron_max_err = max_error_pos;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -650,7 +625,7 @@ pub fn delete_old_edges(params: &mut Handler) {
 }
 fn delete_old_edges_mark(params: &mut Handler) -> Vec<usize> {
     let keys = params.edge_handler.get_keys();
-    let max_age = params.config_handler.get_edge_removal_age();
+    let max_age = params.config_handler.edge_removal_age;
     let mut marked_edges: Vec<usize> = Vec::new();
     for &a in keys {
         if *params.edge_handler.get_edge_age(a) > max_age {
@@ -693,8 +668,8 @@ pub fn remove_unconnected_neurons(params: &mut Handler) {
 //--------------------------------------------------------------------------------------------------
 pub fn create_edge(params: &mut Handler) {
     // examine, if winner and second neuron are connected
-    let winner_neuron: usize = params.system_handler.get_winner_neuron();
-    let second_neuron: usize = params.system_handler.get_second_neuron();
+    let winner_neuron: usize = params.system_handler.winner_neuron;
+    let second_neuron: usize = params.system_handler.second_neuron;
 
     let winner_edges = get_winner_edges(params);
 
@@ -718,8 +693,8 @@ pub fn create_edge(params: &mut Handler) {
 }
 //--------------------------------------
 pub fn remove_edge(params: &mut Handler) {
-    let neuron_1 = params.system_handler.get_neuron_max_err();
-    let neuron_2 = params.system_handler.get_neighbor_neuron_max_err();
+    let neuron_1 = params.system_handler.neuron_max_err;
+    let neuron_2 = params.system_handler.neighbor_neuron_max_err;
     let keys: Vec<usize> = params.edge_handler.get_keys().copied().collect();
 
     for a in keys {
@@ -732,9 +707,9 @@ pub fn remove_edge(params: &mut Handler) {
     }
 }
 pub fn insert_new_neuron(params: &mut Handler) {
-    let neuron_1 = params.system_handler.get_neuron_max_err();
-    let neuron_2 = params.system_handler.get_neighbor_neuron_max_err();
-    let input_width = params.config_handler.get_input_width();
+    let neuron_1 = params.system_handler.neuron_max_err;
+    let neuron_2 = params.system_handler.neighbor_neuron_max_err;
+    let input_width = params.config_handler.input_width;
 
     // process weight between neurons and push them on W Vector
     let w_1 = params.neuron_handler.get_weights(neuron_1);
@@ -744,25 +719,25 @@ pub fn insert_new_neuron(params: &mut Handler) {
         w_new.push((w_1[a] + w_2[a]) / 2.0);
     }
     // process errors
-    let err_1 = params.neuron_handler.get_error(neuron_1) * params.config_handler.get_alpha();
-    let err_2 = params.neuron_handler.get_error(neuron_2) * params.config_handler.get_alpha();
+    let err_1 = params.neuron_handler.get_error(neuron_1) * params.config_handler.alpha;
+    let err_2 = params.neuron_handler.get_error(neuron_2) * params.config_handler.alpha;
     let err_new = (err_1 + err_2) / 2.0;
 
     let new_id = params.neuron_handler.create_neuron(w_new);
-    params.system_handler.set_newest_neuron_id(new_id);
+    params.system_handler.newest_neuron_id = new_id;
 
     params.neuron_handler.set_error(new_id, err_new);
 }
 
 pub fn init_dataset(params: &mut Handler, filename_dataset: &String) {
-    let input_width = params.config_handler.get_input_width();
+    let input_width = params.config_handler.input_width;
     params
         .sample_handler
         .init_data_set(&filename_dataset, input_width);
 }
 
 pub fn init_dataset_vec(params: &mut Handler, data_vec: &Vec<f64>) {
-    let input_width = params.config_handler.get_input_width();
+    let input_width = params.config_handler.input_width;
     params.sample_handler.init_input_vec(&data_vec, input_width);
 }
 
@@ -773,13 +748,13 @@ pub fn load_config(params: &mut Handler, filename_config: &String) {
 
 //--------------------------------------------------------------------------------------------------
 pub fn init_training(params: &mut Handler) {
-    params.system_handler.set_train_completed(false);
+    params.system_handler.train_completed = false;
 
-    params.system_handler.set_reshuffle_required(true);
+    params.system_handler.reshuffle_required = true;
 
     init_model(params);
 
-    params.system_handler.set_train_initiated(true);
+    params.system_handler.train_initiated = true;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -924,7 +899,7 @@ mod core_tests {
         //----------------------------------------------------------
         // function call
         configure_model(filename_input, &mut gng_params);
-        let input_width = gng_params.config_handler.get_input_width();
+        let input_width = gng_params.config_handler.input_width;
         init_dataset(&mut gng_params, &filename_dataset);
         let samples_res = gng_params.sample_handler.get_samples_vec();
         let num_samples_res = gng_params.sample_handler.get_num_samples();
@@ -966,7 +941,7 @@ mod core_tests {
         // function call
         //----------------------------------------------------------
         // validation
-        let width = params.config_handler.get_input_width();
+        let width = params.config_handler.input_width;
         let weights_res = params.neuron_handler.get_weight_vec(&width);
         let edge_start_res = params.edge_handler.get_edge_start_vec();
         let edge_end_res = params.edge_handler.get_edge_end_vec();
@@ -1003,27 +978,12 @@ mod core_tests {
         //----------------------------------------------------------
         // input
 
-        comps
-            .config_handler
-            .set_input_width(json_reader::read_val_usize(
-                &reader_input,
-                "config",
-                "input_width",
-            ));
-        comps
-            .config_handler
-            .set_weight_rng_min(json_reader::read_val_f64(
-                &reader_input,
-                "config",
-                "weight_rng_min",
-            ));
-        comps
-            .config_handler
-            .set_weight_rng_max(json_reader::read_val_f64(
-                &reader_input,
-                "config",
-                "weight_rng_max",
-            ));
+        comps.config_handler.input_width =
+            json_reader::read_val_usize(&reader_input, "config", "input_width");
+        comps.config_handler.weight_rng_min =
+            json_reader::read_val_f64(&reader_input, "config", "weight_rng_min");
+        comps.config_handler.weight_rng_max =
+            json_reader::read_val_f64(&reader_input, "config", "weight_rng_max");
 
         //----------------------------------------------------------
         // output
@@ -1041,7 +1001,7 @@ mod core_tests {
         //----------------------------------------------------------
         // validation
 
-        let input_width = comps.config_handler.get_input_width();
+        let input_width = comps.config_handler.input_width;
         let weights = comps.neuron_handler.get_weight_vec(&input_width);
 
         let edges_start = comps.edge_handler.get_edge_start_vec();
@@ -1076,7 +1036,7 @@ mod core_tests {
         let mut params: Handler = Handler::init();
         params.create_system();
 
-        params.system_handler.set_curr_sample_pos(1);
+        params.system_handler.curr_sample_pos = 1;
         // init
         //----------------------------------------------------------
         // target
@@ -1086,7 +1046,7 @@ mod core_tests {
         // function call
 
         load_model(&mut params, filename_input);
-        let input_width = params.config_handler.get_input_width();
+        let input_width = params.config_handler.input_width;
         init_dataset(&mut params, &filename_dataset);
         calc_neuron_distances(&mut params);
 
@@ -1134,15 +1094,9 @@ mod core_tests {
         //------------------------------------------------------------------------------
         // validation
         //
-        assert_eq!(
-            params.system_handler.get_winner_neuron(),
-            winner_neuron_target
-        );
+        assert_eq!(params.system_handler.winner_neuron, winner_neuron_target);
 
-        assert_eq!(
-            params.system_handler.get_second_neuron(),
-            second_neuron_target
-        );
+        assert_eq!(params.system_handler.second_neuron, second_neuron_target);
     }
     #[test]
     fn calc_nearest_neurons_t2() {
@@ -1181,15 +1135,9 @@ mod core_tests {
         //------------------------------------------------------------------------------
         // validation
         //
-        assert_eq!(
-            params.system_handler.get_winner_neuron(),
-            winner_neuron_target
-        );
+        assert_eq!(params.system_handler.winner_neuron, winner_neuron_target);
 
-        assert_eq!(
-            params.system_handler.get_second_neuron(),
-            second_neuron_target
-        );
+        assert_eq!(params.system_handler.second_neuron, second_neuron_target);
     }
     #[test]
     fn calc_neuron_dependencies_t1() {
@@ -1219,8 +1167,8 @@ mod core_tests {
         //------------------------------------------------------------------------------
         // preparation
         load_model(&mut params, filename_input);
-        params.system_handler.set_winner_neuron(winner_neuron_input);
-        params.system_handler.set_second_neuron(second_neuron_input);
+        params.system_handler.winner_neuron = winner_neuron_input;
+        params.system_handler.second_neuron = second_neuron_input;
         // preparation
         //------------------------------------------------------------------------------
         // function call
@@ -1269,15 +1217,15 @@ mod core_tests {
         // function call
 
         load_model(&mut params, filename_input);
-        let input_width = params.config_handler.get_input_width();
+        let input_width = params.config_handler.input_width;
         params
             .sample_handler
             .init_data_set(&filename_dataset, input_width);
-        params.system_handler.set_curr_sample_pos(sample_pos);
+        params.system_handler.curr_sample_pos = sample_pos;
         params
             .neuron_handler
             .set_errors_debug(neuron_err_input.clone());
-        params.system_handler.set_winner_neuron(winner_neuron_input);
+        params.system_handler.winner_neuron = winner_neuron_input;
         add_error_to_winner_neuron(&mut params);
 
         // function call
@@ -1321,14 +1269,14 @@ mod core_tests {
         //------------------------------------------------------------------------------
         // function call
         load_model(&mut params, filename_input);
-        let input_width = params.config_handler.get_input_width();
+        let input_width = params.config_handler.input_width;
         init_dataset(&mut params, &filename_dataset);
-        params.config_handler.set_epsilon_w(epsilon_w);
-        params.config_handler.set_epsilon_n(epsilon_n);
+        params.config_handler.epsilon_w = epsilon_w;
+        params.config_handler.epsilon_n = epsilon_n;
         params
             .neuron_handler
             .set_neuron_dependencies_debug(neuron_dependencies);
-        params.system_handler.set_curr_sample_pos(sample_pos);
+        params.system_handler.curr_sample_pos = sample_pos;
         update_weights(&mut params);
 
         let weights_res = params.neuron_handler.get_weight_vec(&input_width);
@@ -1373,8 +1321,8 @@ mod core_tests {
         params
             .neuron_handler
             .set_neuron_dependencies_debug(neuron_dependencies);
-        params.system_handler.set_winner_neuron(winner_neuron_input);
-        params.system_handler.set_second_neuron(second_neuron_input);
+        params.system_handler.winner_neuron = winner_neuron_input;
+        params.system_handler.second_neuron = second_neuron_input;
         // preparation
         //------------------------------------------------------------------------------
         // function call
@@ -1430,8 +1378,8 @@ mod core_tests {
         params
             .neuron_handler
             .set_neuron_dependencies_debug(neuron_dependencies);
-        params.system_handler.set_winner_neuron(winner_neuron_input);
-        params.system_handler.set_second_neuron(second_neuron_input);
+        params.system_handler.winner_neuron = winner_neuron_input;
+        params.system_handler.second_neuron = second_neuron_input;
         // preparation
         //------------------------------------------------------------------------------
         // function call
@@ -1489,14 +1437,14 @@ mod core_tests {
         //------------------------------------------------------------------------------
         // preparation
         load_model(&mut params, filename_input);
-        params.config_handler.set_alpha(alpha);
-        params.config_handler.set_max_neurons(max_neurons);
-        params.system_handler.set_curr_neuron(target_neuron);
-        params.neuron_handler.set_errors_debug(neuron_err);
+        params.config_handler.alpha = alpha;
+        params.config_handler.max_neurons = max_neurons;
+        params.system_handler.curr_neuron = target_neuron;
+        //params.neuron_handler.errors_debug = neuron_err;
 
         params
             .sample_handler
-            .init_data_set(&filename_dataset, params.config_handler.get_input_width());
+            .init_data_set(&filename_dataset, params.config_handler.input_width);
         // preparation
         //------------------------------------------------------------------------------
 
@@ -1508,7 +1456,7 @@ mod core_tests {
         let keys_neuron = params.neuron_handler.get_keys();
         let keys_edge = params.edge_handler.get_keys();
 
-        let input_width = params.config_handler.get_input_width();
+        let input_width = params.config_handler.input_width;
 
         for a in keys_neuron {
             assert!((params.neuron_handler.get_error(*a) - &target_neuron_err[*a]).abs() < 0.0001);
@@ -1566,14 +1514,14 @@ mod core_tests {
         //------------------------------------------------------------------------------
         // preparation
         load_model(&mut params, filename_input);
-        params.config_handler.set_alpha(alpha);
-        params.config_handler.set_max_neurons(max_neurons);
-        params.system_handler.set_curr_neuron(target_neuron);
-        params.neuron_handler.set_errors_debug(neuron_err);
+        params.config_handler.alpha = alpha;
+        params.config_handler.max_neurons = max_neurons;
+        params.system_handler.curr_neuron = target_neuron;
+        //params.neuron_handler.errors_debug = neuron_err;
 
         params
             .sample_handler
-            .init_data_set(&filename_dataset, params.config_handler.get_input_width());
+            .init_data_set(&filename_dataset, params.config_handler.input_width);
         // preparation
         //------------------------------------------------------------------------------
 
@@ -1585,9 +1533,9 @@ mod core_tests {
         let keys_neuron = params.neuron_handler.get_keys();
         let keys_edge = params.edge_handler.get_keys();
 
-        let input_width = params.config_handler.get_input_width();
+        let input_width = params.config_handler.input_width;
         //   let res_w = params.neuron_handler.get_weight_vec(input_width);
-
+println!("keys: {:?}",keys_neuron);
         for a in keys_neuron {
             assert!((params.neuron_handler.get_error(*a) - &target_neuron_err[*a]).abs() < 0.0001);
             let w_temp = params.neuron_handler.get_weights(*a);
@@ -1652,7 +1600,7 @@ mod core_tests {
                 .create_edge(edge_start[a], edge_end[a], edge_age[a]);
         }
 
-        params.config_handler.set_edge_removal_age(edge_removal_age);
+        params.config_handler.edge_removal_age = edge_removal_age;
         // preparation
         //------------------------------------------------------------------------------
 
@@ -1704,10 +1652,10 @@ mod core_tests {
         // validation
         let keys_neuron = params.neuron_handler.get_keys();
 
-        let input_width = params.config_handler.get_input_width();
+        let input_width = params.config_handler.input_width;
         for a in keys_neuron {
             let weights = params.neuron_handler.get_weights(*a);
-            for w in 0..params.config_handler.get_input_width() {
+            for w in 0..params.config_handler.input_width {
                 assert!((weights[w] - weight_target[(a * input_width) + w]).abs() < 0.0001);
             }
         }
