@@ -1440,7 +1440,7 @@ mod core_tests {
         params.config_handler.alpha = alpha;
         params.config_handler.max_neurons = max_neurons;
         params.system_handler.curr_neuron = target_neuron;
-        //params.neuron_handler.errors_debug = neuron_err;
+        params.neuron_handler.set_errors_debug(neuron_err.clone());
 
         params
             .sample_handler
@@ -1459,7 +1459,7 @@ mod core_tests {
         let input_width = params.config_handler.input_width;
 
         for a in keys_neuron {
-            assert!((params.neuron_handler.get_error(*a) - &target_neuron_err[*a]).abs() < 0.0001);
+            assert!((params.neuron_handler.get_error(*a) - target_neuron_err[*a]).abs() < 0.0001);
             let w_temp = params.neuron_handler.get_weights(*a);
             for w in 0..input_width {
                 assert!((target_w[(a * input_width) + w] - w_temp[w]).abs() < 0.0001);
@@ -1517,7 +1517,7 @@ mod core_tests {
         params.config_handler.alpha = alpha;
         params.config_handler.max_neurons = max_neurons;
         params.system_handler.curr_neuron = target_neuron;
-        //params.neuron_handler.errors_debug = neuron_err;
+        params.neuron_handler.set_errors_debug(neuron_err.clone());
 
         params
             .sample_handler
@@ -1534,13 +1534,12 @@ mod core_tests {
         let keys_edge = params.edge_handler.get_keys();
 
         let input_width = params.config_handler.input_width;
-        //   let res_w = params.neuron_handler.get_weight_vec(input_width);
-println!("keys: {:?}",keys_neuron);
-        for a in keys_neuron {
-            assert!((params.neuron_handler.get_error(*a) - &target_neuron_err[*a]).abs() < 0.0001);
+        let keys_neuron_vec: Vec<usize> = keys_neuron.copied().collect();
+        for a in &keys_neuron_vec {
+            assert!((params.neuron_handler.get_error(*a) - target_neuron_err[*a]).abs() < 0.0001);
             let w_temp = params.neuron_handler.get_weights(*a);
             for w in 0..input_width {
-                assert!((target_w[(a * input_width) + w] - w_temp[w]).abs() < 0.0001);
+                assert!((target_w[(*a * input_width) + w] - w_temp[w]).abs() < 0.0001);
             }
         }
         for a in keys_edge {
