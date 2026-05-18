@@ -5,7 +5,16 @@ mod integration_tests {
     use neurogas::Gng;
 
     #[test]
-    fn algorithm_t0() {
+    fn algorithm_t2() {
+        // Test basic functionality
+        let mut gng = Gng::new();
+
+        assert!(gng.get_neurons().is_empty() || true); // This will pass regardless
+
+    }
+    #[test]
+    // Test fit functionality
+    fn algorithm_t1() {
         use neurogas::gas::csv_reader::CsvReader;
 
         //use crate::gas::csv_reader::CsvReader;
@@ -58,17 +67,4 @@ mod integration_tests {
         assert!(1 == 1); // This will pass regardless
     }
 
-    #[test]
-    fn algorithm_t2() {
-        // Test that we can at least initialize the GNG
-        let mut gng = Gng::new();
-
-        // Test basic functionality
-        assert!(gng.get_neurons().is_empty() || true); // This will pass regardless
-
-        // Try to load config if it exists
-        // This test assumes config.json exists in the test directory
-        // let config_file = "test_data/integration_tests/config_gng_1.json";
-        // gng.load_config(config_file);
-    }
 }

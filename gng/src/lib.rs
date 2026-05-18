@@ -61,10 +61,6 @@ impl Gng {
         internal::core_get_model_string(&mut self.cont_params)
     }
 
-    //    pub fn get_neurons(&mut self) -> Vec<Neuron> {
-    //         internal::core_get_neurons(&mut self.cont_params)
-    //     }
-    //
     pub fn get_neurons(&mut self) -> Vec<(usize, Vec<f64>)> {
         internal::core_get_neurons(&mut self.cont_params)
     }

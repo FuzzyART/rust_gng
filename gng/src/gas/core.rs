@@ -45,26 +45,19 @@ pub fn init_step(params: &mut Handler) {
     init_training(params);
     shuffle_dataset(params);
     params.system_handler.train_initiated = true;
-    println!("num samples :{}", params.sample_handler.get_num_samples());
     params.system_handler.curr_phase = Phase::StartNewEpoch;
 }
 
 //--------------------------------------------------------------------------------------------------
 pub fn fit_step(params: &mut Handler) {
-    println!("epoch: {}", params.system_handler.curr_epoch);
-    println!("max max_neurons {}", params.config_handler.max_neurons);
 
-    //========================================
-    //for a in 0..10 {
-    // if curr_phase == Phase::StartNewEpoch {
     shuffle_dataset(params);
     let curr_epoch = params.system_handler.curr_epoch;
     params.system_handler.curr_epoch = curr_epoch + 1;
-    //}
 
     params.system_handler.curr_phase = Phase::NormalIteration;
     while params.system_handler.curr_phase != Phase::StartNewEpoch {
-        //if curr_phase == Phase::NormalIteration {
+
         select_sample(params);
         calc_neuron_distances(params);
         calc_nearest_neurons(params);
@@ -78,25 +71,22 @@ pub fn fit_step(params: &mut Handler) {
         delete_old_edges(params);
         remove_unconnected_neurons(params);
 
-        if params.system_handler.curr_iteration % params.config_handler.neuron_creation_interval
-            == 0
+        if params.system_handler.curr_iteration %
+        params.config_handler.neuron_creation_interval == 0
         {
             create_neuron(params);
         }
 
         decrease_error_global(params);
-        //}
 
         params.system_handler.curr_iteration += 1;
 
-        // update_phase(params, &mut params.system_handlercurr_phase);
         update_phase(params);
     }
 }
 //--------------------------------------------------------------------------------------------------
 pub fn fit(params: &mut Handler) {
     // init_run
-    //let mut curr_phase = Phase::StartNewEpoch;
     params.system_handler.curr_phase = Phase::StartNewEpoch;
     init_training(params);
     shuffle_dataset(params);
@@ -117,15 +107,13 @@ pub fn fit(params: &mut Handler) {
             calc_neuron_dependencies(params);
             increase_edge_age(params);
             add_error_to_winner_neuron(params);
-
             update_weights(params);
-
             create_edge(params);
             delete_old_edges(params);
             remove_unconnected_neurons(params);
 
-            if params.system_handler.curr_iteration % params.config_handler.neuron_creation_interval
-                == 0
+            if params.system_handler.curr_iteration %
+            params.config_handler.neuron_creation_interval == 0
             {
                 create_neuron(params);
             }
@@ -143,14 +131,11 @@ pub fn fit(params: &mut Handler) {
 
 //--------------------------------------------------------------------------------------------------
 pub fn update_phase(params: &mut Handler) {
-    //let curr_phase = params.system_handler.curr_phase;
     if params.system_handler.train_initiated == true {
-        //params.system_handler.set_curr_phase(Phase::NormalIteration);
         params.system_handler.curr_phase = Phase::NormalIteration;
     };
     if params.system_handler.last_sample_reached == true {
         params.system_handler.last_sample_reached = false;
-        //params.system_handler.set_curr_phase(Phase::StartNewEpoch);
         params.system_handler.curr_phase = Phase::StartNewEpoch;
     }
 }
@@ -195,7 +180,6 @@ pub fn load_model(params: &mut Handler, filename_model: String) {
 //--------------------------------------------------------------------------------------------------
 pub fn configure_model(filename_input: String, gng_params: &mut Handler) {
     let reader_input = json_reader::read_file(&filename_input).unwrap();
-    //gng_params.config_handler.create_config();
     gng_params.config_handler.input_width =
         json_reader::read_val_usize(&reader_input, "config", "input_width");
     gng_params.config_handler.weight_rng_min =
