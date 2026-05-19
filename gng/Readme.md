@@ -44,22 +44,54 @@ fn main() {
     const OUTPUT_FILE: &str = "/tmp/output.json";
     let mut gng = Gng::new();
 
-    gng.set_parameters(
-        2,      // input_width
-        -1.0,   // weight_rng_min
-        1.0,    // weight_rng_max
-        50,     // edge_removal_age
-        200,    // neuron_creation_interval
-        10000,  // max_train_iterations
-        0.096,  // target_error
-        0.1,    // epsilon_w
-        0.006,  // epsilon_n
-        0.5,    // alpha
-        0.995,  // beta
-    );
+        let input_width = 2;
+        let weight_rng_min = -1.0;
+        let weight_rng_max = 1.0;
+        let edge_removal_age = 50;
+        let neuron_creation_interval = 200;
+        let max_epochs = 30;
+        let max_neurons = 50;
+        let target_error = 0.096;
+        let epsilon_w = 0.1;
+        let epsilon_n = 0.006;
+        let alpha = 0.5;
+        let beta = 0.995;
+
+        ctx.set_parameters(
+            input_width,
+            weight_rng_min,
+            weight_rng_max,
+            edge_removal_age,
+            neuron_creation_interval,
+            max_epochs,
+            max_neurons,
+            target_error,
+            epsilon_w,
+            epsilon_n,
+            alpha,
+            beta,
+        );
 
     gng.init_dataset(DATA_FILE);
+
+
+   //----------------------------------------
+   // for complete training 
     gng.fit();
+    
+    //----------------------------------------
+    // for training n epochs
+    ctx.init_step();
+    ctx.fit_step();
+    ctx.get_neurons();
+    ctx.get_edges();
+    // do something else
+    ctx.fit_step();
+    ctx.get_neurons();
+    ctx.get_edges();
+    // ...
+
+    
     gng.save_model_json(OUTPUT_FILE);
 }
 
