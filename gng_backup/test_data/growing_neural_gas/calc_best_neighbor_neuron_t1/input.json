@@ -1,0 +1,8 @@
+{
+  "config":{
+        "num_neurons": 5,
+
+    "neuron_error" :         [[ 0.8, 1.0, 0.5, 1.2, 0.1 ]],
+    "neighbor_neurons" : [[ 4,2,3 ]] 
+  }
+}

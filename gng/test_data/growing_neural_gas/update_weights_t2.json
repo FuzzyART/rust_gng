@@ -1,0 +1,49 @@
+{
+    "variables":{
+        "__C_variables__":"__C_variables__",
+        "inputWidth" : 2,
+        "numNeurons" :7,
+        "numSamples" : 3,
+        "maxEdges" : 5
+    },
+
+    "input":{
+        "smpPos" : 1,
+        "winnerNeurPos" : 4,
+
+    "edge_start": [[0,0,0,0,1,1,2,2,3,5]],
+    "edge_end":   [[1,2,3,4,2,4,4,5,4,6]],
+    "edge_age":      [[1,1,1,1,1,1,1,1,1,1]],
+
+        "epsilonW" : 0.5,
+        "epsilonN" : 0.1,
+        "trainIterations" : 8,
+        "inputWidth" : 2,
+
+        "W_In" : [[0.1,0.2], 
+                   [1.1,1.2], 
+                   [2.1,2.2], 
+                   [3.1,3.2], 
+                   [4.1,4.2], 
+                   [5.1,5.2], 
+                   [6.1,6.2]
+                ],
+
+        "inputSet_In" : [[0.5,0.6],
+                          [1.5,1.6],
+                          [2.5,2.6]
+                      ],
+        "orderPosC" : [[4,3,6,2,0,5,1]]
+
+    },
+    "output":{
+        "W_Target" : [[0.2,0.3], 
+                       [1.1,1.2], 
+                       [2.0,2.1], 
+                       [2.9,3.0], 
+                       [2.6,2.7], 
+                       [5.1,5.2], 
+                       [6.1,6.2]
+                ]
+    }
+}

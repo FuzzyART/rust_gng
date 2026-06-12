@@ -1,0 +1,14 @@
+#!/bin/bash
+cwd=$PWD
+
+# Build Rust source
+nix develop --command bash -c "cd gng && \
+                 cargo clean && \
+                 cargo build --release"
+
+# Run Codium
+nix develop --command bash -c  "cd gng && maturin build --release
+cd .. &&
+source .venv/bin/activate &&
+pip install gng/target/wheels/gng-0.1.1-cp312-cp312-linux_x86_64.whl"
+

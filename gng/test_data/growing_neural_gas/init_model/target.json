@@ -1,0 +1,18 @@
+{
+  "target":{
+    "w" : [[-0.545585138363019, 1.8781071701150283], 
+      [ -0.6126514220729029, 0.22607109139404713]
+    ],
+    "err":[[0.0,0.0]],
+    "distance"            : [[0.0,0.0]],
+    "distance_order"      : [[0,0]],
+    "distance_ranking"    : [[0,0]],
+    "neuron_err_ranking"  : [[0,0]],
+    "neuron_dependencies" : [[0,0]],
+    "edge_start":[[0]],
+    "edge_end":[[1]],
+    "edge_age":[[0]]
+
+
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "input":{
+    "neuron_err_ranking" : [[ 3, 1, 0, 2, 4 ]],
+    "neighbor_neurons" : [[ 4,2,3 ]] 
+  },
+  "output":{
+    "best_neighbor_neuron" : 3,
+    "neuron_err_ranking" : [[ 3, 1, 0, 2, 4 ]],
+    "neighbor_neurons" : [[ 4,2,3 ]] 
+  }
+}
