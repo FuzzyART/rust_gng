@@ -9,5 +9,4 @@ result
 .devcontainer/
 .python-version
 
-*.csv
 rust_gng.git
