@@ -1,0 +1,7 @@
+[package]
+name = "gng_test_app_1"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+neurogas = {version = "0.0.1"}

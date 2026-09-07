@@ -1,0 +1,6 @@
+[submodule "dataset_plotter"]
+	path = dataset_plotter
+	url = git@gitlab.com:br34ch/project_flood/dataset_plotter.git
+[submodule "dataset_creator"]
+	path = dataset_creator
+	url = git@gitlab.com:br34ch/project_flood/dataset_creator.git
