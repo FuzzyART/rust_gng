@@ -1,98 +1,121 @@
-GNG — Rust Machine Learning Library
+# NeuroGas — Experimental ML Core
 
-Experimental machine learning library written in Rust.
+> An experimental Rust implementation of a modular clustering algorithm, initially grounded in Growing Neural Gas.
 
-Overview
+## Overview
 
-GNG is an experimental machine learning library focused on implementing and exploring ML algorithms in Rust.
+NeuroGas is an experimental machine learning core written in Rust.
 
-The project is primarily concerned with the core library and its implementation, rather than applications, visualization, or data-processing tooling.
+The project starts from **Growing Neural Gas (GNG)** as a known mathematical baseline. The implementation is being structured around independently replaceable processing steps, allowing individual parts of the algorithm to be investigated, measured, and eventually replaced with alternative approaches.
 
-The repository is intentionally kept small and focused. Applications and supporting tooling that consume GNG are maintained separately.
+The long-term goal is to explore a clustering approach that is better suited to parallel processing and whose behavior can be visualized as a system of interacting particles rather than a conventional graph-based clustering algorithm.
 
-Project Status
+The algorithm itself is still under development.
 
-This is an experimental and evolving project.
+## Current Approach
 
-- 🦀 Core implementation written in Rust
-- 🧪 Tests included with the library
-- 🚧 APIs may change
-- 🚧 Not production-ready
+The implementation is being decomposed into modular processing steps, including:
 
-The current priority is building a solid understanding of the algorithms and their implementation rather than maintaining a stable public API.
+* Weight calculation
+* Distance calculation
+* Neighbor search
+* Node adaptation
+* Neighborhood updates
+* Node insertion and removal
+* Clustering behavior
+
+The first objective is **mathematical equivalence with GNG**.
+
+Once that baseline is established, individual processing steps can be replaced or redesigned independently. This provides a controlled way to experiment with alternative approaches while retaining a known reference implementation.
+
+## Project Status
+
+🚧 **Highly experimental**
+
+The project is currently focused on establishing the core algorithm and its mathematical behavior.
+
+At this stage:
+
+* GNG serves as the initial reference algorithm
+* The implementation is written entirely in Rust
+* Core processing steps are being modularized
+* Tests are used to verify algorithmic behavior
+* APIs and internal architecture may change substantially
+* No production guarantees are made
+
+The architecture is expected to evolve alongside the algorithm.
 
 ## Building
 
-Build the library with Cargo:
+Build the project with Cargo:
 
 ```bash
-cd gng
 cargo build
 ```
 
 For an optimized release build:
 
 ```bash
-cd gng
 cargo build --release
 ```
 
-### Testing
+## Testing
 
 Run the test suite with:
 
 ```bash
-cd gng
 cargo test
 ```
 
-To run tests with output:
+To see test output:
 
 ```bash
-cd gng
 cargo test -- --nocapture
 ```
 
-### Development
+## Development Philosophy
 
-The project uses the standard Rust toolchain and Cargo for development and dependency management.
+### Establish a known baseline first
 
-A typical development workflow is:
+GNG provides a well-understood reference point. Before introducing fundamentally different behavior, the implementation should reproduce the relevant mathematical properties of GNG.
 
-cd gng
-cargo build
-cargo test
+### Keep processing steps replaceable
 
-## Repository Scope
+Operations such as weighting, distance evaluation, and neighbor search should remain sufficiently isolated that alternative implementations can be investigated independently.
 
-This repository contains the GNG library itself.
+### Prefer experimentation over premature abstraction
 
-Applications, experiments, visualization, data generation, and other supporting tools are intentionally kept outside this repository to keep the core library focused.
+The architecture exists to support experimentation with the algorithm. Abstractions should emerge from the requirements of the implementation rather than being introduced for architectural completeness alone.
 
-## Goals
-- Explore machine learning algorithms in Rust
-- Build a maintainable and testable ML core
-- Learn and experiment with systems-level ML implementation
-- Keep the core library independent from application-specific tooling
+### Treat parallelism as a first-class concern
 
-## Non-Goals
+A major motivation for the project is exploring whether clustering behavior can be expressed through operations that are naturally amenable to parallel execution.
 
-At this stage, the project does not aim to provide:
+## Long-Term Direction
 
-- A stable public API
-- Production guarantees
-- Backwards compatibility
-- A complete ML framework
-- Application-level tooling or visualization
+The intended direction is an algorithm that differs substantially from GNG while retaining some of the useful properties of competitive and topology-forming clustering algorithms.
 
-These may change as the project develops.
+One particularly interesting target is a system whose state and evolution can be visualized as a **particle swarm**: a collection of interacting points that move, adapt, and organize themselves according to local information.
+
+The exact algorithm is intentionally not defined yet.
+
+The current implementation is the experimental foundation for discovering it.
+
+## Scope
+
+This crate contains the machine learning core and its tests.
+
+Applications, visualization, data generation, and other supporting tooling are intentionally kept separate from the core implementation. This allows the algorithm and its tests to evolve independently from the systems used to consume and visualize its output.
 
 ## Contributing
 
-This is primarily a personal experimental project, but issues, feedback, and discussion are welcome.
+This is primarily an experimental research project.
 
-The codebase and APIs may change significantly as development continues.
+The architecture, algorithms, and APIs may change significantly as new ideas are tested. Technical feedback, discussion, and issues are welcome.
 
 ## Disclaimer
 
-This project is experimental and actively evolving. Some implementations and design decisions are exploratory and may change as the project develops.
+This project is experimental research software.
+
+It should not currently be considered a finished algorithm, stable ML framework, or production-ready library. Its purpose is to explore, test, and iteratively develop ideas around clustering, modular algorithm design, and parallel machine learning.
+
