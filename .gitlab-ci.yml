@@ -14,13 +14,11 @@ default:
 build:
   stage: build
   script:
-    - cd gng
     - cargo build --release
 
 test:
   stage: test
   script:
-    - cd gng
     - cargo test --all --release
   dependencies:
     - build
