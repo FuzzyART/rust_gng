@@ -15,32 +15,6 @@ use rand::seq::SliceRandom;
 use serde_json::{json, Value};
 
 use crate::gas::gng_system::Gng_System;
-//pub struct Handler {
-//    pub neuron_handler: NeuronHandler,
-//    pub edge_handler: EdgeHandler,
-//
-//    pub config_handler: Config,
-//    pub system_handler: System,
-//    pub sample_handler: SampleHandler,
-//    pub rng_manager: RngManager,
-//}
-//impl Handler {
-//    pub fn init() -> Self {
-//        Self {
-//            neuron_handler: NeuronHandler::init(),
-//            edge_handler: EdgeHandler::init(),
-//
-//            config_handler: Config::init(),
-//            system_handler: System::init(),
-//            sample_handler: SampleHandler::init(),
-//            rng_manager: RngManager::init(123),
-//        }
-//    }
-//    pub fn create_system(&mut self) {
-//        Self::init();
-//        self.rng_manager.seed_rng(1234567890);
-//    }
-//}
 //--------------------------------------------------------------------------------------------------
 pub fn init_step(params: &mut Gng_System) {
     //   let mut curr_phase = Phase::StartNewEpoch;
