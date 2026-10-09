@@ -1,4 +1,4 @@
-use neurogas::gas::csv_reader::CsvReader;
+use neurogas::aux::csv_reader::CsvReader;
 use neurogas::Gng;
 
 fn main() {

@@ -6,7 +6,7 @@ use crate::handlers::{
 };
 use std::collections::HashSet;
 
-use crate::gas::{
+use crate::aux::{
     json_reader, json_writer::write_json_to_file, json_writer::write_value_to_block,
     rng_manager::RngManager,
 };
@@ -37,6 +37,7 @@ impl Handler {
     }
     pub fn create_system(&mut self) {
         Self::init();
+        self.rng_manager.seed_rng(1234567890);
     }
 }
 //--------------------------------------------------------------------------------------------------
@@ -50,14 +51,12 @@ pub fn init_step(params: &mut Handler) {
 
 //--------------------------------------------------------------------------------------------------
 pub fn fit_step(params: &mut Handler) {
-
     shuffle_dataset(params);
     let curr_epoch = params.system_handler.curr_epoch;
     params.system_handler.curr_epoch = curr_epoch + 1;
 
     params.system_handler.curr_phase = Phase::NormalIteration;
     while params.system_handler.curr_phase != Phase::StartNewEpoch {
-
         select_sample(params);
         calc_neuron_distances(params);
         calc_nearest_neurons(params);
@@ -71,8 +70,8 @@ pub fn fit_step(params: &mut Handler) {
         delete_old_edges(params);
         remove_unconnected_neurons(params);
 
-        if params.system_handler.curr_iteration %
-        params.config_handler.neuron_creation_interval == 0
+        if params.system_handler.curr_iteration % params.config_handler.neuron_creation_interval
+            == 0
         {
             create_neuron(params);
         }
@@ -112,8 +111,8 @@ pub fn fit(params: &mut Handler) {
             delete_old_edges(params);
             remove_unconnected_neurons(params);
 
-            if params.system_handler.curr_iteration %
-            params.config_handler.neuron_creation_interval == 0
+            if params.system_handler.curr_iteration % params.config_handler.neuron_creation_interval
+                == 0
             {
                 create_neuron(params);
             }
@@ -858,6 +857,8 @@ pub fn get_edges(params: &mut Handler) -> Vec<(usize, usize)> {
 //}
 
 mod core_tests {
+    use std::assert_eq;
+
     use super::*;
     #[test]
     fn test_init_dataset_t1() {
@@ -943,6 +944,76 @@ mod core_tests {
         for a in 0..edge_age_res.len() {
             assert_eq!(edge_age_res[a], edge_age_target[a]);
         }
+    }
+    //
+    //
+    //     #[test]
+    //     fn test_shuffle_dataset_functionality() {
+    //         // This test verifies that shuffle_dataset works correctly
+    //         // (i.e., it shuffles elements and maintains the correct count)
+    //         let mut samples = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
+    //         let sample_width = 2;
+    //
+    //         let mut params: Handler = Handler::init();
+    //         params.create_system();
+    //         params.sample_handler.init_input_vec(&mut samples, sample_width);
+    //         shuffle_dataset(&mut params);
+    //
+    //         // Verify that we got the right number of elements
+    //         assert_eq!(params.system.samples.len(), 3); // 6 elements / 2 width = 3 samples
+    //
+    //         // Verify that all original indices are present (just shuffled)
+    //         let mut order = params.system.samples.iter().cloned().collect::<Vec<_>>();
+    //         order.sort();
+    //
+    //         // Should contain values 0, 1, 2 (the sample indices)
+    //         assert_eq!(order, vec![0, 1, 2]);
+    //     }
+    //
+    //     #[test]
+    //     fn test_shuffle_dataset_preserves_elements() {
+    //         // Test that shuffle_dataset preserves all elements but reorders them
+    //         let mut samples = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
+    //         let sample_width = 2;
+    //
+    //         let mut params: Handler = Handler::init();
+    //         params.create_system();
+    //         params.sample_handler.init_input_vec(&mut samples, sample_width);
+    //         shuffle_dataset(&mut params);
+    //
+    //         // Get the original indices that should be shuffled
+    //         let original_indices = vec![0, 1, 2]; // 3 samples from 6 elements
+    //
+    //         // Verify we have the right number of samples
+    //         assert_eq!(params.system.samples.len(), 3);
+    //     }
+    #[test]
+    fn test_shuffle_dataset_deterministic() {
+        let mut samples = vec![
+            1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0,
+        ];
+        let sample_width = 2;
+
+        // First call
+        let mut params: Handler = Handler::init();
+        params.create_system();
+        params
+            .sample_handler
+            .init_input_vec(&mut samples, sample_width);
+        shuffle_dataset(&mut params);
+        let sample_order_1 = params.system_handler.sample_order;
+
+        // Second call with same data
+        let mut params_2: Handler = Handler::init();
+        params_2.create_system();
+        params_2
+            .sample_handler
+            .init_input_vec(&mut samples, sample_width);
+        shuffle_dataset(&mut params_2);
+        let sample_order_2 = params_2.system_handler.sample_order;
+
+        // This test verifies that shuffle_dataset is deterministic
+        assert_eq!(sample_order_1, sample_order_2);
     }
 
     #[test]

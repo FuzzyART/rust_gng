@@ -1,5 +1,5 @@
+use crate::aux::json_reader;
 use crate::ecs::manager;
-use crate::gas::json_reader;
 
 //==================================================================================================
 // Config Struct

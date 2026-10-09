@@ -1,5 +1,5 @@
 #![allow(warnings)]
-pub mod data_structures;
+pub mod aux;
 pub mod ecs;
 pub mod gas;
 pub mod handlers;
