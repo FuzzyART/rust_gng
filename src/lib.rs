@@ -12,17 +12,18 @@ pub mod internal {
         init_dataset as core_init_dataset, init_dataset_vec as core_init_dataset_vec,
         init_step as core_init_step, load_config as core_load_config,
         save_model_json as core_save_model_json, set_input_width as core_set_input_width,
-        set_parameters as core_set_parameters, Handler,
+        set_parameters as core_set_parameters, 
     };
+    pub use crate::gas::gng_system::Gng_System;
 }
 
 pub struct Gng {
-    cont_params: internal::Handler,
+    cont_params: internal::Gng_System,
 }
 
 impl Default for Gng {
     fn default() -> Self {
-        let mut cont_params = internal::Handler::init();
+        let mut cont_params = internal::Gng_System::init();
         cont_params.create_system();
         Self { cont_params }
     }

@@ -14,34 +14,35 @@ use crate::aux::{
 use rand::seq::SliceRandom;
 use serde_json::{json, Value};
 
-pub struct Handler {
-    pub neuron_handler: NeuronHandler,
-    pub edge_handler: EdgeHandler,
-
-    pub config_handler: Config,
-    pub system_handler: System,
-    pub sample_handler: SampleHandler,
-    pub rng_manager: RngManager,
-}
-impl Handler {
-    pub fn init() -> Self {
-        Self {
-            neuron_handler: NeuronHandler::init(),
-            edge_handler: EdgeHandler::init(),
-
-            config_handler: Config::init(),
-            system_handler: System::init(),
-            sample_handler: SampleHandler::init(),
-            rng_manager: RngManager::init(123),
-        }
-    }
-    pub fn create_system(&mut self) {
-        Self::init();
-        self.rng_manager.seed_rng(1234567890);
-    }
-}
+use crate::gas::gng_system::Gng_System;
+//pub struct Handler {
+//    pub neuron_handler: NeuronHandler,
+//    pub edge_handler: EdgeHandler,
+//
+//    pub config_handler: Config,
+//    pub system_handler: System,
+//    pub sample_handler: SampleHandler,
+//    pub rng_manager: RngManager,
+//}
+//impl Handler {
+//    pub fn init() -> Self {
+//        Self {
+//            neuron_handler: NeuronHandler::init(),
+//            edge_handler: EdgeHandler::init(),
+//
+//            config_handler: Config::init(),
+//            system_handler: System::init(),
+//            sample_handler: SampleHandler::init(),
+//            rng_manager: RngManager::init(123),
+//        }
+//    }
+//    pub fn create_system(&mut self) {
+//        Self::init();
+//        self.rng_manager.seed_rng(1234567890);
+//    }
+//}
 //--------------------------------------------------------------------------------------------------
-pub fn init_step(params: &mut Handler) {
+pub fn init_step(params: &mut Gng_System) {
     //   let mut curr_phase = Phase::StartNewEpoch;
     init_training(params);
     shuffle_dataset(params);
@@ -50,7 +51,7 @@ pub fn init_step(params: &mut Handler) {
 }
 
 //--------------------------------------------------------------------------------------------------
-pub fn fit_step(params: &mut Handler) {
+pub fn fit_step(params: &mut Gng_System) {
     shuffle_dataset(params);
     let curr_epoch = params.system_handler.curr_epoch;
     params.system_handler.curr_epoch = curr_epoch + 1;
@@ -84,7 +85,7 @@ pub fn fit_step(params: &mut Handler) {
     }
 }
 //--------------------------------------------------------------------------------------------------
-pub fn fit(params: &mut Handler) {
+pub fn fit(params: &mut Gng_System) {
     // init_run
     params.system_handler.curr_phase = Phase::StartNewEpoch;
     init_training(params);
@@ -129,7 +130,7 @@ pub fn fit(params: &mut Handler) {
 }
 
 //--------------------------------------------------------------------------------------------------
-pub fn update_phase(params: &mut Handler) {
+pub fn update_phase(params: &mut Gng_System) {
     if params.system_handler.train_initiated == true {
         params.system_handler.curr_phase = Phase::NormalIteration;
     };
@@ -139,7 +140,7 @@ pub fn update_phase(params: &mut Handler) {
     }
 }
 
-pub fn start_new_epoch(params: &mut Handler) {
+pub fn start_new_epoch(params: &mut Gng_System) {
     shuffle_dataset(params);
     let curr_epoch = params.system_handler.curr_epoch;
     params.system_handler.curr_epoch = curr_epoch + 1;
@@ -147,7 +148,7 @@ pub fn start_new_epoch(params: &mut Handler) {
 
 //--------------------------------------------------------------------------------------------------
 
-pub fn load_model(params: &mut Handler, filename_model: String) {
+pub fn load_model(params: &mut Gng_System, filename_model: String) {
     let reader_input = json_reader::read_file(&filename_model).unwrap();
 
     let weights = json_reader::read_array_f64(&reader_input, "gng_model", "weights");
@@ -177,7 +178,7 @@ pub fn load_model(params: &mut Handler, filename_model: String) {
     }
 }
 //--------------------------------------------------------------------------------------------------
-pub fn configure_model(filename_input: String, gng_params: &mut Handler) {
+pub fn configure_model(filename_input: String, gng_params: &mut Gng_System) {
     let reader_input = json_reader::read_file(&filename_input).unwrap();
     gng_params.config_handler.input_width =
         json_reader::read_val_usize(&reader_input, "config", "input_width");
@@ -188,7 +189,7 @@ pub fn configure_model(filename_input: String, gng_params: &mut Handler) {
 }
 
 pub fn set_parameters(
-    gng_params: &mut Handler,
+    gng_params: &mut Gng_System,
     input_width: usize,
     weight_rng_min: f64,
     weight_rng_max: f64,
@@ -217,12 +218,12 @@ pub fn set_parameters(
         beta,
     );
 }
-pub fn set_input_width(gng_params: &mut Handler, input_width: usize) {
+pub fn set_input_width(gng_params: &mut Gng_System, input_width: usize) {
     gng_params.config_handler.input_width = input_width;
 }
 //--------------------------------------------------------------------------------------------------
 
-pub fn init_model(params: &mut Handler) {
+pub fn init_model(params: &mut Gng_System) {
     let width = params.config_handler.input_width;
     let rng_min = params.config_handler.weight_rng_min;
     let rng_max = params.config_handler.weight_rng_max;
@@ -239,7 +240,7 @@ pub fn init_model(params: &mut Handler) {
 }
 
 //--------------------------------------------------------------------------------------------------
-pub fn calc_neuron_distances(params: &mut Handler) {
+pub fn calc_neuron_distances(params: &mut Gng_System) {
     // input: config: input_width
     //                weight
     //        system: curr_sample_pos
@@ -275,7 +276,7 @@ pub fn calc_neuron_distances(params: &mut Handler) {
 
 //--------------------------------------------------------------------------------------------------
 /// Calculates the 2 neurons closest to the input
-pub fn calc_nearest_neurons(params: &mut Handler) {
+pub fn calc_nearest_neurons(params: &mut Gng_System) {
     let keys = params.neuron_handler.get_keys();
 
     let mut first_min = f64::INFINITY;
@@ -316,7 +317,7 @@ pub fn calc_nearest_neurons(params: &mut Handler) {
 /// 2: neighbor of winner
 /// 0: irrelevant
 
-pub fn calc_neuron_dependencies(params: &mut Handler) {
+pub fn calc_neuron_dependencies(params: &mut Gng_System) {
     // params
     let num_neurons = params.neuron_handler.get_num_neurons();
 
@@ -353,7 +354,7 @@ pub fn calc_neuron_dependencies(params: &mut Handler) {
 }
 
 //--------------------------------------------------------------------------------------------------
-pub fn update_weights(params: &mut Handler) {
+pub fn update_weights(params: &mut Gng_System) {
     // params
     let input_width = params.config_handler.input_width;
     let epsilon_w: f64 = params.config_handler.epsilon_w;
@@ -401,14 +402,14 @@ pub fn update_weights(params: &mut Handler) {
 }
 
 //--------------------------------------------------------------------------------------------------
-pub fn get_winner_edges(params: &mut Handler) -> Vec<usize> {
+pub fn get_winner_edges(params: &mut Gng_System) -> Vec<usize> {
     let winner_neuron = params.system_handler.winner_neuron;
 
     return params.edge_handler.get_connected_edges(winner_neuron);
 }
 //--------------------------------------------------------------------------------------------------
 
-pub fn calc_neighbor_neuron_vec_max_err(params: &mut Handler) {
+pub fn calc_neighbor_neuron_vec_max_err(params: &mut Gng_System) {
     // input
     //  edge: edge start
     //  edge: edge end
@@ -436,7 +437,7 @@ pub fn calc_neighbor_neuron_vec_max_err(params: &mut Handler) {
 }
 //--------------------------------------------------------------------------------------------------
 
-pub fn select_sample(params: &mut Handler) {
+pub fn select_sample(params: &mut Gng_System) {
     let sample_order_position = params.system_handler.sample_order_position.clone();
     let sample_order = params.system_handler.sample_order.clone();
     let len: usize = sample_order.len();
@@ -450,7 +451,7 @@ pub fn select_sample(params: &mut Handler) {
 }
 //--------------------------------------------------------------------------------------------------
 // shuffle dataset
-pub fn shuffle_dataset(params: &mut Handler) {
+pub fn shuffle_dataset(params: &mut Gng_System) {
     let mut res: Vec<usize> = Vec::new();
     let keys = params.sample_handler.get_keys();
     for a in keys {
@@ -466,7 +467,7 @@ pub fn shuffle_dataset(params: &mut Handler) {
 
 //--------------------------------------------------------------------------------------------------
 
-pub fn decrease_error_global(params: &mut Handler) {
+pub fn decrease_error_global(params: &mut Gng_System) {
     let keys = params.neuron_handler.get_keys();
     let d = params.config_handler.beta;
 
@@ -487,7 +488,7 @@ pub fn decrease_error_global(params: &mut Handler) {
     }
 }
 //--------------------------------------------------------------------------------------------------
-pub fn increase_edge_age(params: &mut Handler) {
+pub fn increase_edge_age(params: &mut Gng_System) {
     let winner_neuron = params.system_handler.winner_neuron;
 
     let keys = params.edge_handler.get_keys();
@@ -506,7 +507,7 @@ pub fn increase_edge_age(params: &mut Handler) {
     }
 }
 //--------------------------------------------------------------------------------------------------
-pub fn add_error_to_winner_neuron(params: &mut Handler) {
+pub fn add_error_to_winner_neuron(params: &mut Gng_System) {
     let sample_pos = params.system_handler.curr_sample_pos;
     let input_width = params.config_handler.input_width;
 
@@ -531,7 +532,7 @@ pub fn add_error_to_winner_neuron(params: &mut Handler) {
 }
 //--------------------------------------------------------------------------------------------------
 // create_neuron and sub gas
-pub fn create_neuron(params: &mut Handler) {
+pub fn create_neuron(params: &mut Gng_System) {
     if params.neuron_handler.get_num_neurons() < params.config_handler.max_neurons {
         //------------------------------------------------------------------------------
         // get neuron with biggest error
@@ -564,7 +565,7 @@ pub fn create_neuron(params: &mut Handler) {
 }
 //---------------------------------------
 
-pub fn calc_neighbor_neuron_max_err(params: &mut Handler) {
+pub fn calc_neighbor_neuron_max_err(params: &mut Gng_System) {
     let neighbor_neurons = &params.system_handler.neighbor_neuron_vec_max_err;
     let mut max_err_neighbor: f64 = *params.neuron_handler.get_error(neighbor_neurons[0]);
     let mut max_error_neighbor_pos = neighbor_neurons[0];
@@ -578,7 +579,7 @@ pub fn calc_neighbor_neuron_max_err(params: &mut Handler) {
 
     params.system_handler.neighbor_neuron_max_err = max_error_neighbor_pos;
 }
-pub fn calc_max_error_neuron(params: &mut Handler) {
+pub fn calc_max_error_neuron(params: &mut Gng_System) {
     let keys = params.neuron_handler.get_all_neuron_ids();
     // Handle empty collection
     if keys.is_empty() {
@@ -599,14 +600,14 @@ pub fn calc_max_error_neuron(params: &mut Handler) {
 }
 
 //--------------------------------------------------------------------------------------------------
-pub fn delete_old_edges(params: &mut Handler) {
+pub fn delete_old_edges(params: &mut Gng_System) {
     let edges = delete_old_edges_mark(params);
 
     for a in edges {
         params.edge_handler.remove_edge(a);
     }
 }
-fn delete_old_edges_mark(params: &mut Handler) -> Vec<usize> {
+fn delete_old_edges_mark(params: &mut Gng_System) -> Vec<usize> {
     let keys = params.edge_handler.get_keys();
     let max_age = params.config_handler.edge_removal_age;
     let mut marked_edges: Vec<usize> = Vec::new();
@@ -618,7 +619,7 @@ fn delete_old_edges_mark(params: &mut Handler) -> Vec<usize> {
     marked_edges
 }
 //--------------------------------------------------------------------------------------------------
-pub fn remove_unconnected_neurons(params: &mut Handler) {
+pub fn remove_unconnected_neurons(params: &mut Gng_System) {
     // Step 1: Get all edge keys
     let edge_keys = params.edge_handler.get_keys();
 
@@ -649,7 +650,7 @@ pub fn remove_unconnected_neurons(params: &mut Handler) {
 }
 
 //--------------------------------------------------------------------------------------------------
-pub fn create_edge(params: &mut Handler) {
+pub fn create_edge(params: &mut Gng_System) {
     // examine, if winner and second neuron are connected
     let winner_neuron: usize = params.system_handler.winner_neuron;
     let second_neuron: usize = params.system_handler.second_neuron;
@@ -675,7 +676,7 @@ pub fn create_edge(params: &mut Handler) {
     }
 }
 //--------------------------------------
-pub fn remove_edge(params: &mut Handler) {
+pub fn remove_edge(params: &mut Gng_System) {
     let neuron_1 = params.system_handler.neuron_max_err;
     let neuron_2 = params.system_handler.neighbor_neuron_max_err;
     let keys: Vec<usize> = params.edge_handler.get_keys().copied().collect();
@@ -689,7 +690,7 @@ pub fn remove_edge(params: &mut Handler) {
         }
     }
 }
-pub fn insert_new_neuron(params: &mut Handler) {
+pub fn insert_new_neuron(params: &mut Gng_System) {
     let neuron_1 = params.system_handler.neuron_max_err;
     let neuron_2 = params.system_handler.neighbor_neuron_max_err;
     let input_width = params.config_handler.input_width;
@@ -712,25 +713,25 @@ pub fn insert_new_neuron(params: &mut Handler) {
     params.neuron_handler.set_error(new_id, err_new);
 }
 
-pub fn init_dataset(params: &mut Handler, filename_dataset: &String) {
+pub fn init_dataset(params: &mut Gng_System, filename_dataset: &String) {
     let input_width = params.config_handler.input_width;
     params
         .sample_handler
         .init_data_set(&filename_dataset, input_width);
 }
 
-pub fn init_dataset_vec(params: &mut Handler, data_vec: &Vec<f64>) {
+pub fn init_dataset_vec(params: &mut Gng_System, data_vec: &Vec<f64>) {
     let input_width = params.config_handler.input_width;
     params.sample_handler.init_input_vec(&data_vec, input_width);
 }
 
 //--------------------------------------------------------------------------------------------------
-pub fn load_config(params: &mut Handler, filename_config: &String) {
+pub fn load_config(params: &mut Gng_System, filename_config: &String) {
     params.config_handler.load_config(&filename_config);
 }
 
 //--------------------------------------------------------------------------------------------------
-pub fn init_training(params: &mut Handler) {
+pub fn init_training(params: &mut Gng_System) {
     params.system_handler.train_completed = false;
 
     params.system_handler.reshuffle_required = true;
@@ -743,7 +744,7 @@ pub fn init_training(params: &mut Handler) {
 //--------------------------------------------------------------------------------------------------
 // Export Model
 pub fn save_model_json(
-    params: &mut Handler,
+    params: &mut Gng_System,
     output_file: String,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let mut data = json!({});
@@ -781,7 +782,7 @@ pub fn save_model_json(
     Ok(())
 }
 
-pub fn get_model_string(params: &mut Handler) -> String {
+pub fn get_model_string(params: &mut Gng_System) -> String {
     let mut data = json!({});
     let keys = params.neuron_handler.get_keys();
     let mut neuron_array: Vec<Value> = Vec::new();
@@ -816,7 +817,7 @@ pub fn get_model_string(params: &mut Handler) -> String {
 /// Returns the current neurons as (id, position) pairs.
 ///
 /// The positions are 3D vectors stored as (x, y, z) tuples.
-pub fn get_neurons(params: &mut Handler) -> Vec<(usize, Vec<f64>)> {
+pub fn get_neurons(params: &mut Gng_System) -> Vec<(usize, Vec<f64>)> {
     let mut result = Vec::with_capacity(params.neuron_handler.get_num_neurons());
     let keys = params.neuron_handler.get_keys();
     let mut neuron_array: Vec<Value> = Vec::new();
@@ -826,7 +827,7 @@ pub fn get_neurons(params: &mut Handler) -> Vec<(usize, Vec<f64>)> {
     result
 }
 
-pub fn get_edges(params: &mut Handler) -> Vec<(usize, usize)> {
+pub fn get_edges(params: &mut Gng_System) -> Vec<(usize, usize)> {
     let mut result = Vec::with_capacity(params.neuron_handler.get_num_neurons());
     let keys = params.edge_handler.get_keys();
     let mut neuron_array: Vec<Value> = Vec::new();
@@ -842,7 +843,7 @@ pub fn get_edges(params: &mut Handler) -> Vec<(usize, usize)> {
 /// Returns the current edges as (from, to) pairs.
 ///
 /// Each tuple represents a directed edge between two neurons.
-//pub fn get_edges(params: &mut Handler) -> Vec<(usize, usize)> {
+//pub fn get_edges(params: &mut Gng_System) -> Vec<(usize, usize)> {
 //    self.edge_handler
 //        .get()
 //        .iter()
@@ -869,7 +870,7 @@ mod core_tests {
         let reader_target = json_reader::read_file(&filename_target).unwrap();
         //------------------------------------------------------------------------------
 
-        let mut gng_params: Handler = Handler::init();
+        let mut gng_params: Gng_System = Gng_System::init();
 
         // input
         //----------------------------------------------------------
@@ -906,7 +907,7 @@ mod core_tests {
 
         let reader_target = json_reader::read_file(&filename_target).unwrap();
 
-        let mut params: Handler = Handler::init();
+        let mut params: Gng_System = Gng_System::init();
         params.create_system();
 
         // init
@@ -954,7 +955,7 @@ mod core_tests {
     //         let mut samples = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
     //         let sample_width = 2;
     //
-    //         let mut params: Handler = Handler::init();
+    //         let mut params: Gng_System = Gng_System::init();
     //         params.create_system();
     //         params.sample_handler.init_input_vec(&mut samples, sample_width);
     //         shuffle_dataset(&mut params);
@@ -976,7 +977,7 @@ mod core_tests {
     //         let mut samples = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
     //         let sample_width = 2;
     //
-    //         let mut params: Handler = Handler::init();
+    //         let mut params: Gng_System = Gng_System::init();
     //         params.create_system();
     //         params.sample_handler.init_input_vec(&mut samples, sample_width);
     //         shuffle_dataset(&mut params);
@@ -995,7 +996,7 @@ mod core_tests {
         let sample_width = 2;
 
         // First call
-        let mut params: Handler = Handler::init();
+        let mut params: Gng_System = Gng_System::init();
         params.create_system();
         params
             .sample_handler
@@ -1004,7 +1005,7 @@ mod core_tests {
         let sample_order_1 = params.system_handler.sample_order;
 
         // Second call with same data
-        let mut params_2: Handler = Handler::init();
+        let mut params_2: Gng_System = Gng_System::init();
         params_2.create_system();
         params_2
             .sample_handler
@@ -1026,7 +1027,7 @@ mod core_tests {
 
         //------------------------------------------------------------------------------
 
-        let mut comps: Handler = Handler::init();
+        let mut comps: Gng_System = Gng_System::init();
         comps.create_system();
 
         // input
@@ -1088,7 +1089,7 @@ mod core_tests {
 
         let reader_target = json_reader::read_file(&filename_target).unwrap();
 
-        let mut params: Handler = Handler::init();
+        let mut params: Gng_System = Gng_System::init();
         params.create_system();
 
         params.system_handler.curr_sample_pos = 1;
@@ -1123,7 +1124,7 @@ mod core_tests {
         let reader_target = json_reader::read_file(&filename_target).unwrap();
         let reader_input = json_reader::read_file(&filename_input).unwrap();
 
-        let mut params: Handler = Handler::init();
+        let mut params: Gng_System = Gng_System::init();
         params.create_system();
         //------------------------------------------------------------------------------
         // input
@@ -1163,7 +1164,7 @@ mod core_tests {
         let reader_target = json_reader::read_file(&filename_target).unwrap();
         let reader_input = json_reader::read_file(&filename_input).unwrap();
 
-        let mut params: Handler = Handler::init();
+        let mut params: Gng_System = Gng_System::init();
         params.create_system();
         //------------------------------------------------------------------------------
         // input
@@ -1204,7 +1205,7 @@ mod core_tests {
         let reader_target = json_reader::read_file(&filename_target).unwrap();
         let reader_input = json_reader::read_file(&filename_input).unwrap();
 
-        let mut params: Handler = Handler::init();
+        let mut params: Gng_System = Gng_System::init();
         params.create_system();
         //------------------------------------------------------------------------------
         // input
@@ -1252,7 +1253,7 @@ mod core_tests {
         let reader_target = json_reader::read_file(&filename_target).unwrap();
         let reader_input = json_reader::read_file(&filename_input).unwrap();
 
-        let mut params: Handler = Handler::init();
+        let mut params: Gng_System = Gng_System::init();
         params.create_system();
         //------------------------------------------------------------------------------
         // input
@@ -1302,7 +1303,7 @@ mod core_tests {
         let reader_target = json_reader::read_file(&filename_target).unwrap();
         let reader_input = json_reader::read_file(&filename_input).unwrap();
 
-        let mut params: Handler = Handler::init();
+        let mut params: Gng_System = Gng_System::init();
         params.create_system();
 
         //------------------------------------------------------------------------------
@@ -1347,7 +1348,7 @@ mod core_tests {
         let reader_target = json_reader::read_file(&filename_target).unwrap();
         let reader_input = json_reader::read_file(&filename_input).unwrap();
 
-        let mut params: Handler = Handler::init();
+        let mut params: Gng_System = Gng_System::init();
         params.create_system();
 
         //------------------------------------------------------------------------------
@@ -1404,7 +1405,7 @@ mod core_tests {
         let reader_target = json_reader::read_file(&filename_target).unwrap();
         let reader_input = json_reader::read_file(&filename_input).unwrap();
 
-        let mut params: Handler = Handler::init();
+        let mut params: Gng_System = Gng_System::init();
         params.create_system();
 
         //------------------------------------------------------------------------------
@@ -1464,7 +1465,7 @@ mod core_tests {
         let reader_target = json_reader::read_file(&filename_target).unwrap();
         let reader_input = json_reader::read_file(&filename_input).unwrap();
 
-        let mut params: Handler = Handler::init();
+        let mut params: Gng_System = Gng_System::init();
         params.create_system();
         // Setup
         //------------------------------------------------------------------------------
@@ -1541,7 +1542,7 @@ mod core_tests {
         let reader_target = json_reader::read_file(&filename_target).unwrap();
         let reader_input = json_reader::read_file(&filename_input).unwrap();
 
-        let mut params: Handler = Handler::init();
+        let mut params: Gng_System = Gng_System::init();
         params.create_system();
         // Setup
         //------------------------------------------------------------------------------
@@ -1618,7 +1619,7 @@ mod core_tests {
         let reader_target = json_reader::read_file(&filename_target).unwrap();
         let reader_input = json_reader::read_file(&filename_input).unwrap();
 
-        let mut params: Handler = Handler::init();
+        let mut params: Gng_System = Gng_System::init();
         params.create_system();
         // Setup
         //------------------------------------------------------------------------------
@@ -1686,7 +1687,7 @@ mod core_tests {
 
         let reader_target = json_reader::read_file(&filename_target).unwrap();
 
-        let mut params: Handler = Handler::init();
+        let mut params: Gng_System = Gng_System::init();
         params.create_system();
 
         //------------------------------------------------------------------------------
