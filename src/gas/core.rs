@@ -426,8 +426,9 @@ pub fn shuffle_dataset(params: &mut Gng_System) {
     for a in keys {
         res.push(*a);
     }
-    let rng_new = params.rng_manager.get_rng();
-    res.shuffle(rng_new);
+    params.rng_manager.seed_rng(123);
+    let rng = params.rng_manager.get_rng();
+    res.shuffle(rng);
 
     params.system_handler.sample_order = res;
 

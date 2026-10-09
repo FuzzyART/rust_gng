@@ -1,9 +1,9 @@
-use crate::handlers::config_handler::Config;
-use crate::handlers::system_handler::System;
-use crate::handlers::system_handler::Phase;
 use crate::components::{
     edge_component::EdgeHandler, neuron_component::NeuronHandler, sample_component::SampleHandler,
 };
+use crate::handlers::config_handler::Config;
+use crate::handlers::system_handler::Phase;
+use crate::handlers::system_handler::System;
 
 use crate::aux::{
     json_reader, json_writer::write_json_to_file, json_writer::write_value_to_block,
@@ -33,6 +33,6 @@ impl Gng_System {
     }
     pub fn create_system(&mut self) {
         Self::init();
-        self.rng_manager.seed_rng(1234567890);
+        //self.rng_manager.seed_rng(1234567890);
     }
 }

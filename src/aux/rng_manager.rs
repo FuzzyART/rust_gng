@@ -93,6 +93,20 @@ mod tests {
     }
 
     #[test]
+    fn test_rng_manager_deterministic_behavior_2() {
+        // Test that same seed produces same sequence
+        let mut rng_manager = RngManager::init(123);
+        rng_manager.seed_rng(890);
+
+        let values1: Vec<f64> = (0..5).map(|_| rng_manager.get_f64(0.0, 1.0)).collect();
+
+        rng_manager.seed_rng(890);
+        let values2: Vec<f64> = (0..5).map(|_| rng_manager.get_f64(0.0, 1.0)).collect();
+
+        assert_eq!(values1, values2);
+    }
+
+    #[test]
     fn test_rng_manager_different_seeds_different_results() {
         let mut rng_manager1 = RngManager::init(42);
         let mut rng_manager2 = RngManager::init(123);

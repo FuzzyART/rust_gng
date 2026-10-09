@@ -1,9 +1,9 @@
 #![allow(warnings)]
 pub mod aux;
+pub mod components;
 pub mod ecs;
 pub mod gas;
 pub mod handlers;
-pub mod components;
 
 pub mod internal {
     // Re-export the original types and functions from core
