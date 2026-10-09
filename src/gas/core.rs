@@ -423,10 +423,6 @@ pub fn select_sample(params: &mut Gng_System) {
 pub fn shuffle_dataset(params: &mut Gng_System) {
     let mut res: Vec<usize> = Vec::new();
     let keys = params.sample_handler.get_keys();
-    for a in keys {
-        res.push(*a);
-    }
-    params.rng_manager.seed_rng(123);
     let rng = params.rng_manager.get_rng();
     res.shuffle(rng);
 
@@ -958,35 +954,80 @@ mod core_tests {
     //         // Verify we have the right number of samples
     //         assert_eq!(params.system.samples.len(), 3);
     //     }
+//--------------------------------------------------------------------------------------------------
     #[test]
     fn test_shuffle_dataset_deterministic() {
-        let mut samples = vec![
+        let rng_seed = 12345;
+        let mut samples_1 = vec![
+            1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0,
+        ];
+        let mut samples_2 = vec![
             1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0,
         ];
         let sample_width = 2;
 
         // First call
         let mut params: Gng_System = Gng_System::init();
-        params.create_system();
+        params.rng_manager.seed_rng(rng_seed);
+        let foo1 = params.rng_manager.get_f64(-1.0, 1.0);
+        println!("foo1: {:?}", foo1);
         params
             .sample_handler
-            .init_input_vec(&mut samples, sample_width);
-        shuffle_dataset(&mut params);
-        let sample_order_1 = params.system_handler.sample_order;
+            .init_input_vec(&mut samples_1, sample_width);
+        let mut res_pre_shuffle_1: Vec<usize> = Vec::new();
+        for a in params.sample_handler.get_keys() {
+            res_pre_shuffle_1.push(*a);
+        }
+        println!("Keys_Test1: {:?}", res_pre_shuffle_1);
 
+        //++++++++++++++++++++
+        shuffle_dataset(&mut params);
+        //++++++++++++++++++++
+
+        let mut res_post_shuffle_1: Vec<usize> = Vec::new();
+        for a in params.sample_handler.get_keys() {
+            res_post_shuffle_1.push(*a);
+        }
+        println!("Keys_Test1B: {:?}", res_post_shuffle_1);
+
+        let sample_order_1 = params.system_handler.sample_order;
+        println!("Sample Order 1: {:?}",sample_order_1);
+        //========================================
         // Second call with same data
         let mut params_2: Gng_System = Gng_System::init();
-        params_2.create_system();
+        params_2.rng_manager.seed_rng(rng_seed);
+        let foo2 = params_2.rng_manager.get_f64(-1.0, 1.0);
         params_2
             .sample_handler
-            .init_input_vec(&mut samples, sample_width);
+            .init_input_vec(&mut samples_2, sample_width);
+
+        let mut res_pre_shuffle_2: Vec<usize> = Vec::new();
+        for a in params_2.sample_handler.get_keys() {
+            res_pre_shuffle_2.push(*a);
+        }
+        println!("Keys_Test2: {:?}", res_pre_shuffle_2);
+
+        //++++++++++++++++++++
         shuffle_dataset(&mut params_2);
+        //++++++++++++++++++++
+
+        let mut res_post_shuffle_2: Vec<usize> = Vec::new();
+        for a in params_2.sample_handler.get_keys() {
+            res_post_shuffle_2.push(*a);
+        }
+        println!("Keys_Test2B: {:?}", res_post_shuffle_2);
+
         let sample_order_2 = params_2.system_handler.sample_order;
+        println!("Sample Order 2: {:?}",sample_order_2);
+
+        //========================================
+
+        println!("foo2: {:?}", foo2);
 
         // This test verifies that shuffle_dataset is deterministic
         assert_eq!(sample_order_1, sample_order_2);
     }
-
+//--------------------------------------------------------------------------------------------------
     #[test]
     fn test_init_model_t1() {
         let filename_input = "test_data/growing_neural_gas/init_model/input.json".to_string();
