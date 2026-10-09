@@ -1,8 +1,8 @@
 use crate::handlers::config_handler::Config;
 use crate::handlers::system_handler::System;
-use crate::handlers::{
-    edge_handler::EdgeHandler, neuron_handler::NeuronHandler, sample_handler::SampleHandler,
-    system_handler::Phase,
+use crate::handlers::system_handler::Phase;
+use crate::components::{
+    edge_component::EdgeHandler, neuron_component::NeuronHandler, sample_component::SampleHandler,
 };
 
 use crate::aux::{

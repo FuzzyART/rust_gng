@@ -3,6 +3,7 @@ pub mod aux;
 pub mod ecs;
 pub mod gas;
 pub mod handlers;
+pub mod components;
 
 pub mod internal {
     // Re-export the original types and functions from core
@@ -12,7 +13,7 @@ pub mod internal {
         init_dataset as core_init_dataset, init_dataset_vec as core_init_dataset_vec,
         init_step as core_init_step, load_config as core_load_config,
         save_model_json as core_save_model_json, set_input_width as core_set_input_width,
-        set_parameters as core_set_parameters, 
+        set_parameters as core_set_parameters,
     };
     pub use crate::gas::gng_system::Gng_System;
 }
