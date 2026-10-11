@@ -19,6 +19,7 @@ pub struct Config {
     pub epsilon_n: f64,
     pub alpha: f64,
     pub beta: f64,
+    pub rng_seed: u64,
 }
 impl Config {
     pub fn init() -> Self {
@@ -38,6 +39,7 @@ impl Config {
             epsilon_n: 0.0,
             alpha: 0.0,
             beta: 0.0,
+            rng_seed: 123,
         }
     }
 
@@ -58,6 +60,7 @@ impl Config {
         epsilon_n: f64,
         alpha: f64,
         beta: f64,
+        rng_seed: u64,
     ) {
         self.input_width = input_width;
         self.weight_rng_min = weight_rng_min;
@@ -71,6 +74,7 @@ impl Config {
         self.epsilon_n = epsilon_n;
         self.alpha = alpha;
         self.beta = beta;
+        self.rng_seed = rng_seed;
     }
 
     // --- Reader (loads from JSON file) ---

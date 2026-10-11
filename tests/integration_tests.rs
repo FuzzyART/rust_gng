@@ -33,6 +33,7 @@ mod integration_tests {
         let epsilon_n = 0.006;
         let alpha = 0.5;
         let beta = 0.995;
+        let rng_seed : u64 = 12345; // Fixed seed for reproducibility
 
         ctx.set_parameters(
             input_width,
@@ -47,6 +48,7 @@ mod integration_tests {
             epsilon_n,
             alpha,
             beta,
+            rng_seed,
         );
 
         let reader = CsvReader::new(
@@ -88,6 +90,7 @@ mod integration_tests {
         let epsilon_n = 0.006;
         let alpha = 0.5;
         let beta = 0.995;
+        let rng_seed : u64 = 123;
 
         ctx.set_parameters(
             input_width,
@@ -102,6 +105,7 @@ mod integration_tests {
             epsilon_n,
             alpha,
             beta,
+            rng_seed,
         );
 
         let reader = CsvReader::new(
@@ -140,6 +144,7 @@ mod integration_tests {
         let epsilon_n = 0.006;
         let alpha = 0.5;
         let beta = 0.995;
+        let rng_seed : u64 = 123;
 
         ctx.set_parameters(
             input_width,
@@ -154,6 +159,7 @@ mod integration_tests {
             epsilon_n,
             alpha,
             beta,
+            rng_seed,
         );
 
         let reader = CsvReader::new(
@@ -188,6 +194,7 @@ mod integration_tests {
             epsilon_n,
             alpha,
             beta,
+            rng_seed,
         );
         ctx2.init_dataset_vec(&in_set);
         ctx2.fit();

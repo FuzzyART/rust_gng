@@ -16,6 +16,7 @@ fn main() {
     let epsilon_n = 0.006;
     let alpha = 0.5;
     let beta = 0.995;
+    let rng_seed:u64 = 123;
 
     ctx.set_parameters(
         input_width,
@@ -30,6 +31,7 @@ fn main() {
         epsilon_n,
         alpha,
         beta,
+        rng_seed,
     );
 
     let reader = CsvReader::new("test_data/debug_dataset.csv", ',');

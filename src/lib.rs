@@ -85,6 +85,7 @@ impl Gng {
         epsilon_n: f64,
         alpha: f64,
         beta: f64,
+        rng_seed: u64,
     ) {
         internal::core_set_parameters(
             &mut self.cont_params,
@@ -100,6 +101,7 @@ impl Gng {
             epsilon_n,
             alpha,
             beta,
+            rng_seed,
         );
     }
 }

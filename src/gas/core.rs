@@ -171,6 +171,9 @@ pub fn set_parameters(
     epsilon_n: f64,
     alpha: f64,
     beta: f64,
+    rng_seed: u64,
+
+
 ) {
     gng_params.config_handler.set_parameters(
         input_width,
@@ -185,6 +188,7 @@ pub fn set_parameters(
         epsilon_n,
         alpha,
         beta,
+        rng_seed,
     );
 }
 pub fn set_input_width(gng_params: &mut Gng_System, input_width: usize) {
