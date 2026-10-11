@@ -280,11 +280,49 @@ pub fn calc_nearest_neurons(params: &mut Gng_System) {
 }
 
 //--------------------------------------------------------------------------------------------------
-/// calculates the neuron dependency array, which contains winner and neighbor neuron flags
-/// requires: model_params.winner_edges
-/// 1: winner,
-/// 2: neighbor of winner
-/// 0: irrelevant
+///Calculates and populates the neuron dependency array
+/// 
+/// the neuron dependency array identifies the winner neuron and its neighboring neurons within the network. This information is used 
+///to determine the influence scope of the winning neuron during subsequent processing steps.
+///
+///## Function Signature
+///```rust
+///pub fn calc_neuron_dependencies(params: &mut Gng_System)
+///```
+///
+///## Parameters
+///
+///### `params: &mut Gng_System`
+///A mutable reference to a `Gng_System` struct containing the system state and all necessary handlers. This parameter is modified in place to update neuron dependency flags.
+///
+///## Function Behavior
+///
+///### Process
+///1. **Neuron Identification**: Retrieves the total number of neurons and identifies the current winner neuron
+///2. **Edge Analysis**: Obtains all edges connected to the winner neuron and determines neighboring neurons through edge connections
+///3. **Dependency Assignment**: Sets dependency flags for each neuron in the network:
+///   - **Flag 0**: Irrelevant neuron (not part of winner's influence scope)
+///   - **Flag 1**: Winner neuron (primary neuron of interest)
+///   - **Flag 2**: Neighbor neuron (directly connected to winner neuron)
+///
+///### Algorithm Steps
+///1. Collect all edges connected to the winner neuron
+///2. For each edge, identify the neighboring neuron (either start or end point)
+///3. Initialize all neurons with dependency flag 0
+///4. Set the winner neuron's dependency flag to 1
+///5. Set all neighbor neurons' dependency flags to 2
+///
+///## Requirements
+///- `model_params.winner_edges` must be properly initialized and populated
+///- The system must have a valid winner neuron identified in `system_handler.winner_neuron`
+///- Edge handler must contain valid edge connections for the winner neuron
+///
+///## Notes
+///- This function assumes that `winner_edges` contains valid edge references
+///- The dependency array is reset and rebuilt entirely on each call
+///- Neighbors are determined based on direct edge connections from the winner neuron
+///- All neurons in the system are processed, regardless of their current dependency state
+
 
 pub fn calc_neuron_dependencies(params: &mut Gng_System) {
     // params
@@ -405,7 +443,23 @@ pub fn calc_neighbor_neuron_vec_max_err(params: &mut Gng_System) {
     params.system_handler.neighbor_neuron_vec_max_err = res_vec;
 }
 //--------------------------------------------------------------------------------------------------
-
+/// Selects the next sample from the sample order and updates the system state.
+///
+/// This function retrieves the current sample order position and the sample
+/// order, then assigns the sample at the current position to `curr_sample_pos`.
+/// It increments `sample_order_position` to prepare for the next sample.
+///
+/// If the current position is the last position in the sample order,
+/// `last_sample_reached` is set to `true`.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the sample
+///   order, current sample position, and related state.
+///
+/// # Panics
+///
+/// Panics if `sample_order_position` is out of bounds for `sample_order`.
 pub fn select_sample(params: &mut Gng_System) {
     let sample_order_position = params.system_handler.sample_order_position.clone();
     let sample_order = params.system_handler.sample_order.clone();
@@ -419,7 +473,38 @@ pub fn select_sample(params: &mut Gng_System) {
     }
 }
 //--------------------------------------------------------------------------------------------------
-// shuffle dataset
+///Randomizes the order of samples in the dataset. 
+/// 
+/// This function prepares the sample order for sequential sampling by creating a 
+///shuffled permutation of all available sample IDs.
+///
+///## Function Signature
+///```rust
+///pub fn shuffle_dataset(params: &mut Gng_System)
+///```
+///
+///## Parameters
+///
+///### `params: &mut Gng_System`
+///A mutable reference to a `Gng_System` struct containing the system state and handlers. This parameter is modified in place to update the sample order and reset the sample position counter.
+///
+///## Function Behavior
+///
+///### Process
+///1. **Collect Sample Keys**: Retrieves all sample IDs from the sample handler and collects them into a vector
+///2. **Normalize Order**: Sorts the sample IDs in ascending order to ensure consistent iteration
+///3. **Apply Randomization**: Uses the system's seeded random number generator to shuffle the sorted sample IDs
+///4. **Update System State**: Stores the shuffled order in the system handler and resets the sample position counter
+///
+///### State Updates
+///- `params.system_handler.sample_order`: Updated to contain the randomly shuffled sample IDs
+///- `params.system_handler.sample_order_position`: Reset to 0, starting the sampling sequence from the beginning
+///
+///## Notes
+///- The function uses a seeded RNG for reproducible shuffling results
+///- Sample IDs are first sorted then shuffled to ensure deterministic behavior while maintaining randomness
+///- This function should be called before starting a new sampling iteration to randomize the order of samples
+
 pub fn shuffle_dataset(params: &mut Gng_System) {
     let mut res: Vec<usize> = params.sample_handler.get_keys().copied().collect();
 
@@ -915,48 +1000,6 @@ mod core_tests {
             assert_eq!(edge_age_res[a], edge_age_target[a]);
         }
     }
-    //
-    //
-    //     #[test]
-    //     fn test_shuffle_dataset_functionality() {
-    //         // This test verifies that shuffle_dataset works correctly
-    //         // (i.e., it shuffles elements and maintains the correct count)
-    //         let mut samples = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
-    //         let sample_width = 2;
-    //
-    //         let mut params: Gng_System = Gng_System::init();
-    //         params.create_system();
-    //         params.sample_handler.init_input_vec(&mut samples, sample_width);
-    //         shuffle_dataset(&mut params);
-    //
-    //         // Verify that we got the right number of elements
-    //         assert_eq!(params.system.samples.len(), 3); // 6 elements / 2 width = 3 samples
-    //
-    //         // Verify that all original indices are present (just shuffled)
-    //         let mut order = params.system.samples.iter().cloned().collect::<Vec<_>>();
-    //         order.sort();
-    //
-    //         // Should contain values 0, 1, 2 (the sample indices)
-    //         assert_eq!(order, vec![0, 1, 2]);
-    //     }
-    //
-    //     #[test]
-    //     fn test_shuffle_dataset_preserves_elements() {
-    //         // Test that shuffle_dataset preserves all elements but reorders them
-    //         let mut samples = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
-    //         let sample_width = 2;
-    //
-    //         let mut params: Gng_System = Gng_System::init();
-    //         params.create_system();
-    //         params.sample_handler.init_input_vec(&mut samples, sample_width);
-    //         shuffle_dataset(&mut params);
-    //
-    //         // Get the original indices that should be shuffled
-    //         let original_indices = vec![0, 1, 2]; // 3 samples from 6 elements
-    //
-    //         // Verify we have the right number of samples
-    //         assert_eq!(params.system.samples.len(), 3);
-    //     }
     //--------------------------------------------------------------------------------------------------
     #[test]
     fn test_shuffle_dataset_deterministic() {
@@ -1053,6 +1096,61 @@ mod core_tests {
         }
     }
     //--------------------------------------------------------------------------------------------------
+
+    #[test]
+    fn test_init_model_t1_consistency() {
+        let filename_input = "test_data/growing_neural_gas/init_model/input.json".to_string();
+        let filename_target = "test_data/growing_neural_gas/init_model/target.json".to_string();
+
+        let reader_input = json_reader::read_file(&filename_input).unwrap();
+        let reader_target = json_reader::read_file(&filename_target).unwrap();
+
+        // Setup
+        let mut comps1: Gng_System = Gng_System::init();
+        let mut comps2: Gng_System = Gng_System::init();
+
+        comps1.create_system();
+        comps2.create_system();
+
+        // Input configuration
+        comps1.config_handler.input_width =
+            json_reader::read_val_usize(&reader_input, "config", "input_width");
+        comps1.config_handler.weight_rng_min =
+            json_reader::read_val_f64(&reader_input, "config", "weight_rng_min");
+        comps1.config_handler.weight_rng_max =
+            json_reader::read_val_f64(&reader_input, "config", "weight_rng_max");
+
+        comps2.config_handler.input_width =
+            json_reader::read_val_usize(&reader_input, "config", "input_width");
+        comps2.config_handler.weight_rng_min =
+            json_reader::read_val_f64(&reader_input, "config", "weight_rng_min");
+        comps2.config_handler.weight_rng_max =
+            json_reader::read_val_f64(&reader_input, "config", "weight_rng_max");
+
+        // Run with same seed (e.g., 42)
+        // let seed = 42u64;
+        // comps1.set_rng_seed(seed); // Assume this method exists to set the RNG seed
+        // comps2.set_rng_seed(seed);
+
+        init_model(&mut comps1);
+        init_model(&mut comps2);
+
+        // Validation: compare results
+        let input_width = comps1.config_handler.input_width;
+        let weights1 = comps1.neuron_handler.get_weight_vec(&input_width);
+        let edges_start1 = comps1.edge_handler.get_edge_start_vec();
+        let edges_end1 = comps1.edge_handler.get_edge_end_vec();
+
+        let weights2 = comps2.neuron_handler.get_weight_vec(&input_width);
+        let edges_start2 = comps2.edge_handler.get_edge_start_vec();
+        let edges_end2 = comps2.edge_handler.get_edge_end_vec();
+
+        assert_eq!(weights1, weights2);
+        assert_eq!(edges_start1, edges_start2);
+        assert_eq!(edges_end1, edges_end2);
+    }
+    //--------------------------------------------------------------------------------------------------
+
     #[test]
     pub fn calc_neuron_distances_t1() {
         let filename_input =
