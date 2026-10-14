@@ -2,7 +2,7 @@ use crate::handlers::system_handler::Phase;
 use std::collections::HashSet;
 
 use crate::aux::{
-    json_reader, json_writer::write_json_to_file, json_writer::write_value_to_block,
+    csv_reader, json_reader, json_writer::write_json_to_file, json_writer::write_value_to_block,
     rng_manager::RngManager,
 };
 
@@ -172,8 +172,6 @@ pub fn set_parameters(
     alpha: f64,
     beta: f64,
     rng_seed: u64,
-
-
 ) {
     gng_params.config_handler.set_parameters(
         input_width,
@@ -284,49 +282,47 @@ pub fn calc_nearest_neurons(params: &mut Gng_System) {
 }
 
 //--------------------------------------------------------------------------------------------------
-///Calculates and populates the neuron dependency array
-/// 
-/// the neuron dependency array identifies the winner neuron and its neighboring neurons within the network. This information is used 
-///to determine the influence scope of the winning neuron during subsequent processing steps.
-///
-///## Function Signature
-///```rust
-///pub fn calc_neuron_dependencies(params: &mut Gng_System)
-///```
-///
-///## Parameters
-///
-///### `params: &mut Gng_System`
-///A mutable reference to a `Gng_System` struct containing the system state and all necessary handlers. This parameter is modified in place to update neuron dependency flags.
-///
-///## Function Behavior
-///
-///### Process
-///1. **Neuron Identification**: Retrieves the total number of neurons and identifies the current winner neuron
-///2. **Edge Analysis**: Obtains all edges connected to the winner neuron and determines neighboring neurons through edge connections
-///3. **Dependency Assignment**: Sets dependency flags for each neuron in the network:
-///   - **Flag 0**: Irrelevant neuron (not part of winner's influence scope)
-///   - **Flag 1**: Winner neuron (primary neuron of interest)
-///   - **Flag 2**: Neighbor neuron (directly connected to winner neuron)
-///
-///### Algorithm Steps
-///1. Collect all edges connected to the winner neuron
-///2. For each edge, identify the neighboring neuron (either start or end point)
-///3. Initialize all neurons with dependency flag 0
-///4. Set the winner neuron's dependency flag to 1
-///5. Set all neighbor neurons' dependency flags to 2
-///
-///## Requirements
-///- `model_params.winner_edges` must be properly initialized and populated
-///- The system must have a valid winner neuron identified in `system_handler.winner_neuron`
-///- Edge handler must contain valid edge connections for the winner neuron
-///
-///## Notes
-///- This function assumes that `winner_edges` contains valid edge references
-///- The dependency array is reset and rebuilt entirely on each call
-///- Neighbors are determined based on direct edge connections from the winner neuron
-///- All neurons in the system are processed, regardless of their current dependency state
-
+//Calculates and populates the neuron dependency array
+//
+// the neuron dependency array identifies the winner neuron and its neighboring neurons within the network. This information is used
+//to determine the influence scope of the winning neuron during subsequent processing steps.
+//
+//## Function Signature
+//```rust
+//pub fn calc_neuron_dependencies(params: &mut Gng_System)
+//
+//## Parameters
+//
+//### `params: &mut Gng_System`
+//A mutable reference to a `Gng_System` struct containing the system state and all necessary handlers. This parameter is modified in place to update neuron dependency flags.
+//
+//## Function Behavior
+//
+//### Process
+//1. **Neuron Identification**: Retrieves the total number of neurons and identifies the current winner neuron
+//2. **Edge Analysis**: Obtains all edges connected to the winner neuron and determines neighboring neurons through edge connections
+//3. **Dependency Assignment**: Sets dependency flags for each neuron in the network:
+//   - **Flag 0**: Irrelevant neuron (not part of winner's influence scope)
+//   - **Flag 1**: Winner neuron (primary neuron of interest)
+//   - **Flag 2**: Neighbor neuron (directly connected to winner neuron)
+//
+//### Algorithm Steps
+//1. Collect all edges connected to the winner neuron
+//2. For each edge, identify the neighboring neuron (either start or end point)
+//3. Initialize all neurons with dependency flag 0
+//4. Set the winner neuron's dependency flag to 1
+//5. Set all neighbor neurons' dependency flags to 2
+//
+//## Requirements
+//- `model_params.winner_edges` must be properly initialized and populated
+//- The system must have a valid winner neuron identified in `system_handler.winner_neuron`
+//- Edge handler must contain valid edge connections for the winner neuron
+//
+//## Notes
+//- This function assumes that `winner_edges` contains valid edge references
+//- The dependency array is reset and rebuilt entirely on each call
+//- Neighbors are determined based on direct edge connections from the winner neuron
+//- All neurons in the system are processed, regardless of their current dependency state
 
 pub fn calc_neuron_dependencies(params: &mut Gng_System) {
     // params
@@ -477,37 +473,37 @@ pub fn select_sample(params: &mut Gng_System) {
     }
 }
 //--------------------------------------------------------------------------------------------------
-///Randomizes the order of samples in the dataset. 
-/// 
-/// This function prepares the sample order for sequential sampling by creating a 
-///shuffled permutation of all available sample IDs.
-///
-///## Function Signature
-///```rust
-///pub fn shuffle_dataset(params: &mut Gng_System)
-///```
-///
-///## Parameters
-///
-///### `params: &mut Gng_System`
-///A mutable reference to a `Gng_System` struct containing the system state and handlers. This parameter is modified in place to update the sample order and reset the sample position counter.
-///
-///## Function Behavior
-///
-///### Process
-///1. **Collect Sample Keys**: Retrieves all sample IDs from the sample handler and collects them into a vector
-///2. **Normalize Order**: Sorts the sample IDs in ascending order to ensure consistent iteration
-///3. **Apply Randomization**: Uses the system's seeded random number generator to shuffle the sorted sample IDs
-///4. **Update System State**: Stores the shuffled order in the system handler and resets the sample position counter
-///
-///### State Updates
-///- `params.system_handler.sample_order`: Updated to contain the randomly shuffled sample IDs
-///- `params.system_handler.sample_order_position`: Reset to 0, starting the sampling sequence from the beginning
-///
-///## Notes
-///- The function uses a seeded RNG for reproducible shuffling results
-///- Sample IDs are first sorted then shuffled to ensure deterministic behavior while maintaining randomness
-///- This function should be called before starting a new sampling iteration to randomize the order of samples
+//Randomizes the order of samples in the dataset.
+//
+// This function prepares the sample order for sequential sampling by creating a
+//shuffled permutation of all available sample IDs.
+//
+//## Function Signature
+//```rust
+//pub fn shuffle_dataset(params: &mut Gng_System)
+//```
+//
+//## Parameters
+//
+//### `params: &mut Gng_System`
+//A mutable reference to a `Gng_System` struct containing the system state and handlers. This parameter is modified in place to update the sample order and reset the sample position counter.
+//
+//## Function Behavior
+//
+//### Process
+//1. **Collect Sample Keys**: Retrieves all sample IDs from the sample handler and collects them into a vector
+//2. **Normalize Order**: Sorts the sample IDs in ascending order to ensure consistent iteration
+//3. **Apply Randomization**: Uses the system's seeded random number generator to shuffle the sorted sample IDs
+//4. **Update System State**: Stores the shuffled order in the system handler and resets the sample position counter
+//
+//### State Updates
+//- `params.system_handler.sample_order`: Updated to contain the randomly shuffled sample IDs
+//- `params.system_handler.sample_order_position`: Reset to 0, starting the sampling sequence from the beginning
+//
+//## Notes
+//- The function uses a seeded RNG for reproducible shuffling results
+//- Sample IDs are first sorted then shuffled to ensure deterministic behavior while maintaining randomness
+//- This function should be called before starting a new sampling iteration to randomize the order of samples
 
 pub fn shuffle_dataset(params: &mut Gng_System) {
     let mut res: Vec<usize> = params.sample_handler.get_keys().copied().collect();
@@ -918,6 +914,8 @@ pub fn get_edges(params: &mut Gng_System) -> Vec<(usize, usize)> {
 mod core_tests {
     use std::assert_eq;
 
+    use crate::gas::gng_system;
+
     use super::*;
     #[test]
     fn test_init_dataset_t1() {
@@ -1102,7 +1100,7 @@ mod core_tests {
     //--------------------------------------------------------------------------------------------------
 
     #[test]
-    fn test_init_model_t1_consistency() {
+    fn test_init_model_t1_deterministic() {
         let filename_input = "test_data/growing_neural_gas/init_model/input.json".to_string();
         let filename_target = "test_data/growing_neural_gas/init_model/target.json".to_string();
 
@@ -1190,6 +1188,82 @@ mod core_tests {
             assert!((params.neuron_handler.get_distance(a) - distance_target[a]).abs() < 0.0001);
         }
     }
+
+    //--------------------------------------------------------------------------------------------------
+    #[test]
+    pub fn calc_neuron_distances_determinism() {
+        let filename_input =
+            "test_data/growing_neural_gas/calc_neuron_distances_t1/input.json".to_string();
+        let filename_target =
+            "test_data/growing_neural_gas/calc_neuron_distances_t1/target.json".to_string();
+        let filename_dataset =
+            "test_data/growing_neural_gas/calc_neuron_distances_t1/dataset.csv".to_string();
+
+        let reader_target = json_reader::read_file(&filename_target).unwrap();
+
+        // First execution
+        let mut params1: Gng_System = Gng_System::init();
+        params1.create_system();
+
+        params1.system_handler.curr_sample_pos = 1;
+
+        // Load and initialize
+        load_model(&mut params1, filename_input.clone());
+        let input_width = params1.config_handler.input_width;
+        init_dataset(&mut params1, &filename_dataset);
+
+        // First call
+        calc_neuron_distances(&mut params1);
+
+        // Second execution with same setup
+        let mut params2: Gng_System = Gng_System::init();
+        params2.create_system();
+
+        params2.system_handler.curr_sample_pos = 1;
+
+        // Load and initialize (same data)
+        load_model(&mut params2, filename_input);
+        init_dataset(&mut params2, &filename_dataset);
+
+        // Second call
+        calc_neuron_distances(&mut params2);
+
+        // Get target distances
+        let distance_target = json_reader::read_array_f64(&reader_target, "target", "distance");
+
+        // Validate both executions produce identical results
+        for a in 0..distance_target.len() {
+            let dist1 = params1.neuron_handler.get_distance(a);
+            let dist2 = params2.neuron_handler.get_distance(a);
+            let target = distance_target[a];
+
+            // Check that both executions match target
+            assert!(
+                (dist1 - target).abs() < 0.0001,
+                "First execution mismatch at index {}: {} vs {}",
+                a,
+                dist1,
+                target
+            );
+            assert!(
+                (dist2 - target).abs() < 0.0001,
+                "Second execution mismatch at index {}: {} vs {}",
+                a,
+                dist2,
+                target
+            );
+
+            // Check that both executions are identical to each other
+            assert!(
+                (dist1 - dist2).abs() < 0.0001,
+                "Non-deterministic result: execution 1 = {}, execution 2 = {} at index {}",
+                dist1,
+                dist2,
+                a
+            );
+        }
+    }
+
     //--------------------------------------------------------------------------------------------------
     #[test]
     fn calc_nearest_neurons_t1() {
@@ -1231,6 +1305,8 @@ mod core_tests {
 
         assert_eq!(params.system_handler.second_neuron, second_neuron_target);
     }
+    //--------------------------------------------------------------------------------------------------
+
     #[test]
     fn calc_nearest_neurons_t2() {
         let filename_input =
@@ -1272,6 +1348,70 @@ mod core_tests {
 
         assert_eq!(params.system_handler.second_neuron, second_neuron_target);
     }
+
+    #[test]
+    fn calc_nearest_neurons_determinism() {
+        let filename_input =
+            "test_data/growing_neural_gas/calc_nearest_neurons_t2/input.json".to_string();
+        let filename_target =
+            "test_data/growing_neural_gas/calc_nearest_neurons_t2/target.json".to_string();
+
+        let reader_target = json_reader::read_file(&filename_target).unwrap();
+        let reader_input = json_reader::read_file(&filename_input).unwrap();
+
+        // Read target values once
+        let winner_neuron_target =
+            json_reader::read_val_usize(&reader_target, "target", "winner_neuron");
+        let second_neuron_target =
+            json_reader::read_val_usize(&reader_target, "target", "second_neuron");
+
+        // First run
+        let mut params1: Gng_System = Gng_System::init();
+        params1.create_system();
+
+        let distance_input =
+            json_reader::read_array_f64(&reader_input, "config", "neuron_distance");
+        let num_neurons = json_reader::read_val_usize(&reader_input, "config", "num_neurons");
+
+        params1.neuron_handler.init_neurons_debug(num_neurons);
+        params1
+            .neuron_handler
+            .set_distances_debug(distance_input.clone());
+        calc_nearest_neurons(&mut params1);
+
+        // Second run with identical inputs
+        let mut params2: Gng_System = Gng_System::init();
+        params2.create_system();
+
+        params2.neuron_handler.init_neurons_debug(num_neurons);
+        params2
+            .neuron_handler
+            .set_distances_debug(distance_input.clone());
+        calc_nearest_neurons(&mut params2);
+
+        // Validate both runs produce identical results
+        assert_eq!(params1.system_handler.winner_neuron, winner_neuron_target);
+        assert_eq!(params2.system_handler.winner_neuron, winner_neuron_target);
+
+        assert_eq!(params1.system_handler.second_neuron, second_neuron_target);
+        assert_eq!(params2.system_handler.second_neuron, second_neuron_target);
+
+        // Additional determinism check: ensure both runs produce identical system states
+        assert_eq!(
+            params1.system_handler.winner_neuron,
+            params2.system_handler.winner_neuron
+        );
+        assert_eq!(
+            params1.system_handler.second_neuron,
+            params2.system_handler.second_neuron
+        );
+
+        // Optional: check that neuron positions are identical (if applicable)
+        // This would depend on your specific implementation details
+        // assert_eq!(params1.neuron_handler.neurons, params2.neuron_handler.neurons);
+    }
+
+    //--------------------------------------------------------------------------------------------------
     #[test]
     fn calc_neuron_dependencies_t1() {
         let filename_input =
@@ -1318,6 +1458,84 @@ mod core_tests {
             );
         }
     }
+
+    //--------------------------------------------------------------------------------------------------
+    #[test]
+    fn calc_neuron_dependencies_determinism() {
+        let filename_input =
+            "test_data/growing_neural_gas/calc_neuron_dependencies_t1/input.json".to_string();
+        let filename_target =
+            "test_data/growing_neural_gas/calc_neuron_dependencies_t1/target.json".to_string();
+
+        let reader_target = json_reader::read_file(&filename_target).unwrap();
+        let reader_input = json_reader::read_file(&filename_input).unwrap();
+
+        // Read target data once
+        let target_neuron_dependencies =
+            json_reader::read_array_usize(&reader_target, "target", "neuron_dependencies");
+
+        // First run
+        let mut params1: Gng_System = Gng_System::init();
+        params1.create_system();
+
+        // Preparation for first run
+        load_model(&mut params1, filename_input.clone());
+        let winner_neuron_input =
+            json_reader::read_val_usize(&reader_input, "config", "winner_neuron");
+        let second_neuron_input =
+            json_reader::read_val_usize(&reader_input, "config", "second_neuron");
+        params1.system_handler.winner_neuron = winner_neuron_input;
+        params1.system_handler.second_neuron = second_neuron_input;
+
+        // First function call
+        calc_neuron_dependencies(&mut params1);
+
+        // Second run with fresh system
+        let mut params2: Gng_System = Gng_System::init();
+        params2.create_system();
+
+        // Preparation for second run (same inputs)
+        load_model(&mut params2, filename_input.clone());
+        params2.system_handler.winner_neuron = winner_neuron_input;
+        params2.system_handler.second_neuron = second_neuron_input;
+
+        // Second function call
+        calc_neuron_dependencies(&mut params2);
+
+        // Validate both runs produce identical results
+        for a in 0..target_neuron_dependencies.len() {
+            assert_eq!(
+                *params1.neuron_handler.get_neuron_dependency(a) as usize,
+                *params2.neuron_handler.get_neuron_dependency(a) as usize,
+                "Determinism check failed: different results between runs at index {}",
+                a
+            );
+            assert_eq!(
+                *params1.neuron_handler.get_neuron_dependency(a) as usize,
+                target_neuron_dependencies[a] as usize,
+                "First run result doesn't match target at index {}",
+                a
+            );
+        }
+
+        // Additional check: ensure both results are identical to target
+        for a in 0..target_neuron_dependencies.len() {
+            assert_eq!(
+                *params1.neuron_handler.get_neuron_dependency(a) as usize,
+                target_neuron_dependencies[a] as usize,
+                "First run doesn't match target at index {}",
+                a
+            );
+            assert_eq!(
+                *params2.neuron_handler.get_neuron_dependency(a) as usize,
+                target_neuron_dependencies[a] as usize,
+                "Second run doesn't match target at index {}",
+                a
+            );
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
     #[test]
     fn add_error_to_winner_neuron_t1() {
         let filename_input =
@@ -1368,6 +1586,83 @@ mod core_tests {
             assert!((neuron_err_target[a] - params.neuron_handler.get_error(a)).abs() < 0.001);
         }
     }
+    //--------------------------------------------------------------------------------------------------
+    #[test]
+    fn add_error_to_winner_neuron_determinism() {
+        let filename_input =
+            "test_data/growing_neural_gas/add_error_to_winner_neuron_t1/input.json".to_string();
+        let filename_target =
+            "test_data/growing_neural_gas/add_error_to_winner_neuron_t1/target.json".to_string();
+        let filename_dataset =
+            "test_data/growing_neural_gas/add_error_to_winner_neuron_t1/dataset.csv".to_string();
+
+        // First run
+        let reader_target = json_reader::read_file(&filename_target).unwrap();
+        let reader_input = json_reader::read_file(&filename_input).unwrap();
+
+        let mut params1: Gng_System = Gng_System::init();
+        params1.create_system();
+
+        // Input setup for first run
+        let sample_pos = json_reader::read_val_usize(&reader_input, "config", "curr_sample_pos");
+        let neuron_err_input =
+            json_reader::read_array_f64(&reader_input, "gng_model", "neuron_err");
+        let winner_neuron_input =
+            json_reader::read_val_usize(&reader_input, "config", "winner_neuron");
+
+        load_model(&mut params1, filename_input.clone());
+        let input_width = params1.config_handler.input_width;
+        params1
+            .sample_handler
+            .init_data_set(&filename_dataset, input_width);
+        params1.system_handler.curr_sample_pos = sample_pos;
+        params1
+            .neuron_handler
+            .set_errors_debug(neuron_err_input.clone());
+        params1.system_handler.winner_neuron = winner_neuron_input;
+        add_error_to_winner_neuron(&mut params1);
+
+        // Second run with identical inputs
+        let mut params2: Gng_System = Gng_System::init();
+        params2.create_system();
+
+        // Same input setup for second run
+        load_model(&mut params2, filename_input);
+        params2
+            .sample_handler
+            .init_data_set(&filename_dataset, input_width);
+        params2.system_handler.curr_sample_pos = sample_pos;
+        params2
+            .neuron_handler
+            .set_errors_debug(neuron_err_input.clone());
+        params2.system_handler.winner_neuron = winner_neuron_input;
+        add_error_to_winner_neuron(&mut params2);
+
+        // Validation: Compare all neuron errors between runs
+        let num_neurons = params1.neuron_handler.get_num_neurons();
+        assert_eq!(num_neurons, params2.neuron_handler.get_num_neurons());
+
+        for i in 0..num_neurons {
+            let error1 = params1.neuron_handler.get_error(i);
+            let error2 = params2.neuron_handler.get_error(i);
+            assert!(
+                (error1 - error2).abs() < 0.001,
+                "Determinism failed: neuron {} has different errors between runs ({}, {})",
+                i,
+                error1,
+                error2
+            );
+        }
+
+        // Also validate against target values to ensure both runs are correct
+        let neuron_err_target = json_reader::read_array_f64(&reader_target, "target", "neuron_err");
+        for a in 0..neuron_err_target.len() {
+            assert!((neuron_err_target[a] - params1.neuron_handler.get_error(a)).abs() < 0.001);
+            assert!((neuron_err_target[a] - params2.neuron_handler.get_error(a)).abs() < 0.001);
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
     #[test]
     fn update_weights_t1() {
         let filename_input =
@@ -1417,6 +1712,75 @@ mod core_tests {
             assert!((weights_res[a] - weights_target[a]).abs() < 0.001);
         }
     }
+
+    //--------------------------------------------------------------------------------------------------
+
+    #[test]
+    fn update_weights_determinism() {
+        let filename_input =
+            "test_data/growing_neural_gas/update_weights_t1/input.json".to_string();
+        let filename_target =
+            "test_data/growing_neural_gas/update_weights_t1/target.json".to_string();
+        let filename_dataset =
+            "test_data/growing_neural_gas/update_weights_t1/dataset.csv".to_string();
+
+        let reader_target = json_reader::read_file(&filename_target).unwrap();
+        let reader_input = json_reader::read_file(&filename_input).unwrap();
+
+        // First run
+        let mut params1: Gng_System = Gng_System::init();
+        params1.create_system();
+
+        let epsilon_w: f64 = json_reader::read_val_f64(&reader_input, "config", "epsilon_w");
+        let epsilon_n: f64 = json_reader::read_val_f64(&reader_input, "config", "epsilon_n");
+        let sample_pos = json_reader::read_val_usize(&reader_input, "state", "curr_sample_pos");
+        let neuron_dependencies =
+            json_reader::read_array_usize(&reader_input, "state", "neuron_dependencies");
+
+        load_model(&mut params1, filename_input.clone());
+        let input_width = params1.config_handler.input_width;
+        init_dataset(&mut params1, &filename_dataset);
+        params1.config_handler.epsilon_w = epsilon_w;
+        params1.config_handler.epsilon_n = epsilon_n;
+        params1
+            .neuron_handler
+            .set_neuron_dependencies_debug(neuron_dependencies.clone());
+        params1.system_handler.curr_sample_pos = sample_pos;
+        update_weights(&mut params1);
+
+        let weights_res1 = params1.neuron_handler.get_weight_vec(&input_width);
+
+        // Second run with same inputs
+        let mut params2: Gng_System = Gng_System::init();
+        params2.create_system();
+
+        load_model(&mut params2, filename_input);
+        init_dataset(&mut params2, &filename_dataset);
+        params2.config_handler.epsilon_w = epsilon_w;
+        params2.config_handler.epsilon_n = epsilon_n;
+        params2
+            .neuron_handler
+            .set_neuron_dependencies_debug(neuron_dependencies);
+        params2.system_handler.curr_sample_pos = sample_pos;
+        update_weights(&mut params2);
+
+        let weights_res2 = params2.neuron_handler.get_weight_vec(&input_width);
+
+        // Check that both runs produce identical results
+        assert_eq!(weights_res1.len(), weights_res2.len());
+        for (i, (&weight1, &weight2)) in weights_res1.iter().zip(weights_res2.iter()).enumerate() {
+            assert!(
+                (weight1 - weight2).abs() < 0.001,
+                "Weights differ at index {}: {} vs {}",
+                i,
+                weight1,
+                weight2
+            );
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+
     #[test]
     fn create_edge_t1() {
         let filename_input = "test_data/growing_neural_gas/create_edge_t1/input.json".to_string();
@@ -1473,6 +1837,7 @@ mod core_tests {
             assert_eq!(edge_age_res[a], edge_age_target[a]);
         }
     }
+    //--------------------------------------------------------------------------------------------------
 
     #[test]
     fn create_edge_t2() {
@@ -1530,6 +1895,82 @@ mod core_tests {
             assert_eq!(edge_age_res[a], edge_age_target[a]);
         }
     }
+    //--------------------------------------------------------------------------------------------------
+
+    #[test]
+    fn test_determinism_create_edge() {
+        let filename_input = "test_data/growing_neural_gas/create_edge_t2/input.json".to_string();
+        let filename_target = "test_data/growing_neural_gas/create_edge_t2/target.json".to_string();
+
+        // Load inputs once
+        let reader_target = json_reader::read_file(&filename_target).unwrap();
+        let reader_input = json_reader::read_file(&filename_input).unwrap();
+
+        // Read expected outputs from target file
+        let edge_start_target =
+            json_reader::read_array_usize(&reader_target, "target", "edge_start");
+        let edge_end_target = json_reader::read_array_usize(&reader_target, "target", "edge_end");
+        let edge_age_target = json_reader::read_array_usize(&reader_target, "target", "edge_age");
+
+        // First run
+        let mut params1: Gng_System = Gng_System::init();
+        params1.create_system();
+        load_model(&mut params1, filename_input.clone());
+        params1
+            .neuron_handler
+            .set_neuron_dependencies_debug(json_reader::read_array_usize(
+                &reader_input,
+                "state",
+                "neuron_dependencies",
+            ));
+        params1.system_handler.winner_neuron =
+            json_reader::read_val_usize(&reader_input, "config", "winner_neuron");
+        params1.system_handler.second_neuron =
+            json_reader::read_val_usize(&reader_input, "config", "second_neuron");
+
+        create_edge(&mut params1);
+
+        let edge_start_res1 = params1.edge_handler.get_edge_start_vec();
+        let edge_end_res1 = params1.edge_handler.get_edge_end_vec();
+        let edge_age_res1 = params1.edge_handler.get_edge_age_vec();
+
+        // Second run (with same input)
+        let mut params2: Gng_System = Gng_System::init();
+        params2.create_system();
+        load_model(&mut params2, filename_input.clone());
+        params2
+            .neuron_handler
+            .set_neuron_dependencies_debug(json_reader::read_array_usize(
+                &reader_input,
+                "state",
+                "neuron_dependencies",
+            ));
+        params2.system_handler.winner_neuron =
+            json_reader::read_val_usize(&reader_input, "config", "winner_neuron");
+        params2.system_handler.second_neuron =
+            json_reader::read_val_usize(&reader_input, "config", "second_neuron");
+
+        create_edge(&mut params2);
+
+        let edge_start_res2 = params2.edge_handler.get_edge_start_vec();
+        let edge_end_res2 = params2.edge_handler.get_edge_end_vec();
+        let edge_age_res2 = params2.edge_handler.get_edge_age_vec();
+
+        // Validate deterministic behavior
+        assert_eq!(edge_start_res1, edge_start_res2);
+        assert_eq!(edge_end_res1, edge_end_res2);
+        assert_eq!(edge_age_res1, edge_age_res2);
+
+        // Optional: also validate against target if needed
+        for a in 0..edge_start_target.len() {
+            assert_eq!(edge_start_res1[a], edge_start_target[a]);
+            assert_eq!(edge_end_res1[a], edge_end_target[a]);
+            assert_eq!(edge_age_res1[a], edge_age_target[a]);
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+
     #[test]
     pub fn create_neuron_t1() {
         // Setup
@@ -1686,6 +2127,122 @@ mod core_tests {
     }
 
     #[test]
+    pub fn create_neuron_t2_determinism() {
+        // Setup (same as original test)
+        let filename_input = "test_data/growing_neural_gas/create_neuron_t2/input.json".to_string();
+        let filename_target =
+            "test_data/growing_neural_gas/create_neuron_t2/target.json".to_string();
+        let filename_dataset =
+            "test_data/growing_neural_gas/create_neuron_t2/dataset.csv".to_string();
+
+        let reader_target = json_reader::read_file(&filename_target).unwrap();
+        let reader_input = json_reader::read_file(&filename_input).unwrap();
+
+        let mut params1: Gng_System = Gng_System::init();
+        let mut params2: Gng_System = Gng_System::init();
+
+        params1.create_system();
+        params2.create_system();
+
+        // Input setup
+        let target_neuron = json_reader::read_val_usize(&reader_input, "state", "curr_sample_pos");
+        let neuron_err = json_reader::read_array_f64(&reader_input, "state", "neuron_err");
+
+        let alpha = json_reader::read_val_f64(&reader_input, "config", "alpha");
+        let max_neurons = json_reader::read_val_usize(&reader_input, "config", "max_neurons");
+
+        // Output target values
+        let target_w = json_reader::read_array_f64(&reader_target, "target", "weights");
+        let target_edge_start =
+            json_reader::read_array_usize(&reader_target, "target", "edge_start");
+        let target_edge_end = json_reader::read_array_usize(&reader_target, "target", "edge_end");
+        let target_edge_age = json_reader::read_array_usize(&reader_target, "target", "edge_age");
+        let target_neuron_err = json_reader::read_array_f64(&reader_target, "target", "neuron_err");
+
+        // Load model and initialize both systems identically
+        load_model(&mut params1, filename_input.clone());
+        load_model(&mut params2, filename_input.clone());
+
+        params1.config_handler.alpha = alpha;
+        params1.config_handler.max_neurons = max_neurons;
+        params1.system_handler.curr_neuron = target_neuron;
+        params1.neuron_handler.set_errors_debug(neuron_err.clone());
+
+        params2.config_handler.alpha = alpha;
+        params2.config_handler.max_neurons = max_neurons;
+        params2.system_handler.curr_neuron = target_neuron;
+        params2.neuron_handler.set_errors_debug(neuron_err.clone());
+
+        params1
+            .sample_handler
+            .init_data_set(&filename_dataset, params1.config_handler.input_width);
+        params2
+            .sample_handler
+            .init_data_set(&filename_dataset, params2.config_handler.input_width);
+
+        // Call function on both systems
+        create_neuron(&mut params1);
+        create_neuron(&mut params2);
+
+        // Compare results from both runs
+        let keys_neuron1 = params1.neuron_handler.get_keys();
+        let keys_neuron2 = params2.neuron_handler.get_keys();
+
+        let keys_edge1 = params1.edge_handler.get_keys();
+        let keys_edge2 = params2.edge_handler.get_keys();
+
+        let input_width = params1.config_handler.input_width;
+
+        let keys_neuron_vec1: Vec<usize> = keys_neuron1.copied().collect();
+        let keys_neuron_vec2: Vec<usize> = keys_neuron2.copied().collect();
+
+        assert_eq!(keys_neuron_vec1.len(), keys_neuron_vec2.len());
+
+        for a in &keys_neuron_vec1 {
+            assert!(
+                (params1.neuron_handler.get_error(*a) - params2.neuron_handler.get_error(*a)).abs()
+                    < 0.0001,
+                "Neuron error mismatch at neuron {}",
+                a
+            );
+
+            let w1 = params1.neuron_handler.get_weights(*a);
+            let w2 = params2.neuron_handler.get_weights(*a);
+            for w in 0..input_width {
+                assert!(
+                    (w1[w] - w2[w]).abs() < 0.0001,
+                    "Weights mismatch at neuron {}, feature {}",
+                    a,
+                    w
+                );
+            }
+        }
+
+        for a in keys_edge1 {
+            assert_eq!(
+                params1.edge_handler.get_edge_start(*a),
+                params2.edge_handler.get_edge_start(*a),
+                "Edge start mismatch at edge {}",
+                a
+            );
+            assert_eq!(
+                params1.edge_handler.get_edge_end(*a),
+                params2.edge_handler.get_edge_end(*a),
+                "Edge end mismatch at edge {}",
+                a
+            );
+            assert_eq!(
+                params1.edge_handler.get_edge_age(*a),
+                params2.edge_handler.get_edge_age(*a),
+                "Edge age mismatch at edge {}",
+                a
+            );
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+
+    #[test]
     pub fn delete_old_edges_t1() {
         // Setup
         let filename_input =
@@ -1755,6 +2312,7 @@ mod core_tests {
         // validation
         //------------------------------------------------------------------------------
     }
+    //--------------------------------------------------------------------------------------------------
     #[test]
     fn remove_unconnected_neurons_t1() {
         let filename_input =
@@ -1794,5 +2352,184 @@ mod core_tests {
 
         // validation
         //------------------------------------------------------------------------------
+    }
+
+    //--------------------------------------------------------------------------------------------------
+
+    #[test]
+    fn test_consistency_T1() {
+        use csv_reader::CsvReader;
+        //    use neurogas::aux::csv_reader::CsvReader;
+        let input_width = 2;
+        let weight_rng_min = -1.0;
+        let weight_rng_max = 1.0;
+        let edge_removal_age = 50;
+        let neuron_creation_interval = 200;
+        let max_epochs = 3;
+        let max_neurons = 50;
+        let target_error = 0.096;
+        let epsilon_w = 0.1;
+        let epsilon_n = 0.006;
+        let alpha = 0.5;
+        let beta = 0.995;
+        let rng_seed_1: u64 = 4506;
+        let rng_seed_2: u64 = 4506;
+
+        //##########################################################
+        // First run
+        let mut gng_system_1 = Gng_System::init();
+        gng_system_1.config_handler.set_parameters(
+            input_width,
+            weight_rng_min,
+            weight_rng_max,
+            edge_removal_age,
+            neuron_creation_interval,
+            max_epochs,
+            max_neurons,
+            target_error,
+            epsilon_w,
+            epsilon_n,
+            alpha,
+            beta,
+            rng_seed_1,
+        );
+        gng_system_1.rng_manager.seed_rng(rng_seed_1);
+
+        let reader = CsvReader::new(
+            "test_data/integration_tests/integration_t0/circles.csv",
+            ',',
+        );
+
+        let mut in_set: Vec<f64> = Vec::new();
+        let res = reader.read_csv_values_f64();
+        match res {
+            Ok(values) => in_set = values,
+            Err(e) => panic!("Failed to read CSV file: {:?}", e),
+        }
+        gng_system_1
+            .sample_handler
+            .init_input_vec(&in_set, input_width);
+
+        //##########################################################
+        // Second run with identical setup
+        let mut gng_system_2 = Gng_System::init();
+        gng_system_2.config_handler.set_parameters(
+            input_width,
+            weight_rng_min,
+            weight_rng_max,
+            edge_removal_age,
+            neuron_creation_interval,
+            max_epochs,
+            max_neurons,
+            target_error,
+            epsilon_w,
+            epsilon_n,
+            alpha,
+            beta,
+            rng_seed_2,
+        );
+        gng_system_2.rng_manager.seed_rng(rng_seed_2);
+
+        gng_system_2
+            .sample_handler
+            .init_input_vec(&in_set, input_width);
+
+        //##########################################################
+        // First fit run
+        init_training(&mut gng_system_1);
+        shuffle_dataset(&mut gng_system_1);
+        select_sample(&mut gng_system_1);
+        calc_neuron_distances(&mut gng_system_1);
+        calc_nearest_neurons(&mut gng_system_1);
+        calc_neuron_dependencies(&mut gng_system_1);
+        increase_edge_age(&mut gng_system_1);
+        add_error_to_winner_neuron(&mut gng_system_1);
+        update_weights(&mut gng_system_1);
+        create_edge(&mut gng_system_1);
+        delete_old_edges(&mut gng_system_1);
+        remove_unconnected_neurons(&mut gng_system_1);
+        create_neuron(&mut gng_system_1);
+        decrease_error_global(&mut gng_system_1);
+        //##########################################################
+        // Second fit run
+        init_training(&mut gng_system_2);
+        shuffle_dataset(&mut gng_system_2);
+        select_sample(&mut gng_system_2);
+        calc_neuron_distances(&mut gng_system_2);
+        calc_nearest_neurons(&mut gng_system_2);
+        calc_neuron_dependencies(&mut gng_system_2);
+        increase_edge_age(&mut gng_system_2);
+        add_error_to_winner_neuron(&mut gng_system_2);
+        update_weights(&mut gng_system_2);
+        create_edge(&mut gng_system_2);
+        delete_old_edges(&mut gng_system_2);
+        remove_unconnected_neurons(&mut gng_system_2);
+        create_neuron(&mut gng_system_2);
+        decrease_error_global(&mut gng_system_2);
+
+        //##########################################################
+        // Result Comparison
+        //##########################################################
+        // init_training
+        let len1 = gng_system_1.neuron_handler.len();
+        let len2 = gng_system_2.neuron_handler.len();
+        assert_ne!(len1, 0, "Number of neurons should be greater than 0");
+        assert_eq!(len1, len2, "Number of neurons should be equal");
+
+        // Compare results for determinism
+        // Check neuron weights
+        let keys_1 = gng_system_1.neuron_handler.get_keys();
+        let keys_2 = gng_system_2.neuron_handler.get_keys();
+
+        let input_width = gng_system_1.config_handler.input_width;
+        for &key in keys_1 {
+            if let Some(weights_1) = gng_system_1
+                .neuron_handler
+                .get_weights(key)
+                .get(0..input_width)
+            {
+                if let Some(weights_2) = gng_system_2
+                    .neuron_handler
+                    .get_weights(key)
+                    .get(0..input_width)
+                {
+                    for i in 0..input_width {
+                        assert!(
+                            (weights_1[i] - weights_2[i]).abs() < 0.0001,
+                            "Weights should be equal for neuron {} at position {}",
+                            key,
+                            i
+                        );
+                    }
+                }
+            }
+        }
+        // init_training
+        //##########################################################
+        let sample_order_1 = gng_system_1.system_handler.sample_order;
+        let sample_order_2 = gng_system_2.system_handler.sample_order;
+        assert_eq!(sample_order_1, sample_order_2, "Sample orders diverged");
+        //##########################################################
+        // weights
+        for a in 0..gng_system_1.neuron_handler.get_num_neurons() {
+            for b in 0..gng_system_1.config_handler.input_width {
+                let weights_1 = gng_system_1.neuron_handler.get_weights(b);
+                let weights_2 = gng_system_2.neuron_handler.get_weights(b);
+                assert_eq!(weights_1, weights_2, "Weights diverged");
+            }
+        }
+        // weights
+        //##########################################################
+        // edges
+        for a in 0..gng_system_1.edge_handler.get_num_edges() {
+            let edge_start_1 = gng_system_1.edge_handler.get_edge_start(a);
+            let edge_end_1 = gng_system_1.edge_handler.get_edge_end(a);
+            let edge_start_2 = gng_system_2.edge_handler.get_edge_start(a);
+            let edge_end_2 = gng_system_2.edge_handler.get_edge_end(a);
+            assert_eq!(edge_start_1, edge_start_2, "edges diverged");
+            assert_eq!(edge_end_1, edge_end_2, "edges diverged");
+        }
+        // edges
+        //##########################################################
     }
 }
