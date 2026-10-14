@@ -19,14 +19,14 @@ pub mod internal {
 }
 
 pub struct Gng {
-    cont_params: internal::Gng_System,
+    gng_system: internal::Gng_System,
 }
 
 impl Default for Gng {
     fn default() -> Self {
-        let mut cont_params = internal::Gng_System::init();
-        cont_params.create_system();
-        Self { cont_params }
+        let mut gng_system = internal::Gng_System::init();
+        gng_system.create_system();
+        Self { gng_system }
     }
 }
 
@@ -36,39 +36,39 @@ impl Gng {
     }
 
     pub fn load_config(&mut self, filename_config: &str) {
-        internal::core_load_config(&mut self.cont_params, &filename_config.to_string());
+        internal::core_load_config(&mut self.gng_system, &filename_config.to_string());
     }
 
     pub fn init_dataset_vec(&mut self, data: &Vec<f64>) {
-        internal::core_init_dataset_vec(&mut self.cont_params, data);
+        internal::core_init_dataset_vec(&mut self.gng_system, data);
     }
 
     pub fn init_dataset(&mut self, filename_dataset: &str) {
-        internal::core_init_dataset(&mut self.cont_params, &filename_dataset.to_string());
+        internal::core_init_dataset(&mut self.gng_system, &filename_dataset.to_string());
     }
 
     pub fn fit(&mut self) {
-        internal::core_fit(&mut self.cont_params);
+        internal::core_fit(&mut self.gng_system);
     }
     pub fn init_step(&mut self) {
-        internal::core_init_step(&mut self.cont_params);
+        internal::core_init_step(&mut self.gng_system);
     }
     pub fn fit_step(&mut self) {
-        internal::core_fit_step(&mut self.cont_params);
+        internal::core_fit_step(&mut self.gng_system);
     }
     pub fn save_model_json(&mut self, filename_output: &str) {
-        internal::core_save_model_json(&mut self.cont_params, filename_output.to_string());
+        internal::core_save_model_json(&mut self.gng_system, filename_output.to_string());
     }
     pub fn get_model_string(&mut self) -> String {
-        internal::core_get_model_string(&mut self.cont_params)
+        internal::core_get_model_string(&mut self.gng_system)
     }
 
     pub fn get_neurons(&mut self) -> Vec<(usize, Vec<f64>)> {
-        internal::core_get_neurons(&mut self.cont_params)
+        internal::core_get_neurons(&mut self.gng_system)
     }
 
     pub fn get_edges(&mut self) -> Vec<(usize, usize)> {
-        internal::core_get_edges(&mut self.cont_params)
+        internal::core_get_edges(&mut self.gng_system)
     }
 
     pub fn set_parameters(
@@ -88,7 +88,7 @@ impl Gng {
         rng_seed: u64,
     ) {
         internal::core_set_parameters(
-            &mut self.cont_params,
+            &mut self.gng_system,
             input_width,
             weight_rng_min,
             weight_rng_max,
@@ -103,5 +103,6 @@ impl Gng {
             beta,
             rng_seed,
         );
+        self.gng_system.rng_manager.seed_rng(rng_seed);
     }
 }
