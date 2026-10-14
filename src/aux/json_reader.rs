@@ -39,6 +39,10 @@ pub fn read_val_f64(content: &Value, x: &str, y: &str) -> f64 {
     let input = &content[x][y];
     return _read_val_f64(&input);
 }
+pub fn read_val_u64(content: &Value, x: &str, y: &str) -> u64 {
+    let input = &content[x][y];
+    return _read_val_u64(&input);
+}
 
 pub fn read_file_temp(file_name: &str) -> Result<Value, String> {
     let file_content = fs::read_to_string(file_name).expect("file not found");
@@ -153,6 +157,22 @@ fn _read_val_f64(value: &Value) -> f64 {
     match value {
         Value::Number(val) => {
             let temp = val.as_f64();
+            match temp {
+                Some(temp) => res = temp,
+                None => println!("read value is not an int"),
+            }
+        }
+
+        _ => println!("read_val_int: {:?} is not an int", value),
+    }
+    return res;
+}
+
+fn _read_val_u64(value: &Value) -> u64 {
+    let mut res: u64 = 0;
+    match value {
+        Value::Number(val) => {
+            let temp = val.as_u64();
             match temp {
                 Some(temp) => res = temp,
                 None => println!("read value is not an int"),
