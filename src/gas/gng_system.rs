@@ -1,7 +1,7 @@
 use crate::components::{
     edge_component::EdgeHandler, neuron_component::NeuronHandler, sample_component::SampleHandler,
 };
-use crate::handlers::config_handler::Config;
+use crate::handlers::config_handler::{self, Config};
 use crate::handlers::system_handler::Phase;
 use crate::handlers::system_handler::System;
 
@@ -21,18 +21,22 @@ pub struct Gng_System {
 }
 impl Gng_System {
     pub fn init() -> Self {
+        let config_handler = Config::init();
+        let rng_seed = config_handler.rng_seed;
         Self {
             neuron_handler: NeuronHandler::init(),
             edge_handler: EdgeHandler::init(),
 
-            config_handler: Config::init(),
+            config_handler,
             system_handler: System::init(),
             sample_handler: SampleHandler::init(),
-            rng_manager: RngManager::init(123),
+            rng_manager: RngManager::init(rng_seed),
         }
     }
+    //pub fn set_rng_seed(&mut self) {
+    //    self.rng_manager.seed_rng(self.config_handler.rng_seed);
+    //}
     pub fn create_system(&mut self) {
         Self::init();
-        //self.rng_manager.seed_rng(1234567890);
     }
 }
