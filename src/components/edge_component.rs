@@ -94,6 +94,9 @@ impl EdgeHandler {
             obj.age = obj.age + 1;
         }
     }
+    pub fn get_num_edges(&self) -> usize {
+        self.edge_man.len()
+    }
     pub fn len(&self) -> usize {
         self.edge_man.len()
     }

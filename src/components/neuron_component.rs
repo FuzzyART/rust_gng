@@ -101,6 +101,13 @@ impl NeuronHandler {
         let temp = self.neuron_man.len();
         temp
     }
+    pub fn len(&self) -> usize {
+        self.neuron_man.len()
+    }
+
+    //  pub fn len2(&self,mut num_neuron: usize){
+    //      num_neuron =  self.neuron_man.len();
+    //  }
 
     //----------------------------------------------------------
     // Debugging helpers
