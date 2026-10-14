@@ -92,6 +92,7 @@ impl Config {
         self.target_error = json_reader::read_val_f64(&reader, "config", "target_error");
         self.epsilon_w = json_reader::read_val_f64(&reader, "config", "epsilon_w");
         self.epsilon_n = json_reader::read_val_f64(&reader, "config", "epsilon_n");
+        self.rng_seed = json_reader::read_val_u64(&reader, "config", "rng_seed");
     }
 
     // --- Convenience: load_config (renamed/updated from original) ---
