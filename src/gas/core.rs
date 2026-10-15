@@ -10,7 +10,19 @@ use rand::seq::SliceRandom;
 use serde_json::{json, Value};
 
 use crate::gas::gng_system::Gng_System;
+
 //--------------------------------------------------------------------------------------------------
+/// Initializes the training process by setting up initial state and preparing for the first epoch.
+///
+/// This function performs the following steps:
+/// 1. Initializes training parameters
+/// 2. Shuffles the dataset
+/// 3. Sets the training initiation flag to true
+/// 4. Transitions to the StartNewEpoch phase
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system that will be initialized for training
 pub fn init_step(params: &mut Gng_System) {
     //   let mut curr_phase = Phase::StartNewEpoch;
     init_training(params);
@@ -20,6 +32,18 @@ pub fn init_step(params: &mut Gng_System) {
 }
 
 //--------------------------------------------------------------------------------------------------
+/// Executes a single fitting iteration.
+///
+/// This function performs one complete training epoch by:
+/// 1. Shuffling the dataset
+/// 2. Incrementing the current epoch counter
+/// 3. Setting the phase to NormalIteration
+/// 4. Processing samples until reaching StartNewEpoch phase again
+/// 5. Updating system state after each iteration
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system that will be trained
 pub fn fit_step(params: &mut Gng_System) {
     shuffle_dataset(params);
     let curr_epoch = params.system_handler.curr_epoch;
@@ -53,7 +77,21 @@ pub fn fit_step(params: &mut Gng_System) {
         update_phase(params);
     }
 }
+
 //--------------------------------------------------------------------------------------------------
+/// Runs the complete training process until maximum epochs are reached.
+///
+/// This function manages the full training loop by:
+/// 1. Setting initial phase to StartNewEpoch
+/// 2. Initializing training parameters
+/// 3. Shuffling dataset
+/// 4. Setting training initiation flag to true
+/// 5. Iterating through epochs and samples until maximum epochs is reached
+/// 6. Updating system state after each iteration and epoch
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system that will be trained
 pub fn fit(params: &mut Gng_System) {
     // init_run
     params.system_handler.curr_phase = Phase::StartNewEpoch;
@@ -99,6 +137,15 @@ pub fn fit(params: &mut Gng_System) {
 }
 
 //--------------------------------------------------------------------------------------------------
+/// Updates the current phase based on training state.
+///
+/// This function transitions between phases:
+/// - If training has been initiated, sets phase to NormalIteration
+/// - If the last sample has been reached, resets to StartNewEpoch phase
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system whose phase will be updated
 pub fn update_phase(params: &mut Gng_System) {
     if params.system_handler.train_initiated == true {
         params.system_handler.curr_phase = Phase::NormalIteration;
@@ -109,6 +156,12 @@ pub fn update_phase(params: &mut Gng_System) {
     }
 }
 
+//--------------------------------------------------------------------------------------------------
+/// Starts a new epoch by shuffling the dataset and incrementing the epoch counter.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system that will start a new epoch
 pub fn start_new_epoch(params: &mut Gng_System) {
     shuffle_dataset(params);
     let curr_epoch = params.system_handler.curr_epoch;
@@ -116,7 +169,15 @@ pub fn start_new_epoch(params: &mut Gng_System) {
 }
 
 //--------------------------------------------------------------------------------------------------
-
+/// Loads a pre-trained model from a JSON file.
+///
+/// This function reads neuron weights, edge connections, and configuration parameters
+/// from a JSON file and reconstructs the GNG model in memory.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system where the model will be loaded
+/// * `filename_model` - The path to the JSON file containing the model data
 pub fn load_model(params: &mut Gng_System, filename_model: String) {
     let reader_input = json_reader::read_file(&filename_model).unwrap();
 
@@ -146,7 +207,17 @@ pub fn load_model(params: &mut Gng_System, filename_model: String) {
             .create_edge(edge_start[e], edge_end[e], edge_age[e]);
     }
 }
+
 //--------------------------------------------------------------------------------------------------
+/// Configures the model parameters from a JSON configuration file.
+///
+/// This function reads configuration values such as input width, weight range,
+/// and training parameters from a JSON file to initialize the GNG system.
+///
+/// # Arguments
+///
+/// * `filename_input` - The path to the JSON configuration file
+/// * `gng_params` - A mutable reference to the GNG system that will be configured
 pub fn configure_model(filename_input: String, gng_params: &mut Gng_System) {
     let reader_input = json_reader::read_file(&filename_input).unwrap();
     gng_params.config_handler.input_width =
@@ -157,6 +228,28 @@ pub fn configure_model(filename_input: String, gng_params: &mut Gng_System) {
         json_reader::read_val_f64(&reader_input, "config", "weight_rng_max");
 }
 
+//--------------------------------------------------------------------------------------------------
+/// Sets all model parameters directly.
+///
+/// This function provides a programmatic way to configure all GNG system parameters
+/// without requiring a configuration file.
+///
+/// # Arguments
+///
+/// * `gng_params` - A mutable reference to the GNG system to be configured
+/// * `input_width` - The dimensionality of input samples
+/// * `weight_rng_min` - Minimum value for initial weight randomization
+/// * `weight_rng_max` - Maximum value for initial weight randomization
+/// * `edge_removal_age` - Age threshold for edge removal
+/// * `neuron_creation_interval` - Iteration interval between neuron creation
+/// * `max_epochs` - Maximum number of training epochs
+/// * `max_neurons` - Maximum number of neurons allowed in the network
+/// * `target_error` - Target error level for termination
+/// * `epsilon_w` - Weight update parameter for winner neuron
+/// * `epsilon_n` - Weight update parameter for neighbor neurons
+/// * `alpha` - Error decay factor for newly created neurons
+/// * `beta` - Global error decay factor
+/// * `rng_seed` - Random number generator seed for reproducibility
 pub fn set_parameters(
     gng_params: &mut Gng_System,
     input_width: usize,
@@ -189,11 +282,27 @@ pub fn set_parameters(
         rng_seed,
     );
 }
+
+//--------------------------------------------------------------------------------------------------
+/// Sets the input width parameter for the GNG system.
+///
+/// # Arguments
+///
+/// * `gng_params` - A mutable reference to the GNG system to be configured
+/// * `input_width` - The dimensionality of input samples
 pub fn set_input_width(gng_params: &mut Gng_System, input_width: usize) {
     gng_params.config_handler.input_width = input_width;
 }
-//--------------------------------------------------------------------------------------------------
 
+//--------------------------------------------------------------------------------------------------
+/// Initializes the model with two initial neurons connected by an edge.
+///
+/// This function creates two neurons with random weights and connects them with an edge,
+/// forming the starting configuration for the growing neural gas network.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system that will be initialized
 pub fn init_model(params: &mut Gng_System) {
     let width = params.config_handler.input_width;
     let rng_min = params.config_handler.weight_rng_min;
@@ -211,6 +320,14 @@ pub fn init_model(params: &mut Gng_System) {
 }
 
 //--------------------------------------------------------------------------------------------------
+/// Calculates the Euclidean distance from each neuron to the current input sample.
+///
+/// This function computes the distance between the current input sample and all neurons
+/// in the network, storing the results for subsequent processing steps.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the sample and neurons
 pub fn calc_neuron_distances(params: &mut Gng_System) {
     // input: config: input_width
     //                weight
@@ -247,6 +364,13 @@ pub fn calc_neuron_distances(params: &mut Gng_System) {
 
 //--------------------------------------------------------------------------------------------------
 /// Calculates the 2 neurons closest to the input
+///
+/// This function finds the neuron with minimum distance (winner) and the second closest neuron.
+/// These are used in subsequent processing steps to determine weight updates and edge creation.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the neurons and distances
 pub fn calc_nearest_neurons(params: &mut Gng_System) {
     let keys = params.neuron_handler.get_keys();
 
@@ -282,48 +406,14 @@ pub fn calc_nearest_neurons(params: &mut Gng_System) {
 }
 
 //--------------------------------------------------------------------------------------------------
-//Calculates and populates the neuron dependency array
-//
-// the neuron dependency array identifies the winner neuron and its neighboring neurons within the network. This information is used
-//to determine the influence scope of the winning neuron during subsequent processing steps.
-//
-//## Function Signature
-//```rust
-//pub fn calc_neuron_dependencies(params: &mut Gng_System)
-//
-//## Parameters
-//
-//### `params: &mut Gng_System`
-//A mutable reference to a `Gng_System` struct containing the system state and all necessary handlers. This parameter is modified in place to update neuron dependency flags.
-//
-//## Function Behavior
-//
-//### Process
-//1. **Neuron Identification**: Retrieves the total number of neurons and identifies the current winner neuron
-//2. **Edge Analysis**: Obtains all edges connected to the winner neuron and determines neighboring neurons through edge connections
-//3. **Dependency Assignment**: Sets dependency flags for each neuron in the network:
-//   - **Flag 0**: Irrelevant neuron (not part of winner's influence scope)
-//   - **Flag 1**: Winner neuron (primary neuron of interest)
-//   - **Flag 2**: Neighbor neuron (directly connected to winner neuron)
-//
-//### Algorithm Steps
-//1. Collect all edges connected to the winner neuron
-//2. For each edge, identify the neighboring neuron (either start or end point)
-//3. Initialize all neurons with dependency flag 0
-//4. Set the winner neuron's dependency flag to 1
-//5. Set all neighbor neurons' dependency flags to 2
-//
-//## Requirements
-//- `model_params.winner_edges` must be properly initialized and populated
-//- The system must have a valid winner neuron identified in `system_handler.winner_neuron`
-//- Edge handler must contain valid edge connections for the winner neuron
-//
-//## Notes
-//- This function assumes that `winner_edges` contains valid edge references
-//- The dependency array is reset and rebuilt entirely on each call
-//- Neighbors are determined based on direct edge connections from the winner neuron
-//- All neurons in the system are processed, regardless of their current dependency state
-
+/// Calculates and populates the neuron dependency array.
+///
+/// The neuron dependency array identifies the winner neuron and its neighboring neurons within the network.
+/// This information is used to determine the influence scope of the winning neuron during subsequent processing steps.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the system state and all necessary handlers.
 pub fn calc_neuron_dependencies(params: &mut Gng_System) {
     // params
     let num_neurons = params.neuron_handler.get_num_neurons();
@@ -361,6 +451,16 @@ pub fn calc_neuron_dependencies(params: &mut Gng_System) {
 }
 
 //--------------------------------------------------------------------------------------------------
+/// Updates neuron weights based on the current sample and dependency flags.
+///
+/// This function updates weights of neurons according to their dependency status:
+/// - Winner neuron (dependency flag 1): Updated with learning rate epsilon_w
+/// - Neighbor neuron (dependency flag 2): Updated with learning rate epsilon_n
+/// - Irrelevant neuron (dependency flag 0): Not updated
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing neurons and samples
 pub fn update_weights(params: &mut Gng_System) {
     // params
     let input_width = params.config_handler.input_width;
@@ -409,13 +509,31 @@ pub fn update_weights(params: &mut Gng_System) {
 }
 
 //--------------------------------------------------------------------------------------------------
+/// Gets the edges connected to the winner neuron.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the edge information
+///
+/// # Returns
+///
+/// A vector of edge IDs connected to the current winner neuron
 pub fn get_winner_edges(params: &mut Gng_System) -> Vec<usize> {
     let winner_neuron = params.system_handler.winner_neuron;
 
     return params.edge_handler.get_connected_edges(winner_neuron);
 }
-//--------------------------------------------------------------------------------------------------
 
+//--------------------------------------------------------------------------------------------------
+/// Calculates the neighbor neurons of the neuron with maximum error.
+///
+/// This function identifies all neurons that are directly connected to the neuron
+/// with the highest error, storing them in `neighbor_neuron_vec_max_err` for use in
+/// subsequent processing steps such as neuron creation.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the edge and neuron information
 pub fn calc_neighbor_neuron_vec_max_err(params: &mut Gng_System) {
     // input
     //  edge: edge start
@@ -442,6 +560,7 @@ pub fn calc_neighbor_neuron_vec_max_err(params: &mut Gng_System) {
     // output
     params.system_handler.neighbor_neuron_vec_max_err = res_vec;
 }
+
 //--------------------------------------------------------------------------------------------------
 /// Selects the next sample from the sample order and updates the system state.
 ///
@@ -472,39 +591,16 @@ pub fn select_sample(params: &mut Gng_System) {
         params.system_handler.last_sample_reached = true;
     }
 }
-//--------------------------------------------------------------------------------------------------
-//Randomizes the order of samples in the dataset.
-//
-// This function prepares the sample order for sequential sampling by creating a
-//shuffled permutation of all available sample IDs.
-//
-//## Function Signature
-//```rust
-//pub fn shuffle_dataset(params: &mut Gng_System)
-//```
-//
-//## Parameters
-//
-//### `params: &mut Gng_System`
-//A mutable reference to a `Gng_System` struct containing the system state and handlers. This parameter is modified in place to update the sample order and reset the sample position counter.
-//
-//## Function Behavior
-//
-//### Process
-//1. **Collect Sample Keys**: Retrieves all sample IDs from the sample handler and collects them into a vector
-//2. **Normalize Order**: Sorts the sample IDs in ascending order to ensure consistent iteration
-//3. **Apply Randomization**: Uses the system's seeded random number generator to shuffle the sorted sample IDs
-//4. **Update System State**: Stores the shuffled order in the system handler and resets the sample position counter
-//
-//### State Updates
-//- `params.system_handler.sample_order`: Updated to contain the randomly shuffled sample IDs
-//- `params.system_handler.sample_order_position`: Reset to 0, starting the sampling sequence from the beginning
-//
-//## Notes
-//- The function uses a seeded RNG for reproducible shuffling results
-//- Sample IDs are first sorted then shuffled to ensure deterministic behavior while maintaining randomness
-//- This function should be called before starting a new sampling iteration to randomize the order of samples
 
+//--------------------------------------------------------------------------------------------------
+/// Randomizes the order of samples in the dataset.
+///
+/// This function prepares the sample order for sequential sampling by creating a
+/// shuffled permutation of all available sample IDs.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the sample handler and system state
 pub fn shuffle_dataset(params: &mut Gng_System) {
     let mut res: Vec<usize> = params.sample_handler.get_keys().copied().collect();
 
@@ -520,7 +616,14 @@ pub fn shuffle_dataset(params: &mut Gng_System) {
 }
 
 //--------------------------------------------------------------------------------------------------
-
+/// Decreases the global error for all neurons by a factor of beta.
+///
+/// This function applies exponential decay to neuron errors, allowing older errors
+/// to gradually fade out while maintaining recent learning effects.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the neurons and their errors
 pub fn decrease_error_global(params: &mut Gng_System) {
     let keys = params.neuron_handler.get_keys();
     let d = params.config_handler.beta;
@@ -541,7 +644,16 @@ pub fn decrease_error_global(params: &mut Gng_System) {
         params.neuron_handler.set_error(a, new_err);
     }
 }
+
 //--------------------------------------------------------------------------------------------------
+/// Increases the age of edges connected to the winner neuron.
+///
+/// This function increments the age counter for all edges that are directly
+/// connected to the current winner neuron, which is used in edge removal logic.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the edges and neurons
 pub fn increase_edge_age(params: &mut Gng_System) {
     let winner_neuron = params.system_handler.winner_neuron;
 
@@ -560,7 +672,16 @@ pub fn increase_edge_age(params: &mut Gng_System) {
         params.edge_handler.set_edge_age(i, age + 1);
     }
 }
+
 //--------------------------------------------------------------------------------------------------
+/// Adds the squared error between the current sample and the winner neuron to the neuron's error.
+///
+/// This function calculates the Euclidean distance between the input sample and the winner neuron,
+/// squares it, and adds this value to the winner neuron's accumulated error.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the sample and neurons
 pub fn add_error_to_winner_neuron(params: &mut Gng_System) {
     let sample_pos = params.system_handler.curr_sample_pos;
     let input_width = params.config_handler.input_width;
@@ -584,8 +705,21 @@ pub fn add_error_to_winner_neuron(params: &mut Gng_System) {
         .neuron_handler
         .set_error(winner_neuron, curr_err + sum);
 }
+
 //--------------------------------------------------------------------------------------------------
-// create_neuron and sub gas
+/// Creates a new neuron in the network.
+///
+/// This function implements the core neuron creation mechanism of the GNG algorithm:
+/// 1. Finds the neuron with maximum error
+/// 2. Identifies its neighbors
+/// 3. Selects the neighbor with maximum error
+/// 4. Removes the edge between them
+/// 5. Creates a new neuron at the midpoint of the removed edge
+/// 6. Connects the new neuron to both original neurons
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system that will create a new neuron
 pub fn create_neuron(params: &mut Gng_System) {
     if params.neuron_handler.get_num_neurons() < params.config_handler.max_neurons {
         //------------------------------------------------------------------------------
@@ -617,8 +751,16 @@ pub fn create_neuron(params: &mut Gng_System) {
         params.edge_handler.create_edge(neuron_new, neuron_2, 0);
     }
 }
-//---------------------------------------
 
+//--------------------------------------------------------------------------------------------------
+/// Finds the neuron with the maximum error in the network.
+///
+/// This function scans all neurons to identify the one with the highest accumulated error,
+/// which is used as a reference for neuron creation and edge management.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the neurons and their errors
 pub fn calc_neighbor_neuron_max_err(params: &mut Gng_System) {
     let neighbor_neurons = &params.system_handler.neighbor_neuron_vec_max_err;
     let mut max_err_neighbor: f64 = *params.neuron_handler.get_error(neighbor_neurons[0]);
@@ -633,6 +775,16 @@ pub fn calc_neighbor_neuron_max_err(params: &mut Gng_System) {
 
     params.system_handler.neighbor_neuron_max_err = max_error_neighbor_pos;
 }
+
+//--------------------------------------------------------------------------------------------------
+/// Finds the neuron with the maximum error in the network.
+///
+/// This function scans all neurons to identify the one with the highest accumulated error,
+/// which is used as a reference for neuron creation and edge management.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the neurons and their errors
 pub fn calc_max_error_neuron(params: &mut Gng_System) {
     let keys = params.neuron_handler.get_all_neuron_ids();
     // Handle empty collection
@@ -654,6 +806,15 @@ pub fn calc_max_error_neuron(params: &mut Gng_System) {
 }
 
 //--------------------------------------------------------------------------------------------------
+/// Removes edges that have exceeded their maximum age.
+///
+/// This function identifies and removes all edges whose age has exceeded the configured
+/// `edge_removal_age` threshold, helping to maintain network topology and prevent
+/// long-lived connections from becoming obsolete.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the edges to be removed
 pub fn delete_old_edges(params: &mut Gng_System) {
     let edges = delete_old_edges_mark(params);
 
@@ -661,6 +822,20 @@ pub fn delete_old_edges(params: &mut Gng_System) {
         params.edge_handler.remove_edge(a);
     }
 }
+
+//--------------------------------------------------------------------------------------------------
+/// Marks edges that have exceeded their maximum age for removal.
+///
+/// This helper function identifies all edges whose age has exceeded the configured
+/// `edge_removal_age` threshold without actually removing them.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the edges to be marked
+///
+/// # Returns
+///
+/// A vector of edge IDs that should be removed
 fn delete_old_edges_mark(params: &mut Gng_System) -> Vec<usize> {
     let keys = params.edge_handler.get_keys();
     let max_age = params.config_handler.edge_removal_age;
@@ -672,7 +847,16 @@ fn delete_old_edges_mark(params: &mut Gng_System) -> Vec<usize> {
     }
     marked_edges
 }
+
 //--------------------------------------------------------------------------------------------------
+/// Removes neurons that are not connected to any edge in the network.
+///
+/// This function cleans up isolated neurons that have become disconnected from the main network,
+/// helping to maintain a coherent and efficient network structure.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the neurons and edges to be cleaned
 pub fn remove_unconnected_neurons(params: &mut Gng_System) {
     // Step 1: Get all edge keys
     let edge_keys = params.edge_handler.get_keys();
@@ -704,6 +888,15 @@ pub fn remove_unconnected_neurons(params: &mut Gng_System) {
 }
 
 //--------------------------------------------------------------------------------------------------
+/// Creates an edge between the winner and second neuron if they are not already connected.
+///
+/// This function implements the edge creation mechanism in GNG:
+/// - If winner and second neurons are already connected, resets the edge age to 0
+/// - If not connected, creates a new edge between them with age 0
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the neurons and edges
 pub fn create_edge(params: &mut Gng_System) {
     // examine, if winner and second neuron are connected
     let winner_neuron: usize = params.system_handler.winner_neuron;
@@ -729,7 +922,16 @@ pub fn create_edge(params: &mut Gng_System) {
             .create_edge(winner_neuron, second_neuron, 0);
     }
 }
-//--------------------------------------
+
+//--------------------------------------------------------------------------------------------------
+/// Removes the edge between two specified neurons.
+///
+/// This function finds and removes the specific edge connecting neuron_1 and neuron_2,
+/// which is used during neuron creation to replace an existing connection with a new one.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the edges to be removed
 pub fn remove_edge(params: &mut Gng_System) {
     let neuron_1 = params.system_handler.neuron_max_err;
     let neuron_2 = params.system_handler.neighbor_neuron_max_err;
@@ -744,6 +946,16 @@ pub fn remove_edge(params: &mut Gng_System) {
         }
     }
 }
+
+//--------------------------------------------------------------------------------------------------
+/// Inserts a new neuron at the midpoint between two existing neurons.
+///
+/// This function creates a new neuron positioned at the average of two existing neurons' weights
+/// and calculates its error as the average of their errors, then stores the new neuron ID.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the neurons and edges
 pub fn insert_new_neuron(params: &mut Gng_System) {
     let neuron_1 = params.system_handler.neuron_max_err;
     let neuron_2 = params.system_handler.neighbor_neuron_max_err;
@@ -767,6 +979,16 @@ pub fn insert_new_neuron(params: &mut Gng_System) {
     params.neuron_handler.set_error(new_id, err_new);
 }
 
+//--------------------------------------------------------------------------------------------------
+/// Initializes the dataset from a CSV file.
+///
+/// This function loads sample data from a CSV file and prepares it for training,
+/// using the configured input width to properly parse each sample.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system that will contain the loaded samples
+/// * `filename_dataset` - The path to the CSV dataset file
 pub fn init_dataset(params: &mut Gng_System, filename_dataset: &String) {
     let input_width = params.config_handler.input_width;
     params
@@ -774,17 +996,47 @@ pub fn init_dataset(params: &mut Gng_System, filename_dataset: &String) {
         .init_data_set(&filename_dataset, input_width);
 }
 
+//--------------------------------------------------------------------------------------------------
+/// Initializes the dataset from a vector of f64 values.
+///
+/// This function loads sample data directly from a vector and prepares it for training,
+/// using the configured input width to properly parse each sample.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system that will contain the loaded samples
+/// * `data_vec` - A vector of f64 values representing the dataset samples
 pub fn init_dataset_vec(params: &mut Gng_System, data_vec: &Vec<f64>) {
     let input_width = params.config_handler.input_width;
     params.sample_handler.init_input_vec(&data_vec, input_width);
 }
 
 //--------------------------------------------------------------------------------------------------
+/// Loads configuration parameters from a JSON file.
+///
+/// This function reads and applies all system configuration values from a JSON file,
+/// including training parameters, network structure settings, and learning rates.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system that will be configured
+/// * `filename_config` - The path to the JSON configuration file
 pub fn load_config(params: &mut Gng_System, filename_config: &String) {
     params.config_handler.load_config(&filename_config);
 }
 
 //--------------------------------------------------------------------------------------------------
+/// Initializes the training process by setting up initial state and model.
+///
+/// This function prepares the system for training by:
+/// 1. Setting training completion flag to false
+/// 2. Setting reshuffle requirement flag to true
+/// 3. Initializing the model with two starting neurons
+/// 4. Setting training initiation flag to true
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system that will be initialized for training
 pub fn init_training(params: &mut Gng_System) {
     params.system_handler.train_completed = false;
 
@@ -796,7 +1048,19 @@ pub fn init_training(params: &mut Gng_System) {
 }
 
 //--------------------------------------------------------------------------------------------------
-// Export Model
+/// Exports the current model to a JSON file.
+///
+/// This function serializes all neurons and edges in the network to a structured JSON format
+/// that can be saved to disk for later loading or analysis.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the model data
+/// * `output_file` - The path where the JSON file will be written
+///
+/// # Returns
+///
+/// A Result indicating success or failure of the write operation
 pub fn save_model_json(
     params: &mut Gng_System,
     output_file: String,
@@ -836,6 +1100,19 @@ pub fn save_model_json(
     Ok(())
 }
 
+//--------------------------------------------------------------------------------------------------
+/// Returns the current model as a JSON string.
+///
+/// This function serializes all neurons and edges in the network to a JSON format
+/// without writing to a file, useful for immediate processing or transmission.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the model data
+///
+/// # Returns
+///
+/// A String containing the serialized model in JSON format
 pub fn get_model_string(params: &mut Gng_System) -> String {
     let mut data = json!({});
     let keys = params.neuron_handler.get_keys();
@@ -864,13 +1141,18 @@ pub fn get_model_string(params: &mut Gng_System) -> String {
     res_str
 }
 
-// Export Model
 //--------------------------------------------------------------------------------------------------
-// get neurons and edges
-
 /// Returns the current neurons as (id, position) pairs.
 ///
-/// The positions are 3D vectors stored as (x, y, z) tuples.
+/// The positions are vectors stored as f64 arrays.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the neurons
+///
+/// # Returns
+///
+/// A vector of tuples where each tuple contains (neuron_id, neuron_position)
 pub fn get_neurons(params: &mut Gng_System) -> Vec<(usize, Vec<f64>)> {
     let mut result = Vec::with_capacity(params.neuron_handler.get_num_neurons());
     let keys = params.neuron_handler.get_keys();
@@ -881,6 +1163,18 @@ pub fn get_neurons(params: &mut Gng_System) -> Vec<(usize, Vec<f64>)> {
     result
 }
 
+//--------------------------------------------------------------------------------------------------
+/// Returns the current edges as (from, to) pairs.
+///
+/// Each tuple represents a directed edge between two neurons.
+///
+/// # Arguments
+///
+/// * `params` - A mutable reference to the GNG system containing the edges
+///
+/// # Returns
+///
+/// A vector of tuples where each tuple contains (from_neuron_id, to_neuron_id)
 pub fn get_edges(params: &mut Gng_System) -> Vec<(usize, usize)> {
     let mut result = Vec::with_capacity(params.neuron_handler.get_num_neurons());
     let keys = params.edge_handler.get_keys();
@@ -893,23 +1187,6 @@ pub fn get_edges(params: &mut Gng_System) -> Vec<(usize, usize)> {
     }
     result
 }
-
-/// Returns the current edges as (from, to) pairs.
-///
-/// Each tuple represents a directed edge between two neurons.
-//pub fn get_edges(params: &mut Gng_System) -> Vec<(usize, usize)> {
-//    self.edge_handler
-//        .get()
-//        .iter()
-//        .filter_map(|edge| {
-//            if edge.active {
-//                Some((edge.from, edge.to))
-//            } else {
-//                None
-//            }
-//        })
-//        .collect()
-//}
 
 mod core_tests {
     use std::assert_eq;

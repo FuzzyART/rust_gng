@@ -33,9 +33,6 @@ impl Gng_System {
             rng_manager: RngManager::init(rng_seed),
         }
     }
-    //pub fn set_rng_seed(&mut self) {
-    //    self.rng_manager.seed_rng(self.config_handler.rng_seed);
-    //}
     pub fn create_system(&mut self) {
         Self::init();
     }

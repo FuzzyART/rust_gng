@@ -7,6 +7,10 @@ use std::io::{self, BufReader};
 use std::io::{BufWriter, Write};
 
 /// A simple CSV reader.
+///
+/// This struct provides functionality to read and process CSV files,
+/// including counting lines, reading values as strings or f64, and
+/// saving vectors to a new CSV file.
 pub struct CsvReader {
     file_path: String,
     delimiter: char,
@@ -14,6 +18,18 @@ pub struct CsvReader {
 
 impl CsvReader {
     /// Create a new `CsvReader` instance.
+    ///
+    /// # Arguments
+    ///
+    /// * `file_path` - A string slice that holds the path to the CSV file.
+    /// * `delimiter` - The character used to separate fields in the CSV file.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rust_gng::aux::csv_reader::CsvReader;
+    /// let csv_reader = CsvReader::new("data.csv", ',');
+    /// ```
     pub fn new(file_path: &str, delimiter: char) -> Self {
         CsvReader {
             file_path: file_path.to_string(),
@@ -22,12 +38,38 @@ impl CsvReader {
     }
 
     /// Read the CSV file and return the number of lines.
+    ///
+    /// # Returns
+    ///
+    /// * `Result<i32, io::Error>` - The number of lines in the CSV file on success,
+    ///   or an I/O error if the file cannot be read.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rust_gng::aux::csv_reader::CsvReader;
+    /// let csv_reader = CsvReader::new("data.csv", ',');
+    /// let line_count = csv_reader.count_lines().unwrap();
+    /// ```
     pub fn count_lines(&self) -> Result<i32, io::Error> {
         let contents = fs::read_to_string(&self.file_path)?;
         Ok(contents.lines().count() as i32)
     }
 
-    /// Read the CSV file and return all values.
+    /// Read the CSV file and return all values as strings.
+    ///
+    /// # Returns
+    ///
+    /// * `Result<Vec<String>, Box<dyn Error>>` - A vector of all string values from the CSV file on success,
+    ///   or an error if the file cannot be read or parsed.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rust_gng::aux::csv_reader::CsvReader;
+    /// let csv_reader = CsvReader::new("data.csv", ',');
+    /// let values = csv_reader.read_csv_values().unwrap();
+    /// ```
     pub fn read_csv_values(&self) -> Result<Vec<String>, Box<dyn Error>> {
         // Open the CSV file.
         let file = File::open(&self.file_path)?;
@@ -54,10 +96,43 @@ impl CsvReader {
 
         Ok(all_values)
     }
+
+    /// Set a mutable reference to an f64 vector with new values.
+    ///
+    /// This function replaces the contents of the target vector with the provided values.
+    /// It's primarily used internally by other methods for managing data.
+    ///
+    /// # Arguments
+    ///
+    /// * `arr` - A mutable reference to the target vector that will be updated.
+    /// * `values` - The new values to set in the vector.
     pub fn set_array_f64(&self, arr: &mut Vec<f64>, values: Vec<f64>) {
         *arr = values;
     }
 
+    /// Read the CSV file and return all values as f64.
+    ///
+    /// This method attempts to parse all fields in the CSV file as floating-point numbers.
+    /// If any field cannot be parsed, an error is returned.
+    ///
+    /// # Returns
+    ///
+    /// * `Result<Vec<f64>, Box<dyn Error>>` - A vector of all f64 values from the CSV file on success,
+    ///   or an error if the file cannot be read or a value cannot be parsed as f64.
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if:
+    /// * The file cannot be opened or read.
+    /// * Any field in the CSV file cannot be parsed as a floating-point number.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rust_gng::aux::csv_reader::CsvReader;
+    /// let csv_reader = CsvReader::new("data.csv", ',');
+    /// let values = csv_reader.read_csv_values_f64().unwrap();
+    /// ```
     pub fn read_csv_values_f64(&self) -> Result<Vec<f64>, Box<dyn Error>> {
         // Open the CSV file.
         let file = File::open(&self.file_path)?;
@@ -93,6 +168,33 @@ impl CsvReader {
         Ok(all_values)
     }
 
+    /// Save two vectors of f64 values to a new CSV file.
+    ///
+    /// This function writes two vectors as columns in a new CSV file with headers "x" and "y".
+    ///
+    /// # Arguments
+    ///
+    /// * `vec1` - The first vector of f64 values (will be written as the "x" column).
+    /// * `vec2` - The second vector of f64 values (will be written as the "y" column).
+    /// * `file_path` - A string slice that holds the path to the output CSV file.
+    ///
+    /// # Returns
+    ///
+    /// * `Result<(), std::io::Error>` - An empty result on success, or an I/O error if the file cannot be created or written.
+    ///
+    /// # Panics
+    ///
+    /// This function will panic if the vectors have different lengths, as it uses `zip`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rust_gng::aux::csv_reader::CsvReader;
+    /// let csv_reader = CsvReader::new("data.csv", ',');
+    /// let vec1 = vec![1.0, 2.0, 3.0];
+    /// let vec2 = vec![4.0, 5.0, 6.0];
+    /// csv_reader.save_vecs_to_csv(vec1, vec2, "output.csv").unwrap();
+    /// ```
     pub fn save_vecs_to_csv(
         &self,
         vec1: Vec<f64>,
