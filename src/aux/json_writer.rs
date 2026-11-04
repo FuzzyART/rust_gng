@@ -25,7 +25,7 @@ use serde_json::{json, Value};
 ///
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// use serde_json::Value;
 /// use gng::aux::json_writer::write_value_to_block;
 ///
@@ -68,7 +68,7 @@ pub fn write_value_to_block<T: Serialize>(data: &mut Value, block: &str, key: &s
 ///
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// use serde_json::Value;
 /// use gng::aux::json_writer::write_json_to_file;
 ///

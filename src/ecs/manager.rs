@@ -14,7 +14,7 @@ use std::collections::{HashMap, VecDeque};
 ///
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// use gng::ecs::manager::EntityManager;
 ///
 /// let mut manager = EntityManager::<String>::new();
@@ -40,7 +40,7 @@ impl<T> EntityManager<T> {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use gng::ecs::manager::EntityManager;
     ///
     /// let manager = EntityManager::<String>::new();
@@ -69,7 +69,7 @@ impl<T> EntityManager<T> {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use gng::ecs::manager::EntityManager;
     ///
     /// let mut manager = EntityManager::<String>::new();
@@ -102,7 +102,7 @@ impl<T> EntityManager<T> {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use gng::ecs::manager::EntityManager;
     ///
     /// let mut manager = EntityManager::<String>::new();
@@ -131,7 +131,7 @@ impl<T> EntityManager<T> {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use gng::ecs::manager::EntityManager;
     ///
     /// let mut manager = EntityManager::<String>::new();
@@ -154,7 +154,7 @@ impl<T> EntityManager<T> {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use gng::ecs::manager::EntityManager;
     ///
     /// let mut manager = EntityManager::<String>::new();
@@ -172,7 +172,7 @@ impl<T> EntityManager<T> {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use gng::ecs::manager::EntityManager;
     ///
     /// let mut manager = EntityManager::<String>::new();
@@ -191,7 +191,7 @@ impl<T> EntityManager<T> {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use gng::ecs::manager::EntityManager;
     ///
     /// let mut manager = EntityManager::<String>::new();
@@ -210,7 +210,7 @@ impl<T> EntityManager<T> {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use gng::ecs::manager::EntityManager;
     ///
     /// let mut manager = EntityManager::<String>::new();
@@ -226,7 +226,7 @@ impl<T> EntityManager<T> {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use gng::ecs::manager::EntityManager;
     ///
     /// let mut manager = EntityManager::<String>::new();

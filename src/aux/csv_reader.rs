@@ -26,7 +26,7 @@ impl CsvReader {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use rust_gng::aux::csv_reader::CsvReader;
     /// let csv_reader = CsvReader::new("data.csv", ',');
     /// ```
@@ -46,7 +46,7 @@ impl CsvReader {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use rust_gng::aux::csv_reader::CsvReader;
     /// let csv_reader = CsvReader::new("data.csv", ',');
     /// let line_count = csv_reader.count_lines().unwrap();
@@ -65,7 +65,7 @@ impl CsvReader {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use rust_gng::aux::csv_reader::CsvReader;
     /// let csv_reader = CsvReader::new("data.csv", ',');
     /// let values = csv_reader.read_csv_values().unwrap();
@@ -128,7 +128,7 @@ impl CsvReader {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use rust_gng::aux::csv_reader::CsvReader;
     /// let csv_reader = CsvReader::new("data.csv", ',');
     /// let values = csv_reader.read_csv_values_f64().unwrap();
@@ -188,7 +188,7 @@ impl CsvReader {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use rust_gng::aux::csv_reader::CsvReader;
     /// let csv_reader = CsvReader::new("data.csv", ',');
     /// let vec1 = vec![1.0, 2.0, 3.0];

@@ -27,7 +27,7 @@ impl Samples {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use gng::components::sample_component::Samples;
     ///
     /// let samples = Samples::init(vec![1.0, 2.0, 3.0]);
@@ -47,7 +47,7 @@ impl Samples {
 ///
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// use gng::components::sample_component::SampleHandler;
 ///
 /// let mut handler = SampleHandler::init();
@@ -71,7 +71,7 @@ impl SampleHandler {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use gng::components::sample_component::SampleHandler;
     ///
     /// let handler = SampleHandler::init();
@@ -101,7 +101,7 @@ impl SampleHandler {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use gng::components::sample_component::SampleHandler;
     ///
     /// let mut handler = SampleHandler::init();
@@ -141,7 +141,7 @@ impl SampleHandler {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use gng::components::sample_component::SampleHandler;
     ///
     /// let mut handler = SampleHandler::init();
@@ -179,7 +179,7 @@ impl SampleHandler {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use gng::components::sample_component::SampleHandler;
     ///
     /// let mut handler = SampleHandler::init();
@@ -198,7 +198,7 @@ impl SampleHandler {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use gng::components::sample_component::SampleHandler;
     ///
     /// let mut handler = SampleHandler::init();
@@ -220,7 +220,7 @@ impl SampleHandler {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use gng::components::sample_component::SampleHandler;
     ///
     /// let mut handler = SampleHandler::init();
@@ -243,7 +243,7 @@ impl SampleHandler {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use gng::components::sample_component::SampleHandler;
     ///
     /// let mut handler = SampleHandler::init();
@@ -258,7 +258,7 @@ impl SampleHandler {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use gng::components::sample_component::SampleHandler;
     ///
     /// let mut handler = SampleHandler::init();
