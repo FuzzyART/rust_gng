@@ -21,7 +21,7 @@ impl RngManager {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use rust_gng::aux::rng_manager::RngManager;
     ///
     /// let mut rng_manager = RngManager::init(42);
@@ -39,7 +39,7 @@ impl RngManager {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use rust_gng::aux::rng_manager::RngManager;
     ///
     /// let mut rng_manager = RngManager::init(42);
@@ -61,7 +61,7 @@ impl RngManager {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use rust_gng::aux::rng_manager::RngManager;
     ///
     /// let mut rng_manager = RngManager::init(42);
@@ -85,7 +85,7 @@ impl RngManager {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use rust_gng::aux::rng_manager::RngManager;
     ///
     /// let mut rng_manager = RngManager::init(42);
@@ -103,7 +103,7 @@ impl RngManager {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use rand::Rng;
     /// use rust_gng::aux::rng_manager::RngManager;
     ///

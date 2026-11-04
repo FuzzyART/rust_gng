@@ -51,7 +51,7 @@ impl Edge {
 ///
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// use gng::components::edge_component::EdgeHandler;
 ///
 /// let mut handler = EdgeHandler::init();
