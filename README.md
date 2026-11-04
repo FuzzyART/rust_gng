@@ -1,168 +1,121 @@
-🧠 GNG – Experimental ML Core (Rust + Python)
+# NeuroGas — Experimental ML Core
 
-⚠️ Work in Progress / Portfolio Project
-This repository is actively evolving and not even remotely finished.
-It serves as an experimental playground for ML systems, Rust ↔ Python integration, and tooling — and as a portfolio project to demonstrate real-world engineering skills.
+> An experimental Rust implementation of a modular clustering algorithm, initially grounded in Growing Neural Gas.
 
-Overview
+## Overview
 
-This repository contains an experimental machine learning core written in Rust, with Python bindings and a growing set of tools, experiments, and examples around it.
+NeuroGas is an experimental machine learning core written in Rust.
 
-Everything currently lives in one repository to keep development fast and flexible. The structure and boundaries will evolve as the project matures.
+The project starts from **Growing Neural Gas (GNG)** as a known mathematical baseline. The implementation is being structured around independently replaceable processing steps, allowing individual parts of the algorithm to be investigated, measured, and eventually replaced with alternative approaches.
 
+The long-term goal is to explore a clustering approach that is better suited to parallel processing and whose behavior can be visualized as a system of interacting particles rather than a conventional graph-based clustering algorithm.
 
-## Usage
+The algorithm itself is still under development.
 
-### Compilation
+## Current Approach
 
+The implementation is being decomposed into modular processing steps, including:
 
+* Weight calculation
+* Distance calculation
+* Neighbor search
+* Node adaptation
+* Neighborhood updates
+* Node insertion and removal
+* Clustering behavior
 
+The first objective is **mathematical equivalence with GNG**.
 
+Once that baseline is established, individual processing steps can be replaced or redesigned independently. This provides a controlled way to experiment with alternative approaches while retaining a known reference implementation.
 
-```bash
-sh scripts/1-build_lib.sh
-sh scripts/2-build_py_lib.sh
+## Project Status
 
-sh scripts/container/1-buildContainer.sh
-sh scripts/container/2-startContainer.sh
-sh scripts/container/3-install_gng.sh
+🚧 **Highly experimental**
 
-```
-in VSCode/Codium, attach to remote container
+The project is currently focused on establishing the core algorithm and its mathematical behavior.
 
+At this stage:
 
+* GNG serves as the initial reference algorithm
+* The implementation is written entirely in Rust
+* Core processing steps are being modularized
+* Tests are used to verify algorithmic behavior
+* APIs and internal architecture may change substantially
+* No production guarantees are made
 
+The architecture is expected to evolve alongside the algorithm.
 
-## Current components
+## Building
 
-🦀 Rust GNG library
-
-Core algorithms and performance-critical logic
-
-🐍 Python bindings
-
-Built using maturin
-
-Exposed as a Python package
-
-🧪 Experiments & prototypes
-
-Jupyter notebooks for ML exploration
-
-🛠 Quick-and-dirty tools
-
-Data generators
-
-Visualization helpers
-
-📚 Documentation & setup guides
-
-Including notes on GPU / ROCm / TensorFlow setups
-
-🚧 Planned
-
-A main application that combines everything into a usable system
-
-Project Status
-
-✔ Early architecture in place
-
-✔ Rust ↔ Python integration working
-
-✔ Nix-based dev environment
-
-❌ APIs not stable
-
-❌ No backwards compatibility guarantees
-
-❌ Not production-ready
-
-This project prioritizes learning, experimentation, and correctness over polish — for now.
-
-Development Environment
-
-The project uses Nix to provide a reproducible development environment.
-
-Make sure you have:
-
-Nix (with flakes enabled)
-
-Rust toolchain
-
-Python ≥ 3.12
-
-## Build Instructions
-
-- Build the Rust library
-```bash
-nix develop --command bash -c "cd gng && cargo build"
-```
-- Build the Python package
-
-    - This creates Python wheels using maturin.
+Build the project with Cargo:
 
 ```bash
-nix develop --command bash -c "cd gng && maturin build"
+cargo build
 ```
 
-- Install the Python package in a virtual environment
+For an optimized release build:
 
-```bashy
-python3.12 -m venv venv && \
-source venv/bin/activate && \
-pip install gng/target/wheels/*
+```bash
+cargo build --release
 ```
 
-## Repository Structure (High-Level)
-```
-├── app
-├── experiments
-├── gng
-├── scripts
-├── tools
-├── venv
-├── flake.lock
-├── flake.nix
-├── LICENSE
-├── README.md
+## Testing
 
+Run the test suite with:
+
+```bash
+cargo test
 ```
 
+To see test output:
 
-Structure is expected to change as the project grows.
+```bash
+cargo test -- --nocapture
+```
 
-## Goals
+## Development Philosophy
 
-- Explore ML system design in Rust
+### Establish a known baseline first
 
-- Learn and demonstrate FFI & Python bindings
+GNG provides a well-understood reference point. Before introducing fundamentally different behavior, the implementation should reproduce the relevant mathematical properties of GNG.
 
-- Experiment with GPU acceleration
-- Build a foundation for a real application
-- Serve as a portfolio project to demonstrate:
-- Systems programming
-- ML experimentation
-- Tooling & developer experience
-- Pragmatic engineering decisions
-## Non-Goals (for now)
-- Production stability
-- Clean public API
-- Backwards compatibility
-- Polished UX
-- These will come later — if and when the project stabilizes.
+### Keep processing steps replaceable
 
-## Contributions
+Operations such as weighting, distance evaluation, and neighbor search should remain sufficiently isolated that alternative implementations can be investigated independently.
 
-This is primarily a personal project, but:
+### Prefer experimentation over premature abstraction
 
-- Issues, feedback, and discussion are welcome
+The architecture exists to support experimentation with the algorithm. Abstractions should emerge from the requirements of the implementation rather than being introduced for architectural completeness alone.
 
-- Code style and structure may change rapidly
+### Treat parallelism as a first-class concern
+
+A major motivation for the project is exploring whether clustering behavior can be expressed through operations that are naturally amenable to parallel execution.
+
+## Long-Term Direction
+
+The intended direction is an algorithm that differs substantially from GNG while retaining some of the useful properties of competitive and topology-forming clustering algorithms.
+
+One particularly interesting target is a system whose state and evolution can be visualized as a **particle swarm**: a collection of interacting points that move, adapt, and organize themselves according to local information.
+
+The exact algorithm is intentionally not defined yet.
+
+The current implementation is the experimental foundation for discovering it.
+
+## Scope
+
+This crate contains the machine learning core and its tests.
+
+Applications, visualization, data generation, and other supporting tooling are intentionally kept separate from the core implementation. This allows the algorithm and its tests to evolve independently from the systems used to consume and visualize its output.
+
+## Contributing
+
+This is primarily an experimental research project.
+
+The architecture, algorithms, and APIs may change significantly as new ideas are tested. Technical feedback, discussion, and issues are welcome.
 
 ## Disclaimer
 
-This repository reflects active learning and experimentation.
-Some solutions are intentionally exploratory rather than “final”.
+This project is experimental research software.
 
-If you’re reviewing this as part of a hiring process:
-this repo is meant to show how I think, build, and iterate — not just polished end results.
+It should not currently be considered a finished algorithm, stable ML framework, or production-ready library. Its purpose is to explore, test, and iteratively develop ideas around clustering, modular algorithm design, and parallel machine learning.
+

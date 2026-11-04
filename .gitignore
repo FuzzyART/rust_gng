@@ -1,12 +1,3 @@
 debug/
 target/
 .vscode/
-.venv
-venv
-__pycache__
-result
-*.ipynb_checkpoints
-.devcontainer/
-.python-version
-
-rust_gng.git
