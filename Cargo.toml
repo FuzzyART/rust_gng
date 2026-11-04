@@ -2,7 +2,7 @@
 name = "neurogas"
 version = "0.0.4"
 edition = "2021"
-readme = "Readme.md"
+readme = "README.md"
 repository = "https://gitlab.com/br34ch/project_flood/rust_gng"
 license = "MIT"
 description = "Experimental Rust implementation of the Growing Neural Gas (GNG) algorithm."
